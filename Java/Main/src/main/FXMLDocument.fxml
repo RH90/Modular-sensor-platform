@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="341.0" prefWidth="505.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="main.FXMLDocumentController">
     <children>
-        <Button layoutX="126" layoutY="90" text="Click Me!" onAction="#handleButtonAction" fx:id="button" />
-        <Label layoutX="126" layoutY="120" minHeight="16" minWidth="69" fx:id="label" />
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <Rectangle fx:id="b4" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="42.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b3" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="141.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b2" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="241.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b1" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="338.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b8" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="42.0" layoutY="230.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b7" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="141.0" layoutY="230.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b6" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="241.0" layoutY="230.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b5" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="338.0" layoutY="230.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Rectangle fx:id="b9" arcHeight="5.0" arcWidth="5.0" fill="#b594eb" height="73.0" layoutX="338.0" layoutY="134.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+      <Label layoutX="373.0" layoutY="22.0" text="1" />
+      <Label layoutX="276.0" layoutY="22.0" text="2" />
+      <Label layoutX="176.0" layoutY="22.0" text="3" />
+      <Label layoutX="81.0" layoutY="22.0" text="4" />
+      <Label layoutX="81.0" layoutY="213.0" text="8" />
+      <Label layoutX="180.0" layoutY="213.0" text="7" />
+      <Label layoutX="280.0" layoutY="213.0" text="6" />
+      <Label layoutX="373.0" layoutY="213.0" text="5" />
+      <Label layoutX="373.0" layoutY="120.0" text="9" />
     </children>
 </AnchorPane>
