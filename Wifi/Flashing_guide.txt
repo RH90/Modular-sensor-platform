@@ -1,0 +1,11 @@
+Run "Upload" in Arduino IDE.
+
+Get ready for restarting the module: keep pressed the FLASH button.
+
+When "esptool.exe .... -cp COM...." appears in the messages area then quickly press and release RESET. Then release FLASH button.
+
+You should see in the messages area the flashing process.
+
+After the flashing the you should see the the blue led blinking.
+
+Link: http://www.instructables.com/id/ESP-12F-ESP8266-Module-Minimal-Breadboard-for-Flas/
