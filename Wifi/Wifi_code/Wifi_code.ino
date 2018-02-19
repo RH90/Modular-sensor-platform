@@ -17,15 +17,7 @@ digitalWrite(ledPin, LOW);
 //Serial.println();
 //Serial.println();
 
-while(!Serial.available()) 
-{
-  
-}
 
-test = Serial.read();
-Serial.print("\nData: ");
-Serial.print(test);
-Serial.print("\n");
 //Serial.println(ssid);
 
 WiFi.begin(ssid, password);
@@ -56,8 +48,18 @@ return;
 }
 
 // Wait until the client sends some data
-Serial.println("new client");
+
+while(!Serial.available()) 
+{  
+  
+}
+
+while((test = Serial.read())!='a')
+{
+  client.print(test);
+}
+//Serial.println(string);
 
 
-client.print(test);
+//client.print(test);
 }
