@@ -37,6 +37,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../i2cmaster.c \
 ../main.c
 
 
@@ -47,15 +48,19 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+i2cmaster.o \
 main.o
 
 OBJS_AS_ARGS +=  \
+i2cmaster.o \
 main.o
 
 C_DEPS +=  \
+i2cmaster.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
+i2cmaster.d \
 main.d
 
 OUTPUT_FILE_PATH +=Main.elf
@@ -72,6 +77,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

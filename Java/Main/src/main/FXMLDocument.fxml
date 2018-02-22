@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane id="AnchorPane" prefHeight="341.0" prefWidth="505.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="main.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="341.0" prefWidth="505.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.FXMLDocumentController">
     <children>
         <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
       <Rectangle fx:id="b4" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="42.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="77.0" />
@@ -25,5 +25,7 @@
       <Label layoutX="280.0" layoutY="213.0" text="6" />
       <Label layoutX="373.0" layoutY="213.0" text="5" />
       <Label layoutX="373.0" layoutY="120.0" text="9" />
+      <Label fx:id="L1" layoutX="359.0" layoutY="67.0" text="Label" />
+      <Label fx:id="L2" layoutX="67.0" layoutY="258.0" text="Label" />
     </children>
 </AnchorPane>
