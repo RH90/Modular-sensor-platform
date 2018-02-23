@@ -23,7 +23,7 @@ import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
-public class HC05 {
+public class Bluetooth {
 
     boolean scanFinished = false;
     RemoteDevice hc05device;

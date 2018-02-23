@@ -84,7 +84,7 @@ public class FXMLDocumentController implements Initializable {
     public void Blue() throws Exception {
         System.out.println("Ready");
         s1 = "heu";
-        HC05 Blue = new HC05();
+        Bluetooth Blue = new Bluetooth();
 
         StreamConnection sc = Blue.go();
         BufferedReader reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
