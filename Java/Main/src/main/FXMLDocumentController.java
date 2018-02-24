@@ -95,6 +95,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void Simulink() throws IOException, InterruptedException {
+        try{
         ServerSocket serverSocket = new ServerSocket(8000);
         Socket socket = serverSocket.accept();
         System.out.println("Connected");
@@ -109,10 +110,14 @@ public class FXMLDocumentController implements Initializable {
             bo.flush();
             Thread.sleep(1000);
         }
+        }catch(Exception ex){
+            System.out.println("Simulink Error");
+        }
     }
 
     public void Blue() throws Exception {
         System.out.println("Ready");
+        try{
         Bluetooth Blue = new Bluetooth();
         StreamConnection sc = Blue.go();
         BufferedReader reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
@@ -133,6 +138,9 @@ public class FXMLDocumentController implements Initializable {
                 line += c;
                 continue;
             }
+        }
+        }catch(Exception ex){
+            System.out.println("Wireless connection error");
         }
     }
 

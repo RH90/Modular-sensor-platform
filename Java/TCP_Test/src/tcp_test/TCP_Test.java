@@ -25,8 +25,8 @@ public class TCP_Test {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         // TODO code application logic here
-        int i = 0;
-        int u = 1;
+        int i =-400;
+        int u = -200;
         ServerSocket serverSocket = new ServerSocket(8000);
         Socket socket = serverSocket.accept();
         System.out.println("Connected");
@@ -38,8 +38,6 @@ public class TCP_Test {
             bo.write(bytes,0,4);
             bytes = ByteBuffer.allocate(4).putInt(i).array();
             bo.write(bytes,0,4);
-            bytes = ByteBuffer.allocate(4).putInt(5).array();
-            bo.write(bytes,0,4);
             bo.flush();
             System.out.println(i);
             System.out.println(u);
@@ -48,8 +46,8 @@ public class TCP_Test {
             Thread.sleep(100);
 
             if (i >= 300) {
-                i = 100;
-                 u = 100;
+                i = -100;
+                 u = -100;
             }
 
         }
