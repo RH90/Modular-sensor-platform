@@ -36,8 +36,8 @@ public class FXMLDocumentController implements Initializable {
     private Label L1;
     @FXML
     private Label L2;
-    static String s1 = "0";
-    static String s2 = "0";
+    short s1 = 0;
+    short s2 = 0;
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -56,8 +56,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            L1.setText(s1);
-                            L2.setText(s2);
+                            L1.setText(s1 + "");
+                            L2.setText(s2 + "");
                         }
 
                     });
@@ -95,51 +95,60 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void Simulink() throws IOException, InterruptedException {
-        try{
-        ServerSocket serverSocket = new ServerSocket(8000);
-        Socket socket = serverSocket.accept();
-        System.out.println("Connected");
-        BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
-        PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        while (true) {
-            byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.parseInt(s1)).array();
-            bo.write(bytes, 0, 4);
-            bytes = ByteBuffer.allocate(4).putInt(Integer.parseInt(s2)).array();
-            bo.write(bytes, 0, 4);
-            bo.flush();
-            Thread.sleep(1000);
-        }
-        }catch(Exception ex){
+        try {
+            ServerSocket serverSocket = new ServerSocket(8080);
+
+            System.out.println("Connected");
+            Socket socket = serverSocket.accept();
+            int i = 0;
+            while (true) {
+
+                BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
+                PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                s1 = (short) (Math.random() * 1000);
+                s2 = (short) (Math.random() * 1000);
+                byte[] bytes = ByteBuffer.allocate(2).putShort(s1).array();
+                byte[] bytes1 = ByteBuffer.allocate(2).putShort(s2).array();
+                bo.write(bytes);
+                bo.write(bytes1);
+                bo.flush();
+                
+
+                Thread.sleep(100);
+                
+
+            }
+        } catch (Exception ex) {
             System.out.println("Simulink Error");
         }
     }
 
     public void Blue() throws Exception {
         System.out.println("Ready");
-        try{
-        Bluetooth Blue = new Bluetooth();
-        StreamConnection sc = Blue.go();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
-        System.out.println("Go");
-        String line = "";
-        while (true) {
-            char c = (char) reader.read();
-            if (c == 'a') {
-                s1 = (new StringBuffer(line).reverse().toString() + " cm");
-                line = "";
-            } else if (c == 'b') {
-                int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
-                tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
-                //System.out.println("Acc: " + tmp);
-                s2 = "X: " + tmp;
-                line = "";
-            } else {
-                line += c;
-                continue;
+        try {
+            Bluetooth Blue = new Bluetooth();
+            StreamConnection sc = Blue.go();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
+            System.out.println("Go");
+            String line = "";
+            while (true) {
+                char c = (char) reader.read();
+                if (c == 'a') {
+                    s1 = Short.parseShort(new StringBuffer(line).reverse().toString());
+                    line = "";
+                } else if (c == 'b') {
+                    int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
+                    tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
+                    //System.out.println("Acc: " + tmp);
+                    s2 = (short) tmp;
+                    line = "";
+                } else {
+                    line += c;
+                    continue;
+                }
             }
-        }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Wireless connection error");
         }
     }
