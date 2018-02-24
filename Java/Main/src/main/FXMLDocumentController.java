@@ -11,8 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +36,8 @@ public class FXMLDocumentController implements Initializable {
     private Label L1;
     @FXML
     private Label L2;
-    static String s1 = "";
-    static String s2 = "";
+    static String s1 = "0";
+    static String s2 = "0";
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -78,14 +80,40 @@ public class FXMLDocumentController implements Initializable {
         };
 
         thread.start();
+        Thread thread1 = new Thread() {
+            public void run() {
+                try {
+                    Simulink();
+                } catch (Exception ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+
+        thread1.start();
         // L1.setText("hej");
+    }
+
+    public void Simulink() throws IOException, InterruptedException {
+        ServerSocket serverSocket = new ServerSocket(8000);
+        Socket socket = serverSocket.accept();
+        System.out.println("Connected");
+        BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
+        PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        while (true) {
+            byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.parseInt(s1)).array();
+            bo.write(bytes, 0, 4);
+            bytes = ByteBuffer.allocate(4).putInt(Integer.parseInt(s2)).array();
+            bo.write(bytes, 0, 4);
+            bo.flush();
+            Thread.sleep(1000);
+        }
     }
 
     public void Blue() throws Exception {
         System.out.println("Ready");
-        s1 = "heu";
         Bluetooth Blue = new Bluetooth();
-
         StreamConnection sc = Blue.go();
         BufferedReader reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
         System.out.println("Go");
@@ -99,7 +127,7 @@ public class FXMLDocumentController implements Initializable {
                 int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                 tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                 //System.out.println("Acc: " + tmp);
-                s2="X: "+tmp;
+                s2 = "X: " + tmp;
                 line = "";
             } else {
                 line += c;
