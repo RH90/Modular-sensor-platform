@@ -23,7 +23,11 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
+import javafx.scene.paint.Color;
 import javax.microedition.io.StreamConnection;
 
 /**
@@ -36,18 +40,86 @@ public class FXMLDocumentController implements Initializable {
     private Label L1;
     @FXML
     private Label L2;
-    short s1 = 0;
-    short s2 = 0;
+    @FXML
+    private Button Start;
+    private short s1 = 0;
+    private short s2 = 0;
+    private boolean on_off = true;
+    private Thread thread1 = null;
+    private Thread thread = null;
+    private Socket socket;
+    private ServerSocket serverSocket;
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        L1.setText("Hello World!");
+        if (on_off) {
+            Light.Distant light = new Light.Distant();
+//        light.setAzimuth(45.0);
+//        light.setElevation(30.0);
+            light.setColor(Color.valueOf("#ff4f4f"));
+
+            Lighting lighting = new Lighting();
+            lighting.setLight(light);
+            lighting.setDiffuseConstant(2.0);
+            Start.setEffect(lighting);
+            Start.setText("Stop");
+            on_off = false;
+            if (thread == null || thread1 == null) {
+                thread = new Thread() {
+                    public void run() {
+                        try {
+                            Blue();
+                        } catch (Exception ex) {
+                            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                };
+                thread.start();
+                thread1 = new Thread() {
+                    public void run() {
+                        try {
+                            Simulink();
+                        } catch (Exception ex) {
+                            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                };
+                thread1.start();
+            }
+        } else {
+            thread1.interrupt();
+            thread.interrupt();
+            while (thread1.isAlive()) {
+                //System.out.println("Alive");
+            }
+            System.out.println("Dead");
+            while (thread.isAlive()) {
+                //System.out.println("Blue Alive");
+            }
+            thread = null;
+            thread = null;
+            System.out.println("Blue Dead");
+            Light.Distant light = new Light.Distant();
+//        light.setAzimuth(45.0);
+//        light.setElevation(30.0);
+            light.setColor(Color.valueOf("#32ff3c"));
+
+            Lighting lighting = new Lighting();
+            lighting.setLight(light);
+            lighting.setDiffuseConstant(2.0);
+            Start.setEffect(lighting);
+            Start.setText("Start");
+
+            on_off = true;
+            System.out.println("");
+            System.out.println("");
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -69,58 +141,51 @@ public class FXMLDocumentController implements Initializable {
         th.setDaemon(true);
         th.start();
 
-        Thread thread = new Thread() {
-            public void run() {
-                try {
-                    Blue();
-                } catch (Exception ex) {
-                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        };
-
-        thread.start();
-        Thread thread1 = new Thread() {
-            public void run() {
-                try {
-                    Simulink();
-                } catch (Exception ex) {
-                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        };
-
-        thread1.start();
         // L1.setText("hej");
     }
 
     public void Simulink() throws IOException, InterruptedException {
         try {
-            ServerSocket serverSocket = new ServerSocket(8080);
-
+            if (serverSocket == null) {
+                serverSocket = new ServerSocket(8080);
+            }
+            serverSocket.setSoTimeout(10000);
+            socket = serverSocket.accept();
             System.out.println("Connected");
-            Socket socket = serverSocket.accept();
             int i = 0;
             while (true) {
 
                 BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
                 PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                s1 = (short) (Math.random() * 1000);
-                s2 = (short) (Math.random() * 1000);
+                if (i % 50 == 0) {
+                    s1 = (short) (Math.random() * 1000);
+                    s2 = (short) (Math.random() * 1000);
+                }
                 byte[] bytes = ByteBuffer.allocate(2).putShort(s1).array();
                 byte[] bytes1 = ByteBuffer.allocate(2).putShort(s2).array();
                 bo.write(bytes);
                 bo.write(bytes1);
                 bo.flush();
-                
 
                 Thread.sleep(100);
-                
-
+                i++;
+                if (Thread.currentThread().isInterrupted()) {
+                    if (serverSocket != null && !serverSocket.isClosed()) {
+                        serverSocket.close();
+                        serverSocket = null;
+                    }
+                    break;
+                }
             }
         } catch (Exception ex) {
-            System.out.println("Simulink Error");
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+                serverSocket = null;
+            }
+
+            //    ex.printStackTrace();
+            System.out.println("Simulink Disconnetct");
         }
     }
 
@@ -147,8 +212,12 @@ public class FXMLDocumentController implements Initializable {
                     line += c;
                     continue;
                 }
+                if (Thread.currentThread().isInterrupted()) {
+                    break;
+                }
             }
         } catch (Exception ex) {
+
             System.out.println("Wireless connection error");
         }
     }
@@ -176,7 +245,6 @@ public class FXMLDocumentController implements Initializable {
                 tt = s;
                 break;
             }
-
             // System.out.println(tt + " asf");
         }
     }
