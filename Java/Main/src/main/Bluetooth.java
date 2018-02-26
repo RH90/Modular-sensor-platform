@@ -21,6 +21,7 @@ public class Bluetooth {
     public StreamConnection go() throws Exception {
         //scan for all devices:
         scanFinished = false;
+
         LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, new DiscoveryListener() {
             @Override
             public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
@@ -61,6 +62,7 @@ public class Bluetooth {
             0x0100 // service name
         };
         scanFinished = false;
+
         LocalDevice.getLocalDevice().getDiscoveryAgent().searchServices(attrIDs, searchUuidSet,
                 hc05device, new DiscoveryListener() {
             @Override
@@ -93,9 +95,9 @@ public class Bluetooth {
 
         System.out.println(hc05device.getBluetoothAddress());
         System.out.println(hc05Url);
-        
 
         String PIN = "1234";
+
         boolean paired = RemoteDeviceHelper.authenticate(hc05device, PIN);
         //LOG.info("Pair with " + remoteDevice.getFriendlyName(true) + (paired ? " succesfull" : " failed"));
         if (paired) {
@@ -104,10 +106,11 @@ public class Bluetooth {
             System.out.println("Fail");
         }
         
-        return (StreamConnection)MicroeditionConnector.open(hc05Url);
+
+        return (StreamConnection) MicroeditionConnector.open(hc05Url);
+       
         
-        
-       // System.out.println("Receive data");
-       // reader.close();
+        // System.out.println("Receive data");
+        // reader.close();
     }
 }
