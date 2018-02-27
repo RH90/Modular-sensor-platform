@@ -495,6 +495,7 @@ void Timer1init() {
  2b8:	9d e3       	ldi	r25, 0x3D	; 61
  2ba:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7e0089>
  2be:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7e0088>
+	// 3125=0.2 s
 	sei();
  2c2:	78 94       	sei
  2c4:	08 95       	ret
@@ -557,8 +558,8 @@ int main (void)
  30a:	ff cf       	rjmp	.-2      	; 0x30a <main+0x44>
 
 0000030c <__vector_11>:
-    TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
     OCR1A = 15625;
+	// 3125=0.2 s
 	sei();
 }
 

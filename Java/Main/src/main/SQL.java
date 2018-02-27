@@ -62,7 +62,7 @@ public class SQL {
         };
         thread1.start();
 //                
-        System.out.println(new Timestamp(System.currentTimeMillis()));
+       // System.out.println(new Timestamp(System.currentTimeMillis()));
 
         // ResultSetMetaData columns = rs.getMetaData();
         // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));

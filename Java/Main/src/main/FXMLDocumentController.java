@@ -5,8 +5,6 @@
  */
 package main;
 
-import com.mathworks.engine.EngineException;
-import com.mathworks.engine.MatlabEngine;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,7 +17,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,8 +44,6 @@ public class FXMLDocumentController implements Initializable {
     private Label L2;
     @FXML
     private Button Start;
-    private static short s1 = 0;
-    private static short s2 = 0;
     private final int size = 2;
     private short[] sensor_value = new short[size];
     private boolean test = false;
@@ -141,18 +136,7 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        MatlabEngine eng = null;
-        try {
-            // TODO
-            eng = MatlabEngine.connectMatlab();
-        } catch (EngineException | InterruptedException | IllegalArgumentException | IllegalStateException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            eng.putVariable("x", 5);
-        } catch (InterruptedException | IllegalStateException | ExecutionException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -184,12 +168,13 @@ public class FXMLDocumentController implements Initializable {
                 //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
             }
             serverSocket.setSoTimeout(10000);
+
             socket = serverSocket.accept();
             System.out.println("Connected");
-            int i = 0;
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
             while (true) {
 
 //                if (i % 50 == 0) {
@@ -198,14 +183,15 @@ public class FXMLDocumentController implements Initializable {
 //                }
                 byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[0]).array();
                 byte[] bytes1 = ByteBuffer.allocate(2).putShort(sensor_value[1]).array();
-                bo.write(bytes);
-                bo.write(bytes1);
+                // System.out.println(sensor_value[1]);
+                bo.write(bytes, 0, 2);
+                bo.write(bytes1, 0, 2);
+
                 bo.flush();
 
+                //  System.out.println(new Timestamp(System.currentTimeMillis()));
 //                sql.add("1", s1);
 //                sql.add("2", s2);
-                Thread.sleep(100);
-                i++;
                 if (Thread.currentThread().isInterrupted()) {
                     if (serverSocket != null && !serverSocket.isClosed()) {
                         serverSocket.close();
@@ -213,8 +199,9 @@ public class FXMLDocumentController implements Initializable {
                     }
                     break;
                 }
+                Thread.sleep(100);
             }
-        } catch (Exception ex) {
+        } catch (IOException | InterruptedException ex) {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
                 serverSocket = null;

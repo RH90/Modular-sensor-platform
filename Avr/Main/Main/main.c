@@ -102,6 +102,7 @@ void Timer1init() {
   //  TCCR1A = _BV(WGM11);  // Mode = CTC
     TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
     OCR1A = 15625;
+	// 3125=0.2 s
 	sei();
 }
 
