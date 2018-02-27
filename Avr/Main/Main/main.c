@@ -2,13 +2,14 @@
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include <avr/sfr_defs.h>
+#include <avr/interrupt.h>
 #include "i2cmaster.h"
 //#include <avr/interrupt.h>
   // 16 MHz oscillator.
 #define BaudRate 9600
 #define MYUBRR (F_CPU / 16 / BaudRate ) - 1
 
-
+volatile int count=0;
 
 
 unsigned char serialCheckTxReady(void)
@@ -74,6 +75,7 @@ int main (void)
 	//asm("cli");  // DISABLE global interrupts.
 
 	serial_init(MYUBRR);
+	Timer1init();
 	//serialWrite('H'); // Char : H
 	i2c_init();
 	uint8_t* data;
@@ -89,6 +91,21 @@ int main (void)
 	while(1) // main loop
 	{	// Send 'Hello' to the LCD
 
+	;;		
+	} //End main loop.
+	
+	return 0;
+}
+
+void Timer1init() {
+	TIMSK1 = _BV(OCIE1A);  // Enable Interrupt TimerCounter0 Compare Match A (SIG_OUTPUT_COMPARE0A)
+  //  TCCR1A = _BV(WGM11);  // Mode = CTC
+    TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
+    OCR1A = 15625;
+	sei();
+}
+
+ISR(TIMER1_COMPA_vect){
 		DDRB=1;
 		PORTB=0;
 		_delay_us(2);
@@ -123,10 +140,9 @@ int main (void)
 		//serialWrite(data[0]);
 		print(*dat,'b');
 		free(dat);
-		_delay_ms(1000);
-		
-	} //End main loop.
-	
-	return 0;
+}
+
+ISR(INT0_vect){
+	PORTB=4;
 }
 

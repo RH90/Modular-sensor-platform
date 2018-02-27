@@ -39,32 +39,34 @@ public class SQL {
     String session;
 
     /**
-     * @param Sensor
-     * @param Value
+     * @param sensor_value
      * @throws java.lang.InterruptedException
+     * @throws java.sql.SQLException
      */
-    public void add(String Sensor, int Value) throws InterruptedException {
-
-        boolean hey = true;
+    public void add(short[] sensor_value) throws InterruptedException, SQLException {
         Thread thread1 = new Thread() {
             public void run() {
                 try {
-                    ps.setString(1, Sensor);
-                    ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                    ps.setInt(3, Value);
-                    ps.executeUpdate();
+                    for (int i = 0; i < sensor_value.length; i++) {
+                        short value = sensor_value[i];
+                        String name = i + 1 + "";
+                        ps.setString(1, name);
+                        ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                        ps.setInt(3, value);
+                        ps.executeUpdate();
+                    }
                 } catch (Exception ex) {
                     System.out.println("Database error");
                 }
             }
         };
         thread1.start();
+//                
         System.out.println(new Timestamp(System.currentTimeMillis()));
 
         // ResultSetMetaData columns = rs.getMetaData();
         // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));
         //  System.out.println("------------------------------------------------------------------");
-        
     }
 
     public void start() throws ClassNotFoundException, SQLException {
@@ -74,15 +76,12 @@ public class SQL {
         stmt = con.createStatement();
 
         rs = stmt.executeQuery("Show Tables");
-        ResultSetMetaData columns = rs.getMetaData();
-        System.out.println(columns.getTableName(1));
 
         System.out.println(rs.absolute(1));
         if (rs.absolute(1)) {
             rs.last();
             String parts[] = rs.getString(1).split("_");
             int num = Integer.parseInt(parts[1]) + 1;
-            System.out.println(num);
             int i = 4;
             int tmp = num;
             String zero = "";
@@ -93,7 +92,6 @@ public class SQL {
             for (; i > 0; i--) {
                 zero += 0;
             }
-            System.out.println(zero);
 
             session += zero + (Integer.parseInt(parts[1]) + 1);
         } else {
@@ -111,7 +109,8 @@ public class SQL {
         String query = "INSERT INTO " + session + " (Sensor_nr,Date,Value) VALUES (?,?,?)";
         ps = con.prepareStatement(query);
     }
-    public void close(){
+
+    public void close() {
         try {
             if (rs != null) {
                 rs.close();
@@ -121,10 +120,12 @@ public class SQL {
             }
             if (con != null) {
                 con.close();
+
             }
 
         } catch (SQLException ex) {
-            Logger lgr = Logger.getLogger(Version.class.getName());
+            Logger lgr = Logger.getLogger(Version.class
+                    .getName());
             lgr.log(Level.WARNING, ex.getMessage(), ex);
         }
     }

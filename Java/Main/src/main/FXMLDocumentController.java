@@ -5,6 +5,8 @@
  */
 package main;
 
+import com.mathworks.engine.EngineException;
+import com.mathworks.engine.MatlabEngine;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -17,6 +19,8 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -43,15 +47,17 @@ public class FXMLDocumentController implements Initializable {
     private Label L2;
     @FXML
     private Button Start;
-    private short s1 = 0;
-    private short s2 = 0;
+    private static short s1 = 0;
+    private static short s2 = 0;
+    private final int size = 2;
+    private short[] sensor_value = new short[size];
     private boolean test = false;
     private boolean on_off = true;
     private Thread thread1 = null;
     private Thread thread = null;
     private Socket socket;
     private SQL sql = new SQL();
-    ;
+    private Semaphore mutex = new Semaphore(1);
     private StreamConnection sc = null;
     private ServerSocket serverSocket;
     private int SampleRate = 1000;
@@ -62,9 +68,7 @@ public class FXMLDocumentController implements Initializable {
         if (on_off) {
             try {
                 sql.start();
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
+            } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
             Light.Distant light = new Light.Distant();
@@ -82,6 +86,7 @@ public class FXMLDocumentController implements Initializable {
             test = false;
             if (thread == null || thread1 == null) {
                 thread = new Thread() {
+                    @Override
                     public void run() {
                         try {
                             Blue();
@@ -92,10 +97,11 @@ public class FXMLDocumentController implements Initializable {
                 };
                 thread.start();
                 thread1 = new Thread() {
+                    @Override
                     public void run() {
                         try {
                             Simulink();
-                        } catch (Exception ex) {
+                        } catch (IOException | InterruptedException ex) {
                             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -103,7 +109,7 @@ public class FXMLDocumentController implements Initializable {
                 thread1.start();
             }
         } else {
-            
+
             thread1.interrupt();
             test = true;
             while (thread1.isAlive()) {
@@ -135,8 +141,18 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-
+        MatlabEngine eng = null;
+        try {
+            // TODO
+            eng = MatlabEngine.connectMatlab();
+        } catch (EngineException | InterruptedException | IllegalArgumentException | IllegalStateException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            eng.putVariable("x", 5);
+        } catch (InterruptedException | IllegalStateException | ExecutionException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -145,8 +161,8 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            L1.setText(s1 + "");
-                            L2.setText(s2 + "");
+                            L1.setText(sensor_value[0] + "");
+                            L2.setText(sensor_value[1] + "");
                         }
 
                     });
@@ -171,20 +187,21 @@ public class FXMLDocumentController implements Initializable {
             socket = serverSocket.accept();
             System.out.println("Connected");
             int i = 0;
+            BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
+            PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while (true) {
 
-                BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
-                PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 //                if (i % 50 == 0) {
 //                    s1 = (short) (Math.random() * 1000);
 //                    s2 = (short) (Math.random() * 1000);
 //                }
-                byte[] bytes = ByteBuffer.allocate(2).putShort(s1).array();
-                byte[] bytes1 = ByteBuffer.allocate(2).putShort(s2).array();
+                byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[0]).array();
+                byte[] bytes1 = ByteBuffer.allocate(2).putShort(sensor_value[1]).array();
                 bo.write(bytes);
                 bo.write(bytes1);
                 bo.flush();
+
 //                sql.add("1", s1);
 //                sql.add("2", s2);
                 Thread.sleep(100);
@@ -225,14 +242,20 @@ public class FXMLDocumentController implements Initializable {
                 char c = (char) reader.read();
                 switch (c) {
                     case 'a':
-                        s1 = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
+                        //   mutex.acquire();
+                        //sql.add("1", s1);
+                        //   mutex.release();
                         break;
                     case 'b':
                         int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                         //System.out.println("Acc: " + tmp);
-                        s2 = (short) tmp;
+                        sensor_value[1] = (short) tmp;
+                        mutex.acquire();
+                        sql.add(sensor_value);
+                        mutex.release();
                         line = "";
                         break;
                     default:
