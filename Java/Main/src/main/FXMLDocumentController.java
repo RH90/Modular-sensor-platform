@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +50,8 @@ public class FXMLDocumentController implements Initializable {
     private Thread thread1 = null;
     private Thread thread = null;
     private Socket socket;
+    private SQL sql = new SQL();
+    ;
     private StreamConnection sc = null;
     private ServerSocket serverSocket;
     private int SampleRate = 1000;
@@ -57,9 +60,17 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (on_off) {
+            try {
+                sql.start();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             Light.Distant light = new Light.Distant();
 //        light.setAzimuth(45.0);
 //        light.setElevation(30.0);
+
             light.setColor(Color.valueOf("#ff4f4f"));
 
             Lighting lighting = new Lighting();
@@ -92,6 +103,7 @@ public class FXMLDocumentController implements Initializable {
                 thread1.start();
             }
         } else {
+            
             thread1.interrupt();
             test = true;
             while (thread1.isAlive()) {
@@ -114,7 +126,7 @@ public class FXMLDocumentController implements Initializable {
             lighting.setDiffuseConstant(2.0);
             Start.setEffect(lighting);
             Start.setText("Start");
-
+            sql.close();
             on_off = true;
             System.out.println("");
             System.out.println("");
@@ -173,7 +185,8 @@ public class FXMLDocumentController implements Initializable {
                 bo.write(bytes);
                 bo.write(bytes1);
                 bo.flush();
-
+//                sql.add("1", s1);
+//                sql.add("2", s2);
                 Thread.sleep(100);
                 i++;
                 if (Thread.currentThread().isInterrupted()) {
@@ -231,7 +244,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         } catch (Exception ex) {
-           // ex.printStackTrace();
+            // ex.printStackTrace();
             System.out.println("Wireless connection error");
         }
     }
