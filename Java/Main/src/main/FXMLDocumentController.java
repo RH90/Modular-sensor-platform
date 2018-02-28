@@ -45,6 +45,14 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label L8;
     @FXML
+    private Label L9a;
+    @FXML
+    private Label L9b;
+    @FXML
+    private Label L10a;
+    @FXML
+    private Label L10b;
+    @FXML
     private Button Start;
     private final int size = 3;
     private short[] sensor_value = new short[size];
@@ -53,6 +61,8 @@ public class FXMLDocumentController implements Initializable {
     private Thread thread1 = null;
     private Thread thread = null;
     private Socket socket;
+    private String L9a_s = "";
+    private String L9b_s = "";
     private SQL sql = new SQL();
     private Semaphore mutex = new Semaphore(1);
     private StreamConnection sc = null;
@@ -64,7 +74,8 @@ public class FXMLDocumentController implements Initializable {
     private void handleButtonAction(ActionEvent event) {
         if (on_off) {
             try {
-                sql.start();
+                L10b.setText(sql.start());
+                L10a.setText("DB Connected");
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -130,6 +141,8 @@ public class FXMLDocumentController implements Initializable {
             Start.setEffect(lighting);
             Start.setText("Start");
             sql.close();
+            L10a.setText("DB Disconnected");
+            L10b.setText("");
             on_off = true;
             System.out.println("");
             System.out.println("");
@@ -150,6 +163,8 @@ public class FXMLDocumentController implements Initializable {
                             L1.setText(sensor_value[0] + "");
                             L2.setText(sensor_value[1] + "");
                             L8.setText(sensor_value[2] + "");
+                            L9b.setText(L9b_s);
+                            L9a.setText(L9a_s);
                         }
 
                     });
@@ -174,6 +189,7 @@ public class FXMLDocumentController implements Initializable {
 
             socket = serverSocket.accept();
             System.out.println("Connected");
+            L9b_s = "Simulink Connected";
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -199,6 +215,8 @@ public class FXMLDocumentController implements Initializable {
                         serverSocket.close();
                         serverSocket = null;
                     }
+                    L9b_s = "Simulink Disconnected";
+
                     break;
                 }
                 Thread.sleep(100);
@@ -211,6 +229,7 @@ public class FXMLDocumentController implements Initializable {
 
             //    ex.printStackTrace();
             System.out.println("Simulink Disconnect");
+            L9b_s = "Simulink Disconnected";
         }
     }
 
@@ -225,6 +244,7 @@ public class FXMLDocumentController implements Initializable {
             }
 
             System.out.println("Go");
+            L9a_s = "Wireless Connected";
             String line = "";
             while (true) {
 
@@ -259,11 +279,13 @@ public class FXMLDocumentController implements Initializable {
                         continue;
                 }
                 if (test) {
+                    L9a_s = "Wireless Disconnected";
                     break;
                 }
             }
         } catch (Exception ex) {
             // ex.printStackTrace();
+            L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }
     }

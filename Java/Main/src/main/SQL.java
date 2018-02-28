@@ -69,7 +69,7 @@ public class SQL {
         //  System.out.println("------------------------------------------------------------------");
     }
 
-    public void start() throws ClassNotFoundException, SQLException {
+    public String start() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
         session = "session_";
@@ -108,6 +108,7 @@ public class SQL {
         stmt.executeUpdate(myTableName);
         String query = "INSERT INTO " + session + " (Sensor_nr,Date,Value) VALUES (?,?,?)";
         ps = con.prepareStatement(query);
+        return session;
     }
 
     public void close() {
