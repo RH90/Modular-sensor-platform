@@ -29,7 +29,7 @@
       <Label layoutX="373.0" layoutY="213.0" text="5" />
       <Label layoutX="373.0" layoutY="120.0" text="9" />
       <Label fx:id="L1" layoutX="359.0" layoutY="67.0" text="Label" />
-      <Label fx:id="L2" layoutX="67.0" layoutY="258.0" text="Label" />
+      <Label fx:id="L8" layoutX="67.0" layoutY="258.0" text="Label" />
       <Button fx:id="Start" layoutX="432.0" layoutY="275.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Start">
          <effect>
             <Lighting bumpInput="$null" diffuseConstant="2.0">
@@ -39,5 +39,6 @@
             </Lighting>
          </effect>
       </Button>
+      <Label fx:id="L2" layoutX="262.0" layoutY="67.0" text="Label" />
     </children>
 </AnchorPane>

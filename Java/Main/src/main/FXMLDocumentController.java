@@ -43,8 +43,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label L2;
     @FXML
+    private Label L8;
+    @FXML
     private Button Start;
-    private final int size = 2;
+    private final int size = 3;
     private short[] sensor_value = new short[size];
     private boolean test = false;
     private boolean on_off = true;
@@ -147,6 +149,7 @@ public class FXMLDocumentController implements Initializable {
                         public void run() {
                             L1.setText(sensor_value[0] + "");
                             L2.setText(sensor_value[1] + "");
+                            L8.setText(sensor_value[2] + "");
                         }
 
                     });
@@ -181,11 +184,10 @@ public class FXMLDocumentController implements Initializable {
 //                    s1 = (short) (Math.random() * 1000);
 //                    s2 = (short) (Math.random() * 1000);
 //                }
-                byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[0]).array();
-                byte[] bytes1 = ByteBuffer.allocate(2).putShort(sensor_value[1]).array();
-                // System.out.println(sensor_value[1]);
-                bo.write(bytes, 0, 2);
-                bo.write(bytes1, 0, 2);
+                for (int i = 0; i < size; i++) {
+                    byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i]).array();
+                    bo.write(bytes, 0, 2);
+                }
 
                 bo.flush();
 
@@ -236,10 +238,17 @@ public class FXMLDocumentController implements Initializable {
                         //   mutex.release();
                         break;
                     case 'b':
+                        sensor_value[1] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        //   mutex.acquire();
+                        //sql.add("1", s1);
+                        //   mutex.release();
+                        break;
+                    case 'c':
                         int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                         //System.out.println("Acc: " + tmp);
-                        sensor_value[1] = (short) tmp;
+                        sensor_value[2] = (short) tmp;
                         mutex.acquire();
                         sql.add(sensor_value);
                         mutex.release();
