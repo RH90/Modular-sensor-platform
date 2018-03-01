@@ -48,8 +48,8 @@
       <Line endX="100.0" layoutX="132.0" layoutY="170.0" rotate="90.0" startX="50.0" />
       <Line endX="100.0" layoutX="244.0" layoutY="172.0" rotate="90.0" startX="50.0" />
       <Label fx:id="L9a" layoutX="53.0" layoutY="151.0" text="Label" textAlignment="CENTER" />
-      <Label fx:id="L10a" layoutX="214.0" layoutY="164.0" text="Label" textAlignment="CENTER" />
-      <Label fx:id="L10b" layoutX="214.0" layoutY="181.0" text="Label" textAlignment="CENTER" />
+      <Label fx:id="L10a" layoutX="214.0" layoutY="164.0" textAlignment="CENTER" />
+      <Label fx:id="L10b" layoutX="214.0" layoutY="181.0" textAlignment="CENTER" />
       <Label fx:id="L9b" layoutX="53.0" layoutY="182.0" text="Label" textAlignment="CENTER" />
     </children>
 </AnchorPane>

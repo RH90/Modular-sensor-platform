@@ -55,6 +55,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button Start;
     private final int size = 3;
+    private boolean simulink = false;
     private short[] sensor_value = new short[size];
     private boolean test = false;
     private boolean on_off = true;
@@ -117,7 +118,7 @@ public class FXMLDocumentController implements Initializable {
                 thread1.start();
             }
         } else {
-
+            simulink = true;
             thread1.interrupt();
             test = true;
             while (thread1.isAlive()) {
@@ -200,13 +201,13 @@ public class FXMLDocumentController implements Initializable {
 //                    s1 = (short) (Math.random() * 1000);
 //                    s2 = (short) (Math.random() * 1000);
 //                }
+                //System.out.println(br.readLine());
                 for (int i = 0; i < size; i++) {
                     byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i]).array();
-                    bo.write(bytes, 0, 2);
+                    bo.write(bytes);
+                    
+                    bo.flush();
                 }
-
-                bo.flush();
-
                 //  System.out.println(new Timestamp(System.currentTimeMillis()));
 //                sql.add("1", s1);
 //                sql.add("2", s2);
@@ -221,7 +222,7 @@ public class FXMLDocumentController implements Initializable {
                 }
                 Thread.sleep(100);
             }
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
                 serverSocket = null;
@@ -269,6 +270,8 @@ public class FXMLDocumentController implements Initializable {
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                         //System.out.println("Acc: " + tmp);
                         sensor_value[2] = (short) tmp;
+                        simulink = true;
+
                         mutex.acquire();
                         sql.add(sensor_value);
                         mutex.release();
