@@ -88,6 +88,22 @@ public class SQL {
                     + "Session INT(64),"
                     + "PRIMARY KEY(id))";
             stmt.executeUpdate(myTableName);
+            stmt = con.createStatement();
+            myTableName
+                    = "CREATE TABLE Sensors ("
+                    + "Sensor_id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensing_type VARCHAR(25),"
+                    + "Name VARCHAR(25),"
+                    + "Interface VARCHAR(25),"
+                    + "Reading_method VARCHAR(25),"
+                    + "I2c_Adress VARCHAR(4),"
+                    + "Write_addr VARCHAR(4),"
+                    + "Write_data VARCHAR(4),"
+                    + "Read_addr1 VARCHAR(4),"
+                    + "Read_addr2 VARCHAR(4),"
+                    + "Read_addr3 VARCHAR(4),"
+                    + "PRIMARY KEY(Sensor_id))";
+            stmt.executeUpdate(myTableName);
         } else {
             rs.beforeFirst();
             boolean db1 = true;
@@ -106,15 +122,16 @@ public class SQL {
                 String myTableName
                         = "CREATE TABLE Sensors ("
                         + "Sensor_id INT(64) NOT NULL AUTO_INCREMENT,"
-                        + "Date TIMESTAMP,"
                         + "Sensing_type VARCHAR(25),"
                         + "Name VARCHAR(25),"
-                        + "Output VARCHAR(25),"
+                        + "Interface VARCHAR(25),"
+                        + "Reading_method VARCHAR(25),"
                         + "I2c_Adress VARCHAR(4),"
-                        + "I2c_Write VARCHAR(4),"
-                        + "I2c_Read1 VARCHAR(4),"
-                        + "I2c_Read2 VARCHAR(4),"
-                        + "I2c_Read3 VARCHAR(4),"
+                        + "Write_addr VARCHAR(4),"
+                        + "Write_data VARCHAR(4),"
+                        + "Read_addr1 VARCHAR(4),"
+                        + "Read_addr2 VARCHAR(4),"
+                        + "Read_addr3 VARCHAR(4),"
                         + "PRIMARY KEY(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
@@ -131,6 +148,7 @@ public class SQL {
                         + "FOREIGN KEY (Sensor_id) REFERENCES Sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
+
         }
 
         rs = stmt.executeQuery("select session from sensor_sessions;");
