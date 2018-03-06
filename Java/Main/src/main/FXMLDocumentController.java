@@ -110,8 +110,14 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(true);
             config_db_b.setDisable(true);
             try {
-                L10b.setText("Session: " + sql.start());
-                L10a.setText("DB Connected");
+                int sq =sql.start();
+                if(sq==-1){
+                     L10a.setText("DB Error");
+                }
+                else{
+                     L10b.setText("Session: " + sq);
+                     L10a.setText("DB Connected");
+                }
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }

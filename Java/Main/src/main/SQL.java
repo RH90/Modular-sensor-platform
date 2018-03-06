@@ -72,7 +72,12 @@ public class SQL {
 
     public int start() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
+        try{
+             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
+        }catch(SQLException ex){
+            return -1;
+        }
+       
         stmt = con.createStatement();
 
         rs = stmt.executeQuery("Show Tables");
