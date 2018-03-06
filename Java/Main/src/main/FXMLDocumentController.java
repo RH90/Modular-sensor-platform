@@ -75,7 +75,7 @@ public class FXMLDocumentController implements Initializable {
     private void handleButtonAction(ActionEvent event) {
         if (on_off) {
             try {
-                L10b.setText(sql.start());
+                L10b.setText("Session: " + sql.start());
                 L10a.setText("DB Connected");
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,7 +83,6 @@ public class FXMLDocumentController implements Initializable {
             Light.Distant light = new Light.Distant();
 //        light.setAzimuth(45.0);
 //        light.setElevation(30.0);
-
             light.setColor(Color.valueOf("#ff4f4f"));
 
             Lighting lighting = new Lighting();
@@ -167,7 +166,6 @@ public class FXMLDocumentController implements Initializable {
                             L9b.setText(L9b_s);
                             L9a.setText(L9a_s);
                         }
-
                     });
                     Thread.sleep(10);
                 }
@@ -176,7 +174,6 @@ public class FXMLDocumentController implements Initializable {
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
-
         // L1.setText("hej");
     }
 
@@ -192,8 +189,8 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Connected");
             L9b_s = "Simulink Connected";
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
-            PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
+            //BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             while (true) {
 
@@ -205,7 +202,7 @@ public class FXMLDocumentController implements Initializable {
                 for (int i = 0; i < size; i++) {
                     byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i]).array();
                     bo.write(bytes);
-                    
+
                     bo.flush();
                 }
                 //  System.out.println(new Timestamp(System.currentTimeMillis()));

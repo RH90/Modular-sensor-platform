@@ -36,7 +36,7 @@ public class SQL {
     ResultSet rs = null;
     Connection con = null;
     PreparedStatement ps = null;
-    String session;
+    int session;
 
     /**
      * @param sensor_value
@@ -53,6 +53,7 @@ public class SQL {
                         ps.setString(1, name);
                         ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                         ps.setInt(3, value);
+                        ps.setInt(4, session);
                         ps.executeUpdate();
                     }
                 } catch (Exception ex) {
@@ -62,51 +63,86 @@ public class SQL {
         };
         thread1.start();
 //                
-       // System.out.println(new Timestamp(System.currentTimeMillis()));
+        // System.out.println(new Timestamp(System.currentTimeMillis()));
 
         // ResultSetMetaData columns = rs.getMetaData();
         // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));
         //  System.out.println("------------------------------------------------------------------");
     }
 
-    public String start() throws ClassNotFoundException, SQLException {
+    public int start() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
-        session = "session_";
         stmt = con.createStatement();
 
         rs = stmt.executeQuery("Show Tables");
 
-        System.out.println(rs.absolute(1));
+        rs.last();
+        if (rs.getRow() == 0) {
+            stmt = con.createStatement();
+            String myTableName = "CREATE TABLE Sensor_Sessions ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_nr VARCHAR(10),"
+                    + "Date TIMESTAMP,"
+                    + "Value INT(64), "
+                    + "Session INT(64),"
+                    + "PRIMARY KEY(id))";
+            stmt.executeUpdate(myTableName);
+        } else {
+            rs.beforeFirst();
+            boolean db1 = true;
+            boolean db2 = true;
+            while (rs.next()) {
+                System.out.println(rs.getString(1));
+                if (rs.getString(1).equalsIgnoreCase("Sensor_Sessions")) {
+                    db2 = false;
+                }
+                if (rs.getString(1).equalsIgnoreCase("Sensors")) {
+                    db1 = false;
+                }
+            }
+            if (db1) {
+                stmt = con.createStatement();
+                String myTableName
+                        = "CREATE TABLE Sensors ("
+                        + "Sensor_id INT(64) NOT NULL AUTO_INCREMENT,"
+                        + "Date TIMESTAMP,"
+                        + "Sensing_type VARCHAR(25),"
+                        + "Name VARCHAR(25),"
+                        + "Output VARCHAR(25),"
+                        + "I2c_Adress VARCHAR(4),"
+                        + "I2c_Write VARCHAR(4),"
+                        + "I2c_Read1 VARCHAR(4),"
+                        + "I2c_Read2 VARCHAR(4),"
+                        + "I2c_Read3 VARCHAR(4),"
+                        + "PRIMARY KEY(Sensor_id))";
+                stmt.executeUpdate(myTableName);
+            }
+            if (db2) {
+                stmt = con.createStatement();
+                String myTableName
+                        = "CREATE TABLE Sensor_Sessions ("
+                        + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                        + "Sensor_id INT,"
+                        + "Date TIMESTAMP,"
+                        + "Value INT, "
+                        + "Session INT,"
+                        + "PRIMARY KEY(id)"
+                        + "FOREIGN KEY (Sensor_id) REFERENCES Sensors(Sensor_id))";
+                stmt.executeUpdate(myTableName);
+            }
+        }
+
+        rs = stmt.executeQuery("select session from sensor_sessions;");
+
         if (rs.absolute(1)) {
             rs.last();
-            String parts[] = rs.getString(1).split("_");
-            int num = Integer.parseInt(parts[1]) + 1;
-            int i = 4;
-            int tmp = num;
-            String zero = "";
-            while (tmp != 0) {
-                tmp = tmp / 10;
-                i--;
-            }
-            for (; i > 0; i--) {
-                zero += 0;
-            }
-
-            session += zero + (Integer.parseInt(parts[1]) + 1);
+            session = rs.getInt(1) + 1;
         } else {
-            session += "0000";
+            session = 0;
         }
-        System.out.println(session);
-        stmt = con.createStatement();
-        String myTableName = "CREATE TABLE " + session + "("
-                + "id INT(64) NOT NULL AUTO_INCREMENT,"
-                + "Sensor_nr VARCHAR(10),"
-                + "Date TIMESTAMP,"
-                + "Value INT(64), "
-                + "PRIMARY KEY(id))";
-        stmt.executeUpdate(myTableName);
-        String query = "INSERT INTO " + session + " (Sensor_nr,Date,Value) VALUES (?,?,?)";
+        System.out.println("Session: " + session);
+        String query = "INSERT INTO Sensor_Sessions (Sensor_nr,Date,Value,Session) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         return session;
     }
