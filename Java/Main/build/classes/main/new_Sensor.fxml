@@ -43,8 +43,8 @@
       <TextField layoutX="352.0" layoutY="218.0" />
       <Text layoutX="352.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Read address 3" />
       <TextField layoutX="352.0" layoutY="260.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="441.0" layoutX="169.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="441.0" layoutX="339.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="441.0" layoutX="169.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="441.0" layoutX="339.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
       <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Analog/digital">
          <font>
             <Font name="System Bold" size="22.0" />

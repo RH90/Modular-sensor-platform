@@ -43,7 +43,7 @@ import javax.microedition.io.StreamConnection;
  * @author Rilind
  */
 public class FXMLDocumentController implements Initializable {
-    
+
     @FXML
     private Label L1;
     @FXML
@@ -80,28 +80,30 @@ public class FXMLDocumentController implements Initializable {
     private ServerSocket serverSocket;
     private int SampleRate = 1000;
     private BufferedReader reader = null;
-    
+    private Stage stage_add = null;
+
     @FXML
     private void add_sensor(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new_Sensor.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
+            Stage stage_add = new Stage();
+            stage_add.initModality(Modality.APPLICATION_MODAL);
             //stage.initStyle(StageStyle.UNDECORATED);
-            stage.setTitle("Add Sensor");
-            stage.setScene(new Scene(root1));
-            stage.show();
+            stage_add.setTitle("Add Sensor");
+            stage_add.setScene(new Scene(root1));
+
+            stage_add.show();
         } catch (IOException ex) {
-            
+
         }
     }
-    
+
     @FXML
     private void configure_db(ActionEvent event) {
-        
+
     }
-    
+
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (on_off) {
@@ -117,7 +119,7 @@ public class FXMLDocumentController implements Initializable {
 //        light.setAzimuth(45.0);
 //        light.setElevation(30.0);
             light.setColor(Color.valueOf("#ff4f4f"));
-            
+
             Lighting lighting = new Lighting();
             lighting.setLight(light);
             lighting.setDiffuseConstant(2.0);
@@ -150,7 +152,7 @@ public class FXMLDocumentController implements Initializable {
                 thread1.start();
             }
         } else {
-            
+
             simulink = true;
             thread1.interrupt();
             test = true;
@@ -168,7 +170,7 @@ public class FXMLDocumentController implements Initializable {
 //        light.setAzimuth(45.0);
 //        light.setElevation(30.0);
             light.setColor(Color.valueOf("#32ff3c"));
-            
+
             Lighting lighting = new Lighting();
             lighting.setLight(light);
             lighting.setDiffuseConstant(2.0);
@@ -180,14 +182,15 @@ public class FXMLDocumentController implements Initializable {
             on_off = true;
             System.out.println("");
             System.out.println("");
+            
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
         }
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -212,7 +215,7 @@ public class FXMLDocumentController implements Initializable {
         th.start();
         // L1.setText("hej");
     }
-    
+
     public void Simulink() throws IOException, InterruptedException {
         try {
             if (serverSocket == null) {
@@ -220,7 +223,7 @@ public class FXMLDocumentController implements Initializable {
                 //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
             }
             serverSocket.setSoTimeout(10000);
-            
+
             socket = serverSocket.accept();
             System.out.println("Connected");
             L9b_s = "Simulink Connected";
@@ -238,7 +241,7 @@ public class FXMLDocumentController implements Initializable {
                 for (int i = 0; i < size; i++) {
                     byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i]).array();
                     bo.write(bytes);
-                    
+
                     bo.flush();
                 }
                 //  System.out.println(new Timestamp(System.currentTimeMillis()));
@@ -250,7 +253,7 @@ public class FXMLDocumentController implements Initializable {
                         serverSocket = null;
                     }
                     L9b_s = "Simulink Disconnected";
-                    
+
                     break;
                 }
                 Thread.sleep(100);
@@ -266,22 +269,22 @@ public class FXMLDocumentController implements Initializable {
             L9b_s = "Simulink Disconnected";
         }
     }
-    
+
     public void Blue() throws Exception {
         System.out.println("Ready");
         try {
             Bluetooth Blue = new Bluetooth();
-            
+
             if (sc == null) {
                 sc = Blue.go();
                 reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
             }
-            
+
             System.out.println("Go");
             L9a_s = "Wireless Connected";
             String line = "";
             while (true) {
-                
+
                 char c = (char) reader.read();
                 switch (c) {
                     case 'a':
@@ -304,7 +307,7 @@ public class FXMLDocumentController implements Initializable {
                         //System.out.println("Acc: " + tmp);
                         sensor_value[2] = (short) tmp;
                         simulink = true;
-                        
+
                         mutex.acquire();
                         sql.add(sensor_value);
                         mutex.release();
@@ -325,13 +328,13 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Wireless connection error");
         }
     }
-    
+
     public void Wifi() throws IOException {
         String tt = "";
         while (true) {
-            
+
             Socket socket1 = new Socket("192.168.1.13", 80);
-            
+
             PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
             BufferedInputStream bi = new BufferedInputStream(socket.getInputStream());
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -352,5 +355,5 @@ public class FXMLDocumentController implements Initializable {
             // System.out.println(tt + " asf");
         }
     }
-    
+
 }
