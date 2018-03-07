@@ -32,7 +32,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -105,18 +107,36 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
+    private void search_sensor(MouseEvent event) {
+        Rectangle r = (Rectangle) event.getSource();
+        System.out.println(r.getId());
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
+            Parent root1 = (Parent) fxmlLoader.load();
+            Stage stage_add = new Stage();
+            stage_add.initModality(Modality.APPLICATION_MODAL);
+            //stage.initStyle(StageStyle.UNDECORATED);
+            stage_add.setTitle("Get Sensor");
+            stage_add.setScene(new Scene(root1));
+            stage_add.show();
+        } catch (IOException ex) {
+
+        }
+
+    }
+
+    @FXML
     private void handleButtonAction(ActionEvent event) {
         if (on_off) {
             add_sensor_b.setDisable(true);
             config_db_b.setDisable(true);
             try {
-                int sq =sql.start();
-                if(sq==-1){
-                     L10a.setText("DB Error");
-                }
-                else{
-                     L10b.setText("Session: " + sq);
-                     L10a.setText("DB Connected");
+                int sq = sql.start();
+                if (sq == -1) {
+                    L10a.setText("DB Error");
+                } else {
+                    L10b.setText("Session: " + sq);
+                    L10a.setText("DB Connected");
                 }
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -188,7 +208,7 @@ public class FXMLDocumentController implements Initializable {
             on_off = true;
             System.out.println("");
             System.out.println("");
-            
+
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
         }
@@ -315,7 +335,7 @@ public class FXMLDocumentController implements Initializable {
                         simulink = true;
 
                         mutex.acquire();
-                        sql.add(sensor_value);
+                        sql.add_value(sensor_value);
                         mutex.release();
                         line = "";
                         break;

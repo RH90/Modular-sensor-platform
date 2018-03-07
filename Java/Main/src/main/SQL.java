@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javax.naming.NamingException;
 import jdk.nashorn.internal.runtime.Version;
 
@@ -43,7 +45,7 @@ public class SQL {
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      */
-    public void add(short[] sensor_value) throws InterruptedException, SQLException {
+    public void add_value(short[] sensor_value) throws InterruptedException, SQLException {
         Thread thread1 = new Thread() {
             public void run() {
                 try {
@@ -70,14 +72,66 @@ public class SQL {
         //  System.out.println("------------------------------------------------------------------");
     }
 
+    public ObservableList<String>  list() throws SQLException {
+        rs = stmt.executeQuery("select Name,Interface from sensors");
+        rs.beforeFirst();
+        ObservableList<String> list = FXCollections.observableArrayList();
+        while (rs.next()) {
+            list.add(rs.getString(1));
+            System.out.println(rs.getString(1) + "  : " + rs.getString(2));
+        }
+        return list;
+
+    }
+
+    public void add_sensor(String name, String sensing_type, String reading_method) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,Reading_method) VALUES (?,?,?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, name);
+        ps.setString(2, "Analog_digital");
+        ps.setString(3, sensing_type);
+        ps.setString(4, reading_method);
+        ps.executeUpdate();
+    }
+
+    public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr1, String read_addr2, String read_addr3) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,I2c_Address,"
+                + "Write_addr,Write_data,Read_addr1,Read_addr2,Read_addr3) VALUES (?,?,?,?,?,?,?,?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, name);
+        ps.setString(2, "I2C");
+        ps.setString(3, sensing_type);
+        ps.setString(4, I2C_addr);
+        ps.setString(5, write_addr);
+        ps.setString(6, write_data);
+        ps.setString(7, read_addr1);
+        ps.setString(8, read_addr2);
+        ps.setString(9, read_addr3);
+        ps.executeUpdate();
+    }
+
+    public void add_sensor(String name, String sensing_type, String write_data, String read_addr1, String read_addr2, String read_addr3) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,"
+                + "Write_data,Read_addr1,Read_addr2,Read_addr3) VALUES (?,?,?,?,?,?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, name);
+        ps.setString(2, "SPI");
+        ps.setString(3, sensing_type);
+        ps.setString(4, write_data);
+        ps.setString(5, read_addr1);
+        ps.setString(6, read_addr2);
+        ps.setString(7, read_addr3);
+        ps.executeUpdate();
+    }
+
     public int start() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        try{
-             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
-        }catch(SQLException ex){
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
+        } catch (SQLException ex) {
             return -1;
         }
-       
+
         stmt = con.createStatement();
 
         rs = stmt.executeQuery("Show Tables");
@@ -101,7 +155,7 @@ public class SQL {
                     + "Name VARCHAR(25),"
                     + "Interface VARCHAR(25),"
                     + "Reading_method VARCHAR(25),"
-                    + "I2c_Adress VARCHAR(4),"
+                    + "I2c_Address VARCHAR(4),"
                     + "Write_addr VARCHAR(4),"
                     + "Write_data VARCHAR(4),"
                     + "Read_addr1 VARCHAR(4),"
@@ -131,7 +185,7 @@ public class SQL {
                         + "Name VARCHAR(25),"
                         + "Interface VARCHAR(25),"
                         + "Reading_method VARCHAR(25),"
-                        + "I2c_Adress VARCHAR(4),"
+                        + "I2c_Address VARCHAR(4),"
                         + "Write_addr VARCHAR(4),"
                         + "Write_data VARCHAR(4),"
                         + "Read_addr1 VARCHAR(4),"

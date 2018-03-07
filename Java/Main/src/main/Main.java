@@ -6,6 +6,7 @@
 package main;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,10 +27,8 @@ public class Main extends Application {
         stage.setTitle("Modular sensor platform");
         stage.setScene(scene);
         stage.show();
-        
 
     }
-
 
     /**
      * @param args the command line arguments
