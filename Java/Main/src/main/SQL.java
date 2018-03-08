@@ -42,21 +42,24 @@ public class SQL {
 
     /**
      * @param sensor_value
+     * @param sensor_on
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      */
-    public void add_value(short[] sensor_value) throws InterruptedException, SQLException {
+    public void add_value(short[] sensor_value, boolean[] sensor_on,int[] id) throws InterruptedException, SQLException {
         Thread thread1 = new Thread() {
             public void run() {
                 try {
                     for (int i = 0; i < sensor_value.length; i++) {
-                        short value = sensor_value[i];
-                        String name = i + 1 + "";
-                        ps.setString(1, name);
-                        ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                        ps.setInt(3, value);
-                        ps.setInt(4, session);
-                        ps.executeUpdate();
+                        if (sensor_on[i]) {
+                            short value = sensor_value[i];
+                            String name = i + 1 + "";
+                            ps.setString(1, id[i]+"");
+                            ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                            ps.setInt(3, value);
+                            ps.setInt(4, session);
+                            ps.executeUpdate();
+                        }
                     }
                 } catch (Exception ex) {
                     System.out.println("Database error");

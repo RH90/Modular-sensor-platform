@@ -76,7 +76,9 @@ public class FXMLDocumentController implements Initializable {
     private Socket socket;
     private String L9a_s = "";
     private String L9b_s = "";
+    static boolean[] sensor_on= new boolean[10];
     static String[] labels = new String[10];
+    static int[] id = new int[10];
     private SQL sql = new SQL();
     private Semaphore mutex = new Semaphore(1);
     private StreamConnection sc = null;
@@ -91,6 +93,7 @@ public class FXMLDocumentController implements Initializable {
         }
         for (int i = 0; i < sensor_value.length; i++) {
             sensor_value[i] = 0;
+            sensor_on[i]=false;
         }
         Task task = new Task<Void>() {
             @Override
@@ -105,10 +108,8 @@ public class FXMLDocumentController implements Initializable {
                             //l8b.setText(sensor_value[2] + "");
                             for (int j = 0; j < Label_list_a.size(); j++) {
                                 Label_list_a.get(j).setText(list_string_a[j]);
+                                Label_list_b.get(j).setText(sensor_value[j] + "");
                             }
-                            Label_list_b.get(0).setText(sensor_value[0] + "");
-                            Label_list_b.get(1).setText(sensor_value[1] + "");
-                            Label_list_b.get(7).setText(sensor_value[2] + "");
                             lib.setText(L9b_s);
                             lia.setText(L9a_s);
 
@@ -356,7 +357,7 @@ public class FXMLDocumentController implements Initializable {
                         simulink = true;
 
                         mutex.acquire();
-                        sql.add_value(sensor_value);
+                        sql.add_value(sensor_value,sensor_on,id);
                         mutex.release();
                         line = "";
                         break;
