@@ -71,6 +71,7 @@ void session_init(){
 	_delay_ms(5000);
 }
 
+
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
@@ -100,9 +101,28 @@ int main (void)
 	
 	return 0;
 }
+void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method)
+{
 
 
-ISR(TIMER1_COMPA_vect){
+	
+}
+void I2C_sensor(uint16_t addr,uint16_t read_reg)
+{
+
+	
+}
+void SPI_sensor()
+{
+	
+	
+
+}
+	
+
+
+ISR(TIMER1_COMPA_vect)
+{
 		DDRB=1;
 		PORTB=0;
 		_delay_us(2);
@@ -139,5 +159,6 @@ ISR(TIMER1_COMPA_vect){
 		free(dat);
 		
 }
+
 
 
