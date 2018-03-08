@@ -4,40 +4,11 @@
 #include <avr/sfr_defs.h>
 #include <avr/interrupt.h>
 #include "i2cmaster.h"
+#include "UART.h"
 //#include <avr/interrupt.h>
   // 16 MHz oscillator.
-#define BaudRate 9600
-#define MYUBRR (F_CPU / 16 / BaudRate ) - 1
 
 volatile int count=0;
-
-
-unsigned char serialCheckTxReady(void)
-{
-	return( UCSR0A & _BV(UDRE0) ) ;  // nonzero if transmit register is ready to receive new data.
-}
-
-
-void serialWrite(int DataOut)
-{
-	while (serialCheckTxReady() == 0)  // while NOT ready to transmit
-	{;;}
-	UDR0 = DataOut;
-}
-
-
-unsigned char serialCheckRxComplete(void)
-{
-	return( UCSR0A & _BV(RXC0)) ;  // _BV(x) macro set bit x in a byte which is equivalent to 1<<x. nonzero if serial data is available to read.
-}
-
-
-unsigned char serialRead(void)
-{
-	while( !(UCSR0A & (1 << RXC0)) )
-	;
-	return UDR0;
-}
 
 void print(int num,char c){
 	char string[16];
@@ -57,24 +28,12 @@ void print(int num,char c){
 	serialWrite(c);
 }
 
-
-void serial_init(unsigned int bittimer)
-{
-	/* Set the baud rate */
-	UBRR0H = (unsigned char) (bittimer >> 8);
-	UBRR0L = (unsigned char) bittimer;
-	/* set the framing to 8N1 (8 data bits + 1 stop bit (default) */
-	UCSR0C = (3 << UCSZ00);
-	/* Enable receiver and transmitter */
-	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-	return;
-}
 void adc_init()
 {
 	// AREF = AVcc
 	ADMUX = (1<<REFS0);
 	
-	// ADC Enable and prescaler of 128
+	// ADC Enable and pre scaler of 128
 	// 16000000/128 = 125000
 	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
 }
@@ -94,7 +53,7 @@ uint16_t adc_read(uint8_t ch)
 	ch &= 0b00000111;  // AND operation with 7
 	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
 	
-	// start single convertion
+	// start single conversion
 	// write ’1? to ADSC
 	ADCSRA |= (1<<ADSC);
 	
@@ -105,15 +64,24 @@ uint16_t adc_read(uint8_t ch)
 	
 	return (ADC);
 }
+void session_init(){
+	serialWrite('  ');
+	serialWrite(serialRead());
+	serialWrite('  ');
+	_delay_ms(5000);
+}
 
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
 	adc_init();
 	serial_init(MYUBRR);
+	session_init();
+	
 	Timer1init();
-	//serialWrite('H'); // Char : H
 	i2c_init();
+	
+	
 	uint8_t* data;
 	data = (uint8_t *)malloc(sizeof(uint8_t));
 	_delay_ms(100);
@@ -132,8 +100,6 @@ int main (void)
 	
 	return 0;
 }
-
-
 
 
 ISR(TIMER1_COMPA_vect){

@@ -8,8 +8,10 @@ package main;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -85,6 +87,7 @@ public class FXMLDocumentController implements Initializable {
     private ServerSocket serverSocket;
     private int SampleRate = 1000;
     private BufferedReader reader = null;
+    private BufferedWriter writer = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -326,8 +329,11 @@ public class FXMLDocumentController implements Initializable {
             if (sc == null) {
                 sc = Blue.go();
                 reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
+                writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
             }
-
+            
+            writer.write(100);
+            writer.flush();
             System.out.println("Go");
             L9a_s = "Wireless Connected";
             String line = "";
