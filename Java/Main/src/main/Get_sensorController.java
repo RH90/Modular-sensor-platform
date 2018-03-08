@@ -5,16 +5,24 @@
  */
 package main;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Cell;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.text.Font;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -25,6 +33,7 @@ public class Get_sensorController implements Initializable {
 
     @FXML
     private ListView lv;
+    private String s;
 
     /**
      * Initializes the controller class.
@@ -32,6 +41,10 @@ public class Get_sensorController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+//        getString();
+
+        lv.setStyle("-fx-font-name:Consolas;-fx-font-size:12");
+       // FXMLDocumentController.Label_list_a.get(0).setText("hellp");
         SQL sql = new SQL();
         ObservableList<String> list = null;
         try {
@@ -45,7 +58,39 @@ public class Get_sensorController implements Initializable {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
         lv.setItems(list);
+//        VirtualFlow ch = (VirtualFlow) lv.getChildrenUnmodifiable();
+//        for (int i = 0; i < ch.getCellCount(); i++) {
+//            System.out.println("he");
+//            Cell cell = ch.getCell(i);
+//            Font anyfont = new Font("Consolas", 12);
+//            cell.setFont(anyfont);
+//        }
+        Font anyfont = new Font("Consolas", 12);
+        lv.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
 
+            // @Override
+            public ListCell<Object> call(final ListView<Object> param) {
+                final ListCell<Object> cell = new ListCell<Object>() {
+                    @Override
+                    protected void updateItem(final Object item, final boolean empty) {
+                        if (isEmpty()) {
+                            setFont(anyfont);
+                            setText((String)item);
+                            super.updateItem(item, empty);
+                            
+                          //  setStyle("-fx-font-name: Consolas");
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+    }
+    public void string(String s){
+        this.s=s;
+    }
+    public void getString(){
+        System.out.println(s);
     }
 
     @FXML

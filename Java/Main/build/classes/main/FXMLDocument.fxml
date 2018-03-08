@@ -11,114 +11,195 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import java.util.ArrayList?>
+
 
 <AnchorPane id="AnchorPane" prefHeight="339.0" prefWidth="529.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.FXMLDocumentController">
     <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="417.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="102.0">
-         <fill>
-            <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.4285714285714286">
-               <stops>
-                  <Stop color="#0090ff" />
-                  <Stop color="WHITE" offset="1.0" />
-               </stops>
-            </LinearGradient>
-         </fill>
-      </Rectangle>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="315.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="102.0">
-         <fill>
-            <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.4285714285714286">
-               <stops>
-                  <Stop color="#0090ff" />
-                  <Stop color="WHITE" offset="1.0" />
-               </stops>
-            </LinearGradient>
-         </fill>
-      </Rectangle>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="14.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="301.0">
-         <fill>
-            <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.44285714285714284">
-               <stops>
-                  <Stop color="#0090ff" />
-                  <Stop color="WHITE" offset="1.0" />
-               </stops>
-            </LinearGradient>
-         </fill>
-      </Rectangle>
-      <Rectangle fx:id="b5" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="127.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b4" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="226.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b2" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="127.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b1" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="223.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b8" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="329.0" layoutY="158.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b7" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="329.0" layoutY="65.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b9" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="434.0" layoutY="68.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b10" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="434.0" layoutY="158.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Rectangle fx:id="b9" arcHeight="5.0" arcWidth="5.0" fill="#b594eb" height="73.0" layoutX="14.0" layoutY="245.0" stroke="BLACK" strokeType="INSIDE" width="146.0" />
-      <Label layoutX="258.0" layoutY="139.0" text="1" />
-      <Label layoutX="162.0" layoutY="139.0" text="2" />
-      <Label layoutX="261.0" layoutY="46.0" text="4" />
-      <Label layoutX="166.0" layoutY="46.0" text="5" />
-      <Label layoutX="366.0" layoutY="141.0" prefHeight="17.0" prefWidth="1.0" text="8" />
-      <Label layoutX="364.0" layoutY="46.0" text="7" />
-      <Label layoutX="473.0" layoutY="51.0" text="9" />
-      <Label layoutX="469.0" layoutY="141.0" text="10" />
-      <Label fx:id="L1" layoutX="244.0" layoutY="184.0" text="0" />
-      <Label fx:id="L8" layoutX="353.0" layoutY="186.0" text="0" />
-      <Button fx:id="Start" layoutX="433.0" layoutY="245.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="73.0" prefWidth="77.0" text="Start">
-         <effect>
-            <Lighting bumpInput="$null" diffuseConstant="2.0">
-               <light>
-                  <Light.Distant color="#32ff3c" />
-               </light>
-            </Lighting>
-         </effect>
-      </Button>
-      <Label fx:id="L2" layoutX="148.0" layoutY="184.0" text="0" />
-      <Ellipse fill="DODGERBLUE" layoutX="234.0" layoutY="307.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="51.0" layoutX="177.0" layoutY="256.0" stroke="DODGERBLUE" strokeType="INSIDE" width="113.0" />
-      <Ellipse fill="DODGERBLUE" layoutX="234.0" layoutY="257.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
-      <Line endX="100.0" layoutX="103.0" layoutY="281.0" rotate="90.0" startX="50.0" />
-      <Line endX="100.0" layoutX="215.0" layoutY="283.0" rotate="90.0" startX="50.0" />
-      <Label fx:id="L9a" layoutX="27.0" layoutY="273.0" textAlignment="CENTER" />
-      <Label fx:id="L10a" layoutX="185.0" layoutY="275.0" textAlignment="CENTER" />
-      <Label fx:id="L10b" layoutX="185.0" layoutY="292.0" textAlignment="CENTER" />
-      <Label fx:id="L9b" layoutX="27.0" layoutY="292.0" textAlignment="CENTER" />
-      <Rectangle fx:id="b6" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Label layoutX="64.0" layoutY="46.0" text="6" />
-      <Label fx:id="L21" layoutX="50.0" layoutY="91.0" text="0" />
-      <Rectangle fx:id="b3" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
-      <Label layoutX="64.0" layoutY="139.0" text="3" />
-      <Label fx:id="L211" layoutX="50.0" layoutY="184.0" text="0" />
-      <Label fx:id="L212" layoutX="30.0" layoutY="13.0" prefHeight="46.0" prefWidth="264.0" text="ANALOG/DIGITAL">
-         <font>
-            <Font name="System Bold" size="31.0" />
-         </font>
-      </Label>
-      <Label fx:id="L2121" layoutX="344.0" layoutY="13.0" text="I2C">
-         <font>
-            <Font name="System Bold" size="31.0" />
-         </font>
-      </Label>
-      <Label fx:id="L21211" layoutX="446.0" layoutY="13.0" text="SPI">
-         <font>
-            <Font name="System Bold" size="31.0" />
-         </font>
-      </Label>
-      <Button fx:id="add_sensor_b" layoutX="318.0" layoutY="250.0" mnemonicParsing="false" onAction="#add_sensor" prefHeight="25.0" prefWidth="102.0" text="Add Sensor" />
-      <Button fx:id="config_db_b" layoutX="318.0" layoutY="283.0" mnemonicParsing="false" onAction="#configure_db" prefHeight="25.0" prefWidth="102.0" text="Configure DB" />
-      <Label fx:id="L2122" layoutX="27.0" layoutY="245.0" prefHeight="25.0" prefWidth="47.0" text="Info">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <Label fx:id="L21221" layoutX="210.0" layoutY="245.0" prefHeight="25.0" prefWidth="47.0" text="DB">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <Label fx:id="L81" layoutX="350.0" layoutY="91.0" text="0" />
-      <Label fx:id="L811" layoutX="244.0" layoutY="91.0" text="0" />
-      <Label fx:id="L8111" layoutX="148.0" layoutY="91.0" text="0" />
-      <Label fx:id="L81111" layoutX="466.0" layoutY="91.0" text="0" />
-      <Label fx:id="L811111" layoutX="466.0" layoutY="186.0" text="0" />
+        <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="417.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="102.0">
+            <fill>
+                <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.4285714285714286">
+                    <stops>
+                        <Stop color="#0090ff" />
+                        <Stop color="WHITE" offset="1.0" />
+                    </stops>
+                </LinearGradient>
+            </fill>
+        </Rectangle>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="315.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="102.0">
+            <fill>
+                <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.4285714285714286">
+                    <stops>
+                        <Stop color="#0090ff" />
+                        <Stop color="WHITE" offset="1.0" />
+                    </stops>
+                </LinearGradient>
+            </fill>
+        </Rectangle>
+        <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="14.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="301.0">
+            <fill>
+                <LinearGradient endX="1.0" endY="0.01904761904761905" startX="1.0" startY="0.44285714285714284">
+                    <stops>
+                        <Stop color="#0090ff" />
+                        <Stop color="WHITE" offset="1.0" />
+                    </stops>
+                </LinearGradient>
+            </fill>
+        </Rectangle>
+        <Rectangle fx:id="b5" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="127.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b4" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="226.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b2" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="127.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b1" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="223.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b8" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="329.0" layoutY="158.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b7" arcHeight="5.0" arcWidth="5.0" fill="#57aad0" height="73.0" layoutX="329.0" layoutY="65.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b9" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="434.0" layoutY="68.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b10" arcHeight="5.0" arcWidth="5.0" fill="#69d15e" height="73.0" layoutX="434.0" layoutY="158.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Rectangle fx:id="b11" arcHeight="5.0" arcWidth="5.0" fill="#b594eb" height="73.0" layoutX="14.0" layoutY="245.0" stroke="BLACK" strokeType="INSIDE" width="146.0" />
+        <Label layoutX="258.0" layoutY="139.0" text="1" />
+        <Label layoutX="162.0" layoutY="139.0" text="2" />
+        <Label layoutX="261.0" layoutY="46.0" text="4" />
+        <Label layoutX="166.0" layoutY="46.0" text="5" />
+        <Label layoutX="366.0" layoutY="141.0" prefHeight="17.0" prefWidth="1.0" text="8" />
+        <Label layoutX="364.0" layoutY="46.0" text="7" />
+        <Label layoutX="473.0" layoutY="51.0" text="9" />
+        <Label layoutX="469.0" layoutY="141.0" text="10" />
+        <Label fx:id="l1b" layoutX="244.0" layoutY="184.0" text="0" />
+        <Label fx:id="l8b" layoutX="353.0" layoutY="186.0" text="0" />
+        <Button fx:id="Start" layoutX="433.0" layoutY="245.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="73.0" prefWidth="77.0" text="Start">
+            <effect>
+                <Lighting bumpInput="$null" diffuseConstant="2.0">
+                    <light>
+                        <Light.Distant color="#32ff3c" />
+                    </light>
+                </Lighting>
+            </effect>
+        </Button>
+        <Label fx:id="l2b" layoutX="148.0" layoutY="184.0" text="0" />
+        <Ellipse fill="DODGERBLUE" layoutX="234.0" layoutY="307.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="51.0" layoutX="177.0" layoutY="256.0" stroke="DODGERBLUE" strokeType="INSIDE" width="113.0" />
+        <Ellipse fill="DODGERBLUE" layoutX="234.0" layoutY="257.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
+        <Line endX="100.0" layoutX="103.0" layoutY="281.0" rotate="90.0" startX="50.0" />
+        <Line endX="100.0" layoutX="215.0" layoutY="283.0" rotate="90.0" startX="50.0" />
+        <Label fx:id="lia" layoutX="27.0" layoutY="273.0" textAlignment="CENTER" />
+        <Label fx:id="ldba" layoutX="185.0" layoutY="275.0" textAlignment="CENTER" />
+        <Label fx:id="ldbb" layoutX="185.0" layoutY="292.0" textAlignment="CENTER" />
+        <Label fx:id="lib" layoutX="27.0" layoutY="292.0" textAlignment="CENTER" />
+        <Rectangle fx:id="b6" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Label layoutX="64.0" layoutY="46.0" text="6" />
+        <Label fx:id="l6b" layoutX="50.0" layoutY="91.0" text="0" />
+        <Rectangle fx:id="b3" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
+        <Label layoutX="64.0" layoutY="139.0" text="3" />
+        <Label fx:id="l3b" layoutX="50.0" layoutY="184.0" text="0" />
+        <Label fx:id="L212" layoutX="30.0" layoutY="13.0" prefHeight="46.0" prefWidth="264.0" text="ANALOG/DIGITAL">
+            <font>
+                <Font name="System Bold" size="31.0" />
+            </font>
+        </Label>
+        <Label fx:id="L2121" layoutX="344.0" layoutY="13.0" text="I2C">
+            <font>
+                <Font name="System Bold" size="31.0" />
+            </font>
+        </Label>
+        <Label fx:id="L21211" layoutX="446.0" layoutY="13.0" text="SPI">
+            <font>
+                <Font name="System Bold" size="31.0" />
+            </font>
+        </Label>
+        <Button fx:id="add_sensor_b" layoutX="318.0" layoutY="250.0" mnemonicParsing="false" onAction="#add_sensor" prefHeight="25.0" prefWidth="102.0" text="Add Sensor" />
+        <Button fx:id="config_db_b" layoutX="318.0" layoutY="283.0" mnemonicParsing="false" onAction="#configure_db" prefHeight="25.0" prefWidth="102.0" text="Configure DB" />
+        <Label fx:id="L2122" layoutX="27.0" layoutY="245.0" prefHeight="25.0" prefWidth="47.0" text="Info">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        <Label fx:id="L21221" layoutX="210.0" layoutY="245.0" prefHeight="25.0" prefWidth="47.0" text="DB">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        <Label fx:id="l7b" layoutX="350.0" layoutY="91.0" text="0" />
+        <Label fx:id="l4b" layoutX="244.0" layoutY="91.0" text="0" />
+        <Label fx:id="l5b" layoutX="148.0" layoutY="91.0" text="0" />
+        <Label fx:id="l9b" layoutX="466.0" layoutY="91.0" text="0" />
+        <Label fx:id="l10b" layoutX="466.0" layoutY="186.0" text="0" />
+        
+        <Label fx:id="l1a" layoutX="229.0" layoutY="163.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l2a" layoutX="133.0" layoutY="163.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l4a" layoutX="232.0" layoutY="68.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l3a" layoutX="35.0" layoutY="163.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l5a" layoutX="131.0" layoutY="68.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l6a" layoutX="35.0" layoutY="68.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l7a" layoutX="335.0" layoutY="68.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l8a" layoutX="335.0" layoutY="163.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l9a" layoutX="444.0" layoutY="75.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <Label fx:id="l10a" layoutX="444.0" layoutY="163.0" text="No Sensor ">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Label>
+        <fx:define>
+            <ArrayList fx:id="Label_list_a">
+                <fx:reference source="l1a"/>
+                <fx:reference source="l2a"/>
+                <fx:reference source="l3a"/>
+                <fx:reference source="l4a"/>
+                <fx:reference source="l5a"/>
+                <fx:reference source="l6a"/>
+                <fx:reference source="l7a"/>
+                <fx:reference source="l8a"/>
+                <fx:reference source="l9a"/>
+                <fx:reference source="l10a"/>
+            </ArrayList>
+        </fx:define>
+        <fx:define>
+            <ArrayList fx:id="Label_list_b">
+                <fx:reference source="l1b"/>
+                <fx:reference source="l2b"/>
+                <fx:reference source="l3b"/>
+                <fx:reference source="l4b"/>
+                <fx:reference source="l5b"/>
+                <fx:reference source="l6b"/>
+                <fx:reference source="l7b"/>
+                <fx:reference source="l8b"/>
+                <fx:reference source="l9b"/>
+                <fx:reference source="l10b"/>
+            </ArrayList>
+        </fx:define>
     </children>
 </AnchorPane>

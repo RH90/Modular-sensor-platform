@@ -72,12 +72,14 @@ public class SQL {
         //  System.out.println("------------------------------------------------------------------");
     }
 
-    public ObservableList<String>  list() throws SQLException {
-        rs = stmt.executeQuery("select Name,Interface from sensors");
+    public ObservableList<String> list() throws SQLException {
+        rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors");
         rs.beforeFirst();
         ObservableList<String> list = FXCollections.observableArrayList();
+
         while (rs.next()) {
-            list.add(rs.getString(1));
+            String format = String.format("%4s | %-16s | %-10s", rs.getString(1), rs.getString(2),rs.getString(3));
+            list.add(format);
             System.out.println(rs.getString(1) + "  : " + rs.getString(2));
         }
         return list;

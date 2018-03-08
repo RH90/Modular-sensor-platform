@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
@@ -47,19 +48,17 @@ import javax.microedition.io.StreamConnection;
 public class FXMLDocumentController implements Initializable {
 
     @FXML
-    private Label L1;
+    private ArrayList<Label> Label_list_a;
     @FXML
-    private Label L2;
+    private ArrayList<Label> Label_list_b;
     @FXML
-    private Label L8;
+    private Label lia;
     @FXML
-    private Label L9a;
+    private Label lib;
     @FXML
-    private Label L9b;
+    private Label ldba;
     @FXML
-    private Label L10a;
-    @FXML
-    private Label L10b;
+    private Label ldbb;
     @FXML
     private Button Start;
     @FXML
@@ -76,13 +75,13 @@ public class FXMLDocumentController implements Initializable {
     private Socket socket;
     private String L9a_s = "";
     private String L9b_s = "";
+    static String[] labels = new String[10];
     private SQL sql = new SQL();
     private Semaphore mutex = new Semaphore(1);
     private StreamConnection sc = null;
     private ServerSocket serverSocket;
     private int SampleRate = 1000;
     private BufferedReader reader = null;
-    private Stage stage_add = null;
 
     @FXML
     private void add_sensor(ActionEvent event) {
@@ -108,21 +107,23 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void search_sensor(MouseEvent event) {
-        Rectangle r = (Rectangle) event.getSource();
-        System.out.println(r.getId());
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            Stage stage_add = new Stage();
-            stage_add.initModality(Modality.APPLICATION_MODAL);
-            //stage.initStyle(StageStyle.UNDECORATED);
-            stage_add.setTitle("Get Sensor");
-            stage_add.setScene(new Scene(root1));
-            stage_add.show();
-        } catch (IOException ex) {
+        if (on_off) {
+            Rectangle r = (Rectangle) event.getSource();
+            System.out.println(r.getId());
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage_add = new Stage();
+                stage_add.initModality(Modality.APPLICATION_MODAL);
+                //stage.initStyle(StageStyle.UNDECORATED);
+                stage_add.setTitle("Get Sensor");
+                stage_add.setScene(new Scene(root1));
+                stage_add.show();
 
+            } catch (IOException ex) {
+
+            }
         }
-
     }
 
     @FXML
@@ -133,10 +134,10 @@ public class FXMLDocumentController implements Initializable {
             try {
                 int sq = sql.start();
                 if (sq == -1) {
-                    L10a.setText("DB Error");
+                    ldba.setText("DB Error");
                 } else {
-                    L10b.setText("Session: " + sq);
-                    L10a.setText("DB Connected");
+                    ldbb.setText("Session: " + sq);
+                    ldba.setText("DB Connected");
                 }
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,8 +204,8 @@ public class FXMLDocumentController implements Initializable {
             Start.setEffect(lighting);
             Start.setText("Start");
             sql.close();
-            L10a.setText("DB Disconnected");
-            L10b.setText("");
+            ldba.setText("DB Disconnected");
+            ldbb.setText("");
             on_off = true;
             System.out.println("");
             System.out.println("");
@@ -216,7 +217,6 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -225,11 +225,18 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            L1.setText(sensor_value[0] + "");
-                            L2.setText(sensor_value[1] + "");
-                            L8.setText(sensor_value[2] + "");
-                            L9b.setText(L9b_s);
-                            L9a.setText(L9a_s);
+                            // l1b.setText(sensor_value[0] + "");
+                            // l2b.setText(sensor_value[1] + "");
+                            //l8b.setText(sensor_value[2] + "");
+//                            for (int j = 0; j < Label_list_b.size(); j++) {
+//                                Label_list_b.get(j).setText(j+1+"");
+//                            }
+                            Label_list_b.get(0).setText(sensor_value[0] + "");
+                            Label_list_b.get(1).setText(sensor_value[1] + "");
+                            Label_list_b.get(7).setText(sensor_value[2] + "");
+                            lib.setText(L9b_s);
+                            lia.setText(L9a_s);
+
                         }
                     });
                     Thread.sleep(10);
