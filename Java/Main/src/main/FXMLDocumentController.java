@@ -65,9 +65,10 @@ public class FXMLDocumentController implements Initializable {
     private Button add_sensor_b;
     @FXML
     private Button config_db_b;
+    static String[] list_string_a = new String[10];
     private final int size = 3;
     private boolean simulink = false;
-    private short[] sensor_value = new short[size];
+    private short[] sensor_value = new short[10];
     private boolean test = false;
     private boolean on_off = true;
     private Thread thread1 = null;
@@ -83,14 +84,57 @@ public class FXMLDocumentController implements Initializable {
     private int SampleRate = 1000;
     private BufferedReader reader = null;
 
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        for (int i = 0; i < list_string_a.length; i++) {
+            list_string_a[i] = "No Sensor!";
+        }
+        for (int i = 0; i < sensor_value.length; i++) {
+            sensor_value[i] = 0;
+        }
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                int i = 0;
+                while (true) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            // l1b.setText(sensor_value[0] + "");
+                            // l2b.setText(sensor_value[1] + "");
+                            //l8b.setText(sensor_value[2] + "");
+                            for (int j = 0; j < Label_list_a.size(); j++) {
+                                Label_list_a.get(j).setText(list_string_a[j]);
+                            }
+                            Label_list_b.get(0).setText(sensor_value[0] + "");
+                            Label_list_b.get(1).setText(sensor_value[1] + "");
+                            Label_list_b.get(7).setText(sensor_value[2] + "");
+                            lib.setText(L9b_s);
+                            lia.setText(L9a_s);
+
+                        }
+                    });
+                    Thread.sleep(10);
+                }
+            }
+        };
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
+        // L1.setText("hej");
+    }
+
     @FXML
     private void add_sensor(ActionEvent event) {
+
         try {
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new_Sensor.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage_add = new Stage();
             stage_add.initModality(Modality.APPLICATION_MODAL);
             //stage.initStyle(StageStyle.UNDECORATED);
+
             stage_add.setTitle("Add Sensor");
             stage_add.setScene(new Scene(root1));
 
@@ -111,13 +155,17 @@ public class FXMLDocumentController implements Initializable {
             Rectangle r = (Rectangle) event.getSource();
             System.out.println(r.getId());
             try {
+                Get_sensorController.s = Integer.parseInt(r.getId().substring(1));
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
+
                 Parent root1 = (Parent) fxmlLoader.load();
+
                 Stage stage_add = new Stage();
                 stage_add.initModality(Modality.APPLICATION_MODAL);
                 //stage.initStyle(StageStyle.UNDECORATED);
-                stage_add.setTitle("Get Sensor");
+                stage_add.setTitle(r.getId().substring(1) + " | Get Sensor");
                 stage_add.setScene(new Scene(root1));
+
                 stage_add.show();
 
             } catch (IOException ex) {
@@ -213,40 +261,6 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
         }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        Task task = new Task<Void>() {
-            @Override
-            public Void call() throws Exception {
-                int i = 0;
-                while (true) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            // l1b.setText(sensor_value[0] + "");
-                            // l2b.setText(sensor_value[1] + "");
-                            //l8b.setText(sensor_value[2] + "");
-//                            for (int j = 0; j < Label_list_b.size(); j++) {
-//                                Label_list_b.get(j).setText(j+1+"");
-//                            }
-                            Label_list_b.get(0).setText(sensor_value[0] + "");
-                            Label_list_b.get(1).setText(sensor_value[1] + "");
-                            Label_list_b.get(7).setText(sensor_value[2] + "");
-                            lib.setText(L9b_s);
-                            lia.setText(L9a_s);
-
-                        }
-                    });
-                    Thread.sleep(10);
-                }
-            }
-        };
-        Thread th = new Thread(task);
-        th.setDaemon(true);
-        th.start();
-        // L1.setText("hej");
     }
 
     public void Simulink() throws IOException, InterruptedException {

@@ -10,7 +10,7 @@
 <AnchorPane id="AnchorPane" prefHeight="364.0" prefWidth="405.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Get_sensorController">
    <children>
       <ListView fx:id="lv" layoutY="64.0" prefHeight="299.0" prefWidth="343.0" />
-      <Button layoutX="343.0" layoutY="325.0" mnemonicParsing="false" onAction="#get" prefHeight="31.0" prefWidth="53.0" text="Get" />
+      <Button layoutX="343.0" layoutY="325.0" mnemonicParsing="false" onAction="#get" prefHeight="31.0" prefWidth="61.0" text="Get" />
       <Button layoutX="290.0" layoutY="14.0" mnemonicParsing="false" onAction="#search" prefHeight="25.0" prefWidth="53.0" text="Search" />
       <TextField fx:id="tf" layoutY="14.0" prefHeight="24.0" prefWidth="290.0" />
       <Label layoutY="39.0" prefHeight="25.0" prefWidth="343.0" text="   ID | Name             | Sensor ">
@@ -18,5 +18,6 @@
             <Font name="Consolas" size="12.0" />
          </font>
       </Label>
+      <Button layoutX="343.0" layoutY="287.0" mnemonicParsing="false" onAction="#get" prefHeight="31.0" prefWidth="61.0" text="Remove" />
    </children>
 </AnchorPane>

@@ -13,11 +13,13 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Cell;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -33,7 +35,8 @@ public class Get_sensorController implements Initializable {
 
     @FXML
     private ListView lv;
-    private String s;
+    static int s;
+    private ObservableList<String> list = null;
 
     /**
      * Initializes the controller class.
@@ -42,18 +45,18 @@ public class Get_sensorController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
 //        getString();
-
+        System.out.println("url: " + url.getPath());
         lv.setStyle("-fx-font-name:Consolas;-fx-font-size:12");
-       // FXMLDocumentController.Label_list_a.get(0).setText("hellp");
+        // FXMLDocumentController.Label_list_a.get(0).setText("hellp");
         SQL sql = new SQL();
-        ObservableList<String> list = null;
+
         try {
             sql.start();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            list = sql.list();
+            list = sql.list(s);
         } catch (SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -75,22 +78,25 @@ public class Get_sensorController implements Initializable {
                     protected void updateItem(final Object item, final boolean empty) {
                         if (isEmpty()) {
                             setFont(anyfont);
-                            setText((String)item);
+                            setText((String) item);
                             super.updateItem(item, empty);
-                            
-                          //  setStyle("-fx-font-name: Consolas");
+
+                            //  setStyle("-fx-font-name: Consolas");
                         }
                     }
                 };
                 return cell;
             }
         });
+        System.out.println("node: " + getNode());
     }
-    public void string(String s){
-        this.s=s;
+
+    public void sensor_node(int s) {
+        Get_sensorController.s = s;
     }
-    public void getString(){
-        System.out.println(s);
+
+    public static int getNode() {
+        return s;
     }
 
     @FXML
@@ -100,7 +106,13 @@ public class Get_sensorController implements Initializable {
 
     @FXML
     private void get(ActionEvent event) {
-        System.out.println(lv.getSelectionModel().getSelectedItem());
+        String ss = (String) lv.getSelectionModel().getSelectedItem();
+        String[] array = ss.split("¤");
+
+        System.out.println(Integer.parseInt(array[0].trim()));
+        FXMLDocumentController.list_string_a[getNode() - 1] = array[1];
+        ((Node) (event.getSource())).getScene().getWindow().hide();
+
     }
 
 }

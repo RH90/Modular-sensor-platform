@@ -72,13 +72,21 @@ public class SQL {
         //  System.out.println("------------------------------------------------------------------");
     }
 
-    public ObservableList<String> list() throws SQLException {
-        rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors");
+    public ObservableList<String> list(int i) throws SQLException {
+        System.out.println(i);
+        if (i >= 1 && i <= 6) {
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'Analog_digital'");
+        } else if (i == 7 || i == 8) {
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'I2C'");
+        } else {
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'SPI'");
+        }
+
         rs.beforeFirst();
         ObservableList<String> list = FXCollections.observableArrayList();
 
         while (rs.next()) {
-            String format = String.format("%4s | %-16s | %-10s", rs.getString(1), rs.getString(2),rs.getString(3));
+            String format = String.format("%4s¤ %-16s ¤ %-10s", rs.getString(1), rs.getString(2), rs.getString(3));
             list.add(format);
             System.out.println(rs.getString(1) + "  : " + rs.getString(2));
         }
