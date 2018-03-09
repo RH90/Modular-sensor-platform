@@ -74,6 +74,26 @@ public class SQL {
         // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));
         //  System.out.println("------------------------------------------------------------------");
     }
+    public String getInterface(int id) throws SQLException{
+        rs = stmt.executeQuery("select Interface from sensors where Sensor_id="+id);
+        rs.first();
+        return rs.getString(1);
+    }
+    public String getMethod(int id) throws SQLException{
+        rs = stmt.executeQuery("select Reading_method from sensors where Sensor_id="+id);
+        rs.first();
+        return rs.getString(1);
+    }
+    public String getAddr(int id) throws SQLException{
+        rs = stmt.executeQuery("select I2c_Address from sensors where Sensor_id="+id);
+        rs.first();
+        return rs.getString(1);
+    }
+    public String getReg(int id) throws SQLException{
+        rs = stmt.executeQuery("select Read_addr1 from sensors where Sensor_id="+id);
+        rs.first();
+        return rs.getString(1);
+    }
 
     public ObservableList<String> list(int i) throws SQLException {
         System.out.println(i);

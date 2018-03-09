@@ -10,6 +10,17 @@
 
 volatile int count=0;
 
+volatile uint8_t A1;
+volatile uint8_t A2;
+volatile uint8_t A3;
+volatile uint8_t A4;
+volatile uint8_t A5;
+volatile uint8_t A6;
+volatile uint8_t I2C1_addr;
+volatile uint8_t I2C1_reg;
+volatile uint8_t I2C2_addr;
+volatile uint8_t I2C2_reg;
+
 void print(int num,char c){
 	char string[16];
 	int j=0;
@@ -64,11 +75,27 @@ uint16_t adc_read(uint8_t ch)
 	
 	return (ADC);
 }
+// TODO!
 void session_init(){
-	serialWrite('  ');
-	serialWrite(serialRead());
-	serialWrite('  ');
-	_delay_ms(5000);
+//	serialWrite('  ');
+//	serialWrite(serialRead());
+//	serialWrite('  ');
+	A1=serialRead();
+	A2=serialRead();
+	A3=serialRead();
+	A4=serialRead();
+	A5=serialRead();
+	A6=serialRead();
+	uint8_t read =serialRead();
+	if(read){
+	I2C1_addr=read;
+	I2C1_reg=serialRead();
+	}
+	read =serialRead();
+	if(read){
+		I2C2_addr=read;
+		I2C2_reg=serialRead();
+	}
 }
 
 
@@ -79,7 +106,7 @@ int main (void)
 	serial_init(MYUBRR);
 	session_init();
 	
-	Timer1init();
+	
 	i2c_init();
 	
 	
@@ -93,6 +120,8 @@ int main (void)
 	i2c_writeReg(0x30,0x20,data,1);	
 	DDRB =1;
 	PORTB =1;
+	
+	Timer1init();
 	while(1) // main loop
 	{	// Send 'Hello' to the LCD
 
@@ -101,15 +130,52 @@ int main (void)
 	
 	return 0;
 }
-void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method)
+void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 {
+		if(method==1){
+					DDRC=DDRC|(1<<pin_nmr);
+					PORTC=PORTC^(1<<pin_nmr);
+					_delay_us(2);
+					PORTC=PORTC|(1<<pin_nmr);
+					_delay_us(5);
+					PORTC=PORTC^(1<<pin_nmr);
 
+					
+					DDRC=DDRC^(1<<pin_nmr);
+					int counter=0;
+
+					while(!(PINC&(1<<pin_nmr))&&counter<1000)
+					{
+						_delay_us(1);
+						counter++;
+					}
+					int distance=0;
+					while((PINC&(1<<pin_nmr))&&distance<25000)
+					{
+						_delay_us(10);
+						distance++;
+					}
+					
+					distance =(float)distance *(float)0.174;
+					
+					print(distance,id);
+		}
+		else if(method==2){
+			print(adc_read(pin_nmr),id);
+		}else{
+			
+		}
 
 	
 }
-void I2C_sensor(uint16_t addr,uint16_t read_reg)
+void I2C_sensor(uint16_t addr,uint16_t read_reg,char id)
 {
-
+uint8_t* dat;
+dat = (uint8_t *)malloc(sizeof(uint8_t));
+i2c_readReg(addr,read_reg,dat,1);
+//serialWrite(data[0]);
+print(*dat,id);
+free(dat);
 	
 }
 void SPI_sensor()
@@ -123,40 +189,18 @@ void SPI_sensor()
 
 ISR(TIMER1_COMPA_vect)
 {
-		DDRB=1;
-		PORTB=0;
-		_delay_us(2);
-		PORTB=1;
-		_delay_us(5);
-		PORTB=0;
-
 		
-		DDRB=0;
-		int counter=0;
-
-		while(!(PINB&0x01)&&counter<1000)
-		{
-			_delay_us(1);
-			counter++;
-		}
-		int distance=0;
-		while((PINB&0x01)&&distance<25000)
-		{
-			_delay_us(10);
-			distance++;
-		}
+		Analog_digital_sensor(0,A1,'a');
+		Analog_digital_sensor(1,A2,'b');
+		Analog_digital_sensor(0,A3,'c');
+		Analog_digital_sensor(1,A4,'d');
+		Analog_digital_sensor(0,A5,'e');
+		Analog_digital_sensor(1,A6,'f');
+		I2C_sensor(I2C1_addr,I2C1_reg,'g');
+		//I2C_sensor(I2C2_addr,I2C2_reg,'h');
+		serialWrite('x');
 		
-		distance =(float)distance *(float)0.174;
 		
-		print(distance,'a');
-		print(adc_read(3),'b');
-		
-		uint8_t* dat;
-		dat = (uint8_t *)malloc(sizeof(uint8_t));
-		i2c_readReg(0x30,0x29,dat,1);
-		//serialWrite(data[0]);
-		print(*dat,'c');
-		free(dat);
 		
 }
 

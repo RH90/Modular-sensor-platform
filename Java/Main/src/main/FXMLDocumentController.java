@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -78,7 +79,7 @@ public class FXMLDocumentController implements Initializable {
     private Socket socket;
     private String L9a_s = "";
     private String L9b_s = "";
-    static boolean[] sensor_on= new boolean[10];
+    static boolean[] sensor_on = new boolean[10];
     static String[] labels = new String[10];
     static int[] id = new int[10];
     private SQL sql = new SQL();
@@ -96,7 +97,7 @@ public class FXMLDocumentController implements Initializable {
         }
         for (int i = 0; i < sensor_value.length; i++) {
             sensor_value[i] = 0;
-            sensor_on[i]=false;
+            sensor_on[i] = false;
         }
         Task task = new Task<Void>() {
             @Override
@@ -331,8 +332,39 @@ public class FXMLDocumentController implements Initializable {
                 reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
             }
-            
-            writer.write(100);
+
+            for (int i = 0; i < id.length; i++) {
+                if (sensor_on[i]) {
+                    switch (sql.getInterface(id[i])) {
+                        case "Analog_digital":
+                            System.out.println("Analog!");
+                            String sss=(sql.getMethod(id[i]));
+                            if(sss.equalsIgnoreCase("Simple Read"))
+                                writer.write(2);
+                            else
+                                writer.write(1);
+                            break;
+                        case "I2C":
+                            System.out.println("I2c");
+                            writer.write(new BigInteger(sql.getAddr(id[i]), 16).toByteArray()[0]);
+                            writer.write(new BigInteger(sql.getReg(id[i]), 16).toByteArray()[0]);
+                            break;
+                        case "SPI":
+                            System.out.println("SPI");
+                            break;
+                        default:
+                            break;
+
+                    }
+
+                }else{
+                    writer.write(0); 
+                }
+            }
+//            writer.write(2);
+//            writer.write(1);
+//            writer.write(0x30);
+//            writer.write(0x29);
             writer.flush();
             System.out.println("Go");
             L9a_s = "Wireless Connected";
@@ -344,26 +376,53 @@ public class FXMLDocumentController implements Initializable {
                     case 'a':
                         sensor_value[0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
-                        //   mutex.acquire();
-                        //sql.add("1", s1);
-                        //   mutex.release();
                         break;
                     case 'b':
                         sensor_value[1] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
-                        //   mutex.acquire();
-                        //sql.add("1", s1);
-                        //   mutex.release();
                         break;
                     case 'c':
+                        sensor_value[2] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'd':
+                        sensor_value[3] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'e':
+                        sensor_value[4] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'f':
+                        sensor_value[5] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'g':
                         int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                         //System.out.println("Acc: " + tmp);
-                        sensor_value[2] = (short) tmp;
+                        sensor_value[6] = (short) tmp;
+                        line = "";
+                        break;
+                    case 'h':
+                        int tmp1 = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
+                        tmp1 = (tmp1 & 0x80) == 0 ? tmp1 : tmp1 - 256;
+                        //System.out.println("Acc: " + tmp);
+                        sensor_value[7] = (short) tmp1;
+                        line = "";
+                        break;
+                    case 'i':
+                        sensor_value[8] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'j':
+                        sensor_value[8] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        line = "";
+                        break;
+                    case 'x':
                         simulink = true;
-
                         mutex.acquire();
-                        sql.add_value(sensor_value,sensor_on,id);
+                        sql.add_value(sensor_value, sensor_on, id);
                         mutex.release();
                         line = "";
                         break;
@@ -377,7 +436,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         } catch (Exception ex) {
-            // ex.printStackTrace();
+            ex.printStackTrace();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }
