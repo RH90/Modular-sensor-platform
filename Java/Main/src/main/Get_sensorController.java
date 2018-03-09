@@ -116,4 +116,13 @@ public class Get_sensorController implements Initializable {
 
     }
 
+    @FXML
+    private void remove(ActionEvent event) {
+        String ss = (String) lv.getSelectionModel().getSelectedItem();
+        FXMLDocumentController.sensor_on[s - 1] = false;
+        FXMLDocumentController.list_string_a[s - 1] = "No sensor!";
+        ((Node) (event.getSource())).getScene().getWindow().hide();
+
+    }
+
 }

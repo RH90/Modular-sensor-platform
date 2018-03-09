@@ -214,10 +214,10 @@ ISR(TIMER1_COMPA_vect)
 	
 	Analog_digital_sensor(0,A1,'a');
 	Analog_digital_sensor(1,A2,'b');
-	Analog_digital_sensor(0,A3,'c');
-	Analog_digital_sensor(1,A4,'d');
-	Analog_digital_sensor(0,A5,'e');
-	Analog_digital_sensor(1,A6,'f');
+	Analog_digital_sensor(2,A3,'c');
+	Analog_digital_sensor(3,A4,'d');
+	//Analog_digital_sensor(4,A5,'e');
+	//Analog_digital_sensor(1,A6,'f');
 	I2C_sensor(I2C1_addr,I2C1_reg,'g');
 	//I2C_sensor(I2C2_addr,I2C2_reg,'h');
 	serialWrite('x');

@@ -18,6 +18,6 @@
             <Font name="Consolas" size="12.0" />
          </font>
       </Label>
-      <Button layoutX="343.0" layoutY="287.0" mnemonicParsing="false" onAction="#get" prefHeight="31.0" prefWidth="61.0" text="Remove" />
+      <Button layoutX="343.0" layoutY="287.0" mnemonicParsing="false" onAction="#remove" prefHeight="31.0" prefWidth="61.0" text="Remove" />
    </children>
 </AnchorPane>
