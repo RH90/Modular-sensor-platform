@@ -46,7 +46,7 @@ public class SQL {
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      */
-    public void add_value(short[] sensor_value, boolean[] sensor_on,int[] id) throws InterruptedException, SQLException {
+    public void add_value(short[] sensor_value, boolean[] sensor_on, int[] id) throws InterruptedException, SQLException {
         Thread thread1 = new Thread() {
             public void run() {
                 try {
@@ -54,7 +54,7 @@ public class SQL {
                         if (sensor_on[i]) {
                             short value = sensor_value[i];
                             String name = i + 1 + "";
-                            ps.setString(1, id[i]+"");
+                            ps.setString(1, id[i] + "");
                             ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                             ps.setInt(3, value);
                             ps.setInt(4, session);
@@ -74,23 +74,39 @@ public class SQL {
         // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));
         //  System.out.println("------------------------------------------------------------------");
     }
-    public String getInterface(int id) throws SQLException{
-        rs = stmt.executeQuery("select Interface from sensors where Sensor_id="+id);
+
+    public String getInterface(int id) throws SQLException {
+        rs = stmt.executeQuery("select Interface from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
-    public String getMethod(int id) throws SQLException{
-        rs = stmt.executeQuery("select Reading_method from sensors where Sensor_id="+id);
+
+    public String getMethod(int id) throws SQLException {
+        rs = stmt.executeQuery("select Reading_method from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
-    public String getAddr(int id) throws SQLException{
-        rs = stmt.executeQuery("select I2c_Address from sensors where Sensor_id="+id);
+
+    public String getAddr(int id) throws SQLException {
+        rs = stmt.executeQuery("select I2c_Address from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
-    public String getReg(int id) throws SQLException{
-        rs = stmt.executeQuery("select Read_addr1 from sensors where Sensor_id="+id);
+
+    public String getReg(int id) throws SQLException {
+        rs = stmt.executeQuery("select Read_addr1 from sensors where Sensor_id=" + id);
+        rs.first();
+        return rs.getString(1);
+    }
+
+    public String getWReg(int id) throws SQLException {
+        rs = stmt.executeQuery("select Write_addr from sensors where Sensor_id=" + id);
+        rs.first();
+        return rs.getString(1);
+    }
+
+    public String getWData(int id) throws SQLException {
+        rs = stmt.executeQuery("select Write_data from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }

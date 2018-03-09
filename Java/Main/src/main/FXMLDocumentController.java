@@ -338,16 +338,34 @@ public class FXMLDocumentController implements Initializable {
                     switch (sql.getInterface(id[i])) {
                         case "Analog_digital":
                             System.out.println("Analog!");
-                            String sss=(sql.getMethod(id[i]));
-                            if(sss.equalsIgnoreCase("Simple Read"))
+                            String sss = (sql.getMethod(id[i]));
+                            if (sss.equalsIgnoreCase("Simple Read")) {
                                 writer.write(2);
-                            else
+                            } else {
                                 writer.write(1);
+                            }
                             break;
                         case "I2C":
                             System.out.println("I2c");
-                            writer.write(new BigInteger(sql.getAddr(id[i]), 16).toByteArray()[0]);
-                            writer.write(new BigInteger(sql.getReg(id[i]), 16).toByteArray()[0]);
+                            String a = sql.getAddr(id[i]);
+                            String b = sql.getWReg(id[i]);
+                            String c = sql.getWData(id[i]);
+                            String d = sql.getReg(id[i]);
+                            if (b.equalsIgnoreCase("")) {
+                                b = "0";
+                            }
+                            if (c.equalsIgnoreCase("")) {
+                                c = "0";
+                            }
+                            System.out.println(a);
+                            System.out.println(b);
+                            System.out.println(c);
+                            System.out.println(d);
+
+                            writer.write(new BigInteger(a, 16).toByteArray()[0]);
+                            writer.write(new BigInteger(b, 16).toByteArray()[0]);
+                            writer.write(new BigInteger(c, 16).toByteArray()[0]);
+                            writer.write(new BigInteger(d, 16).toByteArray()[0]);
                             break;
                         case "SPI":
                             System.out.println("SPI");
@@ -357,8 +375,8 @@ public class FXMLDocumentController implements Initializable {
 
                     }
 
-                }else{
-                    writer.write(0); 
+                } else {
+                    writer.write(0);
                 }
             }
 //            writer.write(2);
