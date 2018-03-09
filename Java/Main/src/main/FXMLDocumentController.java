@@ -34,6 +34,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseEvent;
@@ -60,6 +61,8 @@ public class FXMLDocumentController implements Initializable {
     private Label lib;
     @FXML
     private Label ldba;
+    @FXML
+    private TextField delay;
     @FXML
     private Label ldbb;
     @FXML
@@ -111,8 +114,13 @@ public class FXMLDocumentController implements Initializable {
                             // l2b.setText(sensor_value[1] + "");
                             //l8b.setText(sensor_value[2] + "");
                             for (int j = 0; j < Label_list_a.size(); j++) {
+
                                 Label_list_a.get(j).setText(list_string_a[j]);
-                                Label_list_b.get(j).setText(sensor_value[j] + "");
+                                if (sensor_on[j]) {
+                                    Label_list_b.get(j).setText(sensor_value[j] + "");
+                                } else {
+                                    Label_list_b.get(j).setText("0");
+                                }
                             }
                             lib.setText(L9b_s);
                             lia.setText(L9a_s);
@@ -265,6 +273,9 @@ public class FXMLDocumentController implements Initializable {
 
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
+            for (int i = 0; i < sensor_value.length; i++) {
+                sensor_value[i] = 0;
+            }
         }
     }
 
@@ -332,7 +343,14 @@ public class FXMLDocumentController implements Initializable {
                 reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
             }
-
+            int delay_data=10;
+            try{
+                delay_data=Integer.parseInt(delay.getText())/100;
+            }catch(Exception ex){
+                delay_data=10;
+                delay.setText("1000");
+            }
+            writer.write(delay_data);
             for (int i = 0; i < id.length; i++) {
                 if (sensor_on[i]) {
                     switch (sql.getInterface(id[i])) {
@@ -442,6 +460,8 @@ public class FXMLDocumentController implements Initializable {
                         mutex.acquire();
                         sql.add_value(sensor_value, sensor_on, id);
                         mutex.release();
+                        writer.write(0);
+                        writer.flush();
                         line = "";
                         break;
                     default:
@@ -450,11 +470,15 @@ public class FXMLDocumentController implements Initializable {
                 }
                 if (test) {
                     L9a_s = "Wireless Disconnected";
+                    System.out.println("heyy");
+                    writer.write(1);
+                    writer.flush();
                     break;
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            writer.write(1);
+            writer.flush();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }

@@ -25,6 +25,8 @@ volatile uint8_t I2C1_write_reg;
 volatile uint8_t I2C1_write_data;
 volatile uint8_t I2C2_write_reg;
 volatile uint8_t I2C2_write_data;
+volatile uint16_t delay=5;
+volatile uint16_t count_delay=1;
 
 void print(int num,char c){
 	char string[16];
@@ -56,8 +58,10 @@ void adc_init()
 void Timer1init() {
 	TIMSK1 = _BV(OCIE1A);  // Enable Interrupt TimerCounter0 Compare Match A (SIG_OUTPUT_COMPARE0A)
 	//  TCCR1A = _BV(WGM11);  // Mode = CTC
-	TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
-	OCR1A = 15625;
+	//TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
+	TCCR1B = _BV(CS12)|_BV(WGM12); //OC: 256
+	OCR1A = 6250;
+	// 6250
 	// 3125=0.2 s
 	sei();
 }
@@ -96,6 +100,10 @@ void session_init(){
 	//	serialWrite('  ');
 	//	serialWrite(serialRead());
 	//	serialWrite('  ');
+	delay=serialRead();
+	if(delay<=0){
+		delay=10;
+	}
 	A1=serialRead();
 	A2=serialRead();
 	A3=serialRead();
@@ -211,17 +219,26 @@ void SPI_sensor()
 
 ISR(TIMER1_COMPA_vect)
 {
-	
-	Analog_digital_sensor(0,A1,'a');
-	Analog_digital_sensor(1,A2,'b');
-	Analog_digital_sensor(2,A3,'c');
-	Analog_digital_sensor(3,A4,'d');
-	//Analog_digital_sensor(4,A5,'e');
-	//Analog_digital_sensor(1,A6,'f');
-	I2C_sensor(I2C1_addr,I2C1_reg,'g');
-	//I2C_sensor(I2C2_addr,I2C2_reg,'h');
-	serialWrite('x');
-	
+	if (count_delay>=delay)
+	{
+		count_delay=1;
+		Analog_digital_sensor(0,A1,'a');
+		Analog_digital_sensor(1,A2,'b');
+		Analog_digital_sensor(2,A3,'c');
+		Analog_digital_sensor(3,A4,'d');
+		//Analog_digital_sensor(4,A5,'e');
+		//Analog_digital_sensor(1,A6,'f');
+		I2C_sensor(I2C1_addr,I2C1_reg,'g');
+		//I2C_sensor(I2C2_addr,I2C2_reg,'h');
+		serialWrite('x');
+		if(serialRead()){
+			session_init();
+		}
+	} 
+	else
+	{
+		count_delay++;
+	}
 	
 	
 }
