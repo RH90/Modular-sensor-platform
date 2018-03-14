@@ -286,7 +286,7 @@ public class SQL {
             session = 0;
         }
         System.out.println("Session: " + session);
-        String query = "INSERT INTO Sensor_Sessions (Sensor_nr,Date,Value,Session) VALUES (?,?,?,?)";
+        String query = "INSERT INTO Sensor_Sessions (Sensor_id,Date,Value,Session) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         return session;
     }
