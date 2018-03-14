@@ -173,10 +173,25 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public int start() throws ClassNotFoundException, SQLException {
+    public int start(String UserName, String UserPass, int PortNr, String IP_address, String Schema) throws ClassNotFoundException, SQLException {
+        if (UserName.equalsIgnoreCase("")) {
+            UserName = "root";
+        }
+        if (UserPass.equalsIgnoreCase("")) {
+            UserPass = "root";
+        }
+        if (PortNr == 0) {
+            PortNr = 3306;
+        }
+        if (IP_address.equalsIgnoreCase("")) {
+            IP_address = "localhost";
+        }
+        if (Schema.equalsIgnoreCase("")) {
+            Schema = "Sensors";
+        }
         Class.forName("com.mysql.jdbc.Driver");
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Sensors", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://" + IP_address + ":" + PortNr + "/" + Schema, UserName, UserPass);
         } catch (SQLException ex) {
             return -1;
         }
@@ -188,16 +203,7 @@ public class SQL {
         rs.last();
         if (rs.getRow() == 0) {
             stmt = con.createStatement();
-            String myTableName = "CREATE TABLE Sensor_Sessions ("
-                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
-                    + "Sensor_nr VARCHAR(10),"
-                    + "Date TIMESTAMP,"
-                    + "Value INT(64), "
-                    + "Session INT(64),"
-                    + "PRIMARY KEY(id))";
-            stmt.executeUpdate(myTableName);
-            stmt = con.createStatement();
-            myTableName
+            String myTableName
                     = "CREATE TABLE Sensors ("
                     + "Sensor_id INT(64) NOT NULL AUTO_INCREMENT,"
                     + "Sensing_type VARCHAR(25),"
@@ -212,6 +218,18 @@ public class SQL {
                     + "Read_addr3 VARCHAR(4),"
                     + "PRIMARY KEY(Sensor_id))";
             stmt.executeUpdate(myTableName);
+            myTableName
+                    = "CREATE TABLE Sensor_Sessions ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT,"
+                    + "Date TIMESTAMP,"
+                    + "Value INT, "
+                    + "Session INT,"
+                    + "PRIMARY KEY(id),"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+            stmt.executeUpdate(myTableName);
+            stmt = con.createStatement();
+
         } else {
             rs.beforeFirst();
             boolean db1 = true;
@@ -252,8 +270,8 @@ public class SQL {
                         + "Date TIMESTAMP,"
                         + "Value INT, "
                         + "Session INT,"
-                        + "PRIMARY KEY(id)"
-                        + "FOREIGN KEY (Sensor_id) REFERENCES Sensors(Sensor_id))";
+                        + "PRIMARY KEY(id),"
+                        + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
 

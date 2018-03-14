@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="332.0" prefWidth="186.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ConfigDbController">
+   <children>
+      <TextField fx:id="UserName" layoutX="19.0" layoutY="69.0" promptText="Default: root" />
+      <TextField fx:id="UserPass" layoutX="19.0" layoutY="117.0" promptText="Default: root" />
+      <TextField fx:id="PortNr" layoutX="19.0" layoutY="165.0" promptText="Default: 3306" />
+      <Text layoutX="58.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User Name" />
+      <Text layoutX="61.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pass Word" />
+      <Text layoutX="55.0" layoutY="161.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port Number" />
+      <TextField fx:id="IP_address" layoutX="19.0" layoutY="213.0" promptText="Default: localhost" />
+      <Text layoutX="61.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP address" />
+      <Button layoutX="54.0" layoutY="293.0" mnemonicParsing="false" onAction="#Configure_Button" text="Configure" />
+      <TextField fx:id="Schema" layoutX="19.0" layoutY="261.0" promptText="Default: Sensors" />
+      <Text layoutX="67.0" layoutY="257.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Schema" />
+      <Text layoutX="26.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Configure DB">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

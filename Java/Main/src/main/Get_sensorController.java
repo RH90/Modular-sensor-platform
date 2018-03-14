@@ -32,6 +32,11 @@ import javafx.util.Callback;
  * @author Rilind
  */
 public class Get_sensorController implements Initializable {
+    private String UserName = "";
+    private String UserPass = "";
+    private int PortNr = 0;
+    private String IP_address = "";
+    private String Schema = "";
 
     @FXML
     private ListView lv;
@@ -51,7 +56,7 @@ public class Get_sensorController implements Initializable {
         SQL sql = new SQL();
 
         try {
-            sql.start();
+            sql.start(UserName,UserPass,PortNr,IP_address,Schema);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }

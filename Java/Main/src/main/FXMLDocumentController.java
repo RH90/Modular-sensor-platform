@@ -92,6 +92,11 @@ public class FXMLDocumentController implements Initializable {
     private int SampleRate = 1000;
     private BufferedReader reader = null;
     private BufferedWriter writer = null;
+    static String UserName = "";
+    static String UserPass = "";
+    static int PortNr = 0;
+    static String IP_address = "";
+    static String Schema = "";
 
     
     // This method updates the Text on the UI
@@ -160,7 +165,18 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void configure_db(ActionEvent event) {
+    private void configure_db(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("configDb.fxml"));
+
+                Parent root1 = (Parent) fxmlLoader.load();
+
+                Stage stage_add = new Stage();
+                stage_add.initModality(Modality.APPLICATION_MODAL);
+                //stage.initStyle(StageStyle.UNDECORATED);
+                stage_add.setTitle("Configure DB");
+                stage_add.setScene(new Scene(root1));
+
+                stage_add.show();
 
     }
 
@@ -195,7 +211,7 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(true);
             config_db_b.setDisable(true);
             try {
-                int sq = sql.start();
+                int sq = sql.start(UserName,UserPass,PortNr,IP_address,Schema);
                 if (sq == -1) {
                     ldba.setText("DB Error");
                 } else {
