@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="main.ConfigDbController">
+   <children>
+      <TextField fx:id="UserName" layoutX="14.0" layoutY="46.0" />
+      <TextField fx:id="UserPass" layoutX="14.0" layoutY="100.0" />
+      <TextField fx:id="PortNr" layoutX="14.0" layoutY="157.0" />
+      <Text layoutX="59.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User Name" />
+      <Text layoutX="61.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pass Word" />
+      <Text layoutX="54.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port Number" />
+      <TextField layoutX="14.0" layoutY="214.0" />
+   </children>
+</AnchorPane>

@@ -72,7 +72,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button config_db_b;
     static String[] list_string_a = new String[10];
-    private final int size = 3;
+    private final int size = 10;
     private boolean simulink = false;
     private short[] sensor_value = new short[10];
     private boolean test = false;
