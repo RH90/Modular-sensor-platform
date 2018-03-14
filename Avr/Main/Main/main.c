@@ -25,6 +25,10 @@ volatile uint8_t I2C1_write_reg;
 volatile uint8_t I2C1_write_data;
 volatile uint8_t I2C2_write_reg;
 volatile uint8_t I2C2_write_data;
+
+volatile uint8_t SPI1_reg;
+volatile uint8_t SPI2_reg;
+
 volatile uint16_t delay=5;
 volatile uint16_t count_delay=1;
 
@@ -88,7 +92,6 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 {
 		uint8_t* data;
 		data = (uint8_t *)malloc(sizeof(uint8_t));
-		_delay_ms(100);
 		//dat = (uint8_t *)malloc(sizeof(uint8_t));
 		data[0]=dat;
 		i2c_writeReg(dev,reg,data,1);
@@ -97,9 +100,7 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 }
 // TODO!
 void session_init(){
-	//	serialWrite('  ');
-	//	serialWrite(serialRead());
-	//	serialWrite('  ');
+
 	delay=serialRead();
 	if(delay<=0){
 		delay=10;
@@ -141,16 +142,8 @@ int main (void)
 	//asm("cli");  // DISABLE global interrupts.
 	adc_init();
 	serial_init(MYUBRR);
-	
-	
-	
 	i2c_init();
 	session_init();
-	
-
-	//DDRB =1;
-	//PORTB =1;
-	
 	Timer1init();
 	while(1) // main loop
 	{	// Send 'Hello' to the LCD
@@ -228,8 +221,10 @@ ISR(TIMER1_COMPA_vect)
 		Analog_digital_sensor(3,A4,'d');
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
+		if(I2C1_addr)
 		I2C_sensor(I2C1_addr,I2C1_reg,'g');
-		//I2C_sensor(I2C2_addr,I2C2_reg,'h');
+		if(I2C2_addr)
+		I2C_sensor(I2C2_addr,I2C2_reg,'h');
 		serialWrite('x');
 		if(serialRead()){
 			session_init();
