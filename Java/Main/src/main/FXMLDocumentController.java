@@ -93,6 +93,8 @@ public class FXMLDocumentController implements Initializable {
     private BufferedReader reader = null;
     private BufferedWriter writer = null;
 
+    
+    // This method updates the Text on the UI
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         for (int i = 0; i < list_string_a.length; i++) {
@@ -136,7 +138,7 @@ public class FXMLDocumentController implements Initializable {
         th.start();
         // L1.setText("hej");
     }
-
+    // Method for the add sensor button
     @FXML
     private void add_sensor(ActionEvent event) {
 
@@ -452,7 +454,7 @@ public class FXMLDocumentController implements Initializable {
                         line = "";
                         break;
                     case 'j':
-                        sensor_value[8] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[9] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'x':
@@ -477,8 +479,8 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         } catch (Exception ex) {
-            writer.write(1);
-            writer.flush();
+//            writer.write(1);
+//            writer.flush();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }
