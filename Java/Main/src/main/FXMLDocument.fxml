@@ -201,6 +201,9 @@
                 <fx:reference source="l10b" />
             </ArrayList>
         </fx:define>
-      <TextField fx:id="delay" layoutX="319.0" layoutY="306.0" prefHeight="25.0" prefWidth="102.0" promptText="Delay in ms" />
+      <TextField fx:id="delay" layoutX="319.0" layoutY="306.0" prefHeight="25.0" prefWidth="102.0" promptText="Samples per second">
+         <font>
+            <Font size="9.0" />
+         </font></TextField>
     </children>
 </AnchorPane>

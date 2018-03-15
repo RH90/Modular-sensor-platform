@@ -126,7 +126,7 @@ public class FXMLDocumentController implements Initializable {
                                 if (sensor_on[j]) {
                                     Label_list_b.get(j).setText(sensor_value[j] + "");
                                 } else {
-                                    Label_list_b.get(j).setText("0\nHej");
+                                    Label_list_b.get(j).setText("0");
                                 }
                             }
                             lib.setText(L9b_s);
@@ -363,11 +363,15 @@ public class FXMLDocumentController implements Initializable {
             }
             int delay_data=10;
             try{
-                delay_data=Integer.parseInt(delay.getText())/100;
+                // s: 0.8  (1/0.8)*10= 100
+               
+                // s: 10   (1/10)*10= 1
+                delay_data=(int)((1/Double.parseDouble(delay.getText()))*10);
             }catch(Exception ex){
                 delay_data=10;
-                delay.setText("1000");
+                delay.setText("1");
             }
+            System.out.println("Sample rate: "+delay_data);
             writer.write(delay_data);
             for (int i = 0; i < id.length; i++) {
                 if (sensor_on[i]) {
