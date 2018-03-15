@@ -166,7 +166,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void configure_db(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("configDb.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ConfigDb.fxml"));
 
                 Parent root1 = (Parent) fxmlLoader.load();
 
