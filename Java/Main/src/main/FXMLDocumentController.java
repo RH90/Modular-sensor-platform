@@ -50,7 +50,7 @@ import javax.microedition.io.StreamConnection;
  * @author Rilind
  */
 public class FXMLDocumentController implements Initializable {
-
+//<?import java.util.ArrayList?>
     @FXML
     private ArrayList<Label> Label_list_a;
     @FXML
@@ -126,7 +126,7 @@ public class FXMLDocumentController implements Initializable {
                                 if (sensor_on[j]) {
                                     Label_list_b.get(j).setText(sensor_value[j] + "");
                                 } else {
-                                    Label_list_b.get(j).setText("0");
+                                    Label_list_b.get(j).setText("0\nHej");
                                 }
                             }
                             lib.setText(L9b_s);

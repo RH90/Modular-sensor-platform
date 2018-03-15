@@ -16,16 +16,14 @@ volatile uint8_t A3;
 volatile uint8_t A4;
 volatile uint8_t A5;
 volatile uint8_t A6;
-volatile uint8_t I2C1_addr;
-volatile uint8_t I2C1_reg;
-volatile uint8_t I2C2_addr;
-volatile uint8_t I2C2_reg;
+struct I2C_struct{
+	 uint8_t volatile addr;
+	 uint8_t volatile R_reg;
+	 uint8_t volatile W_reg;
+	 uint8_t volatile W_data;
+	};
 
-volatile uint8_t I2C1_write_reg;
-volatile uint8_t I2C1_write_data;
-volatile uint8_t I2C2_write_reg;
-volatile uint8_t I2C2_write_data;
-
+struct I2C_struct I2C[2];
 volatile uint8_t SPI1_reg;
 volatile uint8_t SPI2_reg;
 
@@ -100,7 +98,7 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 }
 // TODO!
 void session_init(){
-
+	
 	delay=serialRead();
 	if(delay<=0){
 		delay=10;
@@ -111,26 +109,23 @@ void session_init(){
 	A4=serialRead();
 	A5=serialRead();
 	A6=serialRead();
-	uint8_t read =serialRead();
-	if(read){
-		I2C1_addr=read;
-		I2C1_write_reg=serialRead();
-		I2C1_write_data=serialRead();
-		if(I2C1_write_reg){
-			I2CW(I2C1_addr,I2C1_write_reg,I2C1_write_data);
-		}
-		I2C1_reg=serialRead();
+	
+	int i=0;
+	for (i;i<2;i++)
+	{
+		uint8_t read =serialRead();
+			if(read){
+				I2C[i].addr=read;
+				I2C[i].W_reg=serialRead();
+				I2C[i].W_data=serialRead();
+				if(I2C[i].W_data){
+					I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
+				}
+				I2C[i].R_reg=serialRead();
+			}
+
 	}
-	read =serialRead();
-	if(read){
-		I2C2_addr=read;
-		I2C2_write_reg=serialRead();
-		I2C2_write_data=serialRead();
-		if(I2C2_write_reg){
-			I2CW(I2C2_addr,I2C2_write_reg,I2C2_write_data);
-		}
-		I2C2_reg=serialRead();
-	}
+
 	//read =serialRead();
 	//read =serialRead();
 
@@ -221,10 +216,10 @@ ISR(TIMER1_COMPA_vect)
 		Analog_digital_sensor(3,A4,'d');
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
-		if(I2C1_addr)
-		I2C_sensor(I2C1_addr,I2C1_reg,'g');
-		if(I2C2_addr)
-		I2C_sensor(I2C2_addr,I2C2_reg,'h');
+		if(I2C[0].addr)
+		I2C_sensor(I2C[0].addr,I2C[0].R_reg,'g');
+		if(I2C[1].addr)
+		I2C_sensor(I2C[1].addr,I2C[1].R_reg,'h');
 		serialWrite('x');
 		if(serialRead()){
 			session_init();
