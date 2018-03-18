@@ -51,6 +51,7 @@ import javax.microedition.io.StreamConnection;
  */
 public class FXMLDocumentController implements Initializable {
 //<?import java.util.ArrayList?>
+
     @FXML
     private ArrayList<Label> Label_list_a;
     @FXML
@@ -98,7 +99,6 @@ public class FXMLDocumentController implements Initializable {
     static String IP_address = "";
     static String Schema = "";
 
-    
     // This method updates the Text on the UI
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -143,6 +143,7 @@ public class FXMLDocumentController implements Initializable {
         th.start();
         // L1.setText("hej");
     }
+
     // Method for the add sensor button
     @FXML
     private void add_sensor(ActionEvent event) {
@@ -168,15 +169,15 @@ public class FXMLDocumentController implements Initializable {
     private void configure_db(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ConfigDb.fxml"));
 
-                Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = (Parent) fxmlLoader.load();
 
-                Stage stage_add = new Stage();
-                stage_add.initModality(Modality.APPLICATION_MODAL);
-                //stage.initStyle(StageStyle.UNDECORATED);
-                stage_add.setTitle("Configure DB");
-                stage_add.setScene(new Scene(root1));
+        Stage stage_add = new Stage();
+        stage_add.initModality(Modality.APPLICATION_MODAL);
+        //stage.initStyle(StageStyle.UNDECORATED);
+        stage_add.setTitle("Configure DB");
+        stage_add.setScene(new Scene(root1));
 
-                stage_add.show();
+        stage_add.show();
 
     }
 
@@ -211,7 +212,7 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(true);
             config_db_b.setDisable(true);
             try {
-                int sq = sql.start(UserName,UserPass,PortNr,IP_address,Schema);
+                int sq = sql.start(UserName, UserPass, PortNr, IP_address, Schema);
                 if (sq == -1) {
                     ldba.setText("DB Error");
                 } else {
@@ -361,17 +362,17 @@ public class FXMLDocumentController implements Initializable {
                 reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
             }
-            int delay_data=10;
-            try{
+            int delay_data = 10;
+            try {
                 // s: 0.8  (1/0.8)*10= 100
-               
+
                 // s: 10   (1/10)*10= 1
-                delay_data=(int)((1/Double.parseDouble(delay.getText()))*10);
-            }catch(Exception ex){
-                delay_data=10;
+                delay_data = (int) ((1 / Double.parseDouble(delay.getText())) * 10);
+            } catch (Exception ex) {
+                delay_data = 10;
                 delay.setText("1");
             }
-            System.out.println("Sample rate: "+delay_data);
+            System.out.println("Sample rate: " + delay_data);
             writer.write(delay_data);
             for (int i = 0; i < id.length; i++) {
                 if (sensor_on[i]) {
@@ -404,14 +405,14 @@ public class FXMLDocumentController implements Initializable {
                             System.out.println(c);
                             System.out.println(d);
 
-                            writer.write(new BigInteger(a.charAt(1)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(a.charAt(0)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(b.charAt(1)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(b.charAt(0)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(c.charAt(1)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(c.charAt(0)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(d.charAt(1)+"", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(d.charAt(0)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(a.charAt(1) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(a.charAt(0) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(b.charAt(1) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(b.charAt(0) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(c.charAt(1) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(c.charAt(0) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(d.charAt(1) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(d.charAt(0) + "", 16).toByteArray()[0]);
                             break;
                         case "SPI":
                             System.out.println("SPI");
@@ -422,8 +423,8 @@ public class FXMLDocumentController implements Initializable {
                     }
 
                 } else {
-                    writer.write(0);
-                    writer.write(0);
+                    writer.write(15);
+                    writer.write(15);
                 }
             }
 //            writer.write(2);
