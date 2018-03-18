@@ -34,6 +34,8 @@ volatile uint16_t count_delay=1;
 void print(int num,char c){
 	char string[16];
 	int j=0;
+	if(num<0)
+	num=num*-1;
 	for(;j<10;j++){
 		string[j]=(num%10)+'0';
 		serialWrite((num%10)+'0');
@@ -98,31 +100,40 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 	
 }
 // TODO!
+uint8_t read_pair()
+{
+	uint8_t a=serialRead();
+	uint8_t b=serialRead();
+	uint8_t c=a|(b<<4);	
+	
+	return c;
+}
+
 void session_init(){
 	
 	delay=serialRead();
 	if(delay<=0){
 		delay=10;
 	}
-	A1=serialRead();
-	A2=serialRead();
-	A3=serialRead();
-	A4=serialRead();
-	A5=serialRead();
-	A6=serialRead();
+	A1=read_pair();
+	A2=read_pair();
+	A3=read_pair();
+	A4=read_pair();
+	A5=read_pair();
+	A6=read_pair();
 	
 	int i=0;
 	for (i;i<2;i++)
 	{
-		uint8_t read =serialRead();
+		uint8_t read =read_pair();
 			if(read){
 				I2C[i].addr=read;
-				I2C[i].W_reg=serialRead();
-				I2C[i].W_data=serialRead();
+				I2C[i].W_reg=read_pair();
+				I2C[i].W_data=read_pair();
 				if(I2C[i].W_data){
 					I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
 				}
-				I2C[i].R_reg=serialRead();
+				I2C[i].R_reg=read_pair();
 			}
 
 	}
@@ -158,7 +169,6 @@ void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 		PORTA=PORTA|(1<<pin_nmr);
 		_delay_us(5);
 		PORTA=PORTA^(1<<pin_nmr);
-
 		
 		DDRA=DDRA^(1<<pin_nmr);
 		int counter=0;
@@ -199,12 +209,8 @@ void I2C_sensor(uint16_t addr,uint16_t read_reg,char id)
 }
 void SPI_sensor()
 {
-	
-	
 
 }
-
-
 
 ISR(TIMER1_COMPA_vect)
 {

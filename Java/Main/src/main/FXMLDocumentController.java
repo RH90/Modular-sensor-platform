@@ -381,8 +381,10 @@ public class FXMLDocumentController implements Initializable {
                             String sss = (sql.getMethod(id[i]));
                             if (sss.equalsIgnoreCase("Simple Read")) {
                                 writer.write(2);
+                                writer.write(0);
                             } else {
                                 writer.write(1);
+                                writer.write(0);
                             }
                             break;
                         case "I2C":
@@ -402,10 +404,14 @@ public class FXMLDocumentController implements Initializable {
                             System.out.println(c);
                             System.out.println(d);
 
-                            writer.write(new BigInteger(a, 16).toByteArray()[0]);
-                            writer.write(new BigInteger(b, 16).toByteArray()[0]);
-                            writer.write(new BigInteger(c, 16).toByteArray()[0]);
-                            writer.write(new BigInteger(d, 16).toByteArray()[0]);
+                            writer.write(new BigInteger(a.charAt(1)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(a.charAt(0)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(b.charAt(1)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(b.charAt(0)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(c.charAt(1)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(c.charAt(0)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(d.charAt(1)+"", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(d.charAt(0)+"", 16).toByteArray()[0]);
                             break;
                         case "SPI":
                             System.out.println("SPI");
@@ -416,6 +422,7 @@ public class FXMLDocumentController implements Initializable {
                     }
 
                 } else {
+                    writer.write(0);
                     writer.write(0);
                 }
             }
