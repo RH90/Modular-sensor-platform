@@ -113,9 +113,8 @@ void session_init(){
 	int i=0;
 	for (i;i<2;i++)
 	{
-		uint8_t read =serialRead();
-			if(read){
-				I2C[i].addr=read;
+		I2C[i].addr =serialRead();
+			if(I2C[i].addr!=0xFF){
 				I2C[i].W_reg=serialRead();
 				I2C[i].W_data=serialRead();
 				if(I2C[i].W_data){
@@ -216,9 +215,9 @@ ISR(TIMER1_COMPA_vect)
 		Analog_digital_sensor(3,A4,'d');
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
-		if(I2C[0].addr)
+		if(I2C[0].addr!=0xFF)
 		I2C_sensor(I2C[0].addr,I2C[0].R_reg,'g');
-		if(I2C[1].addr)
+		if(I2C[1].addr!=0xFF)
 		I2C_sensor(I2C[1].addr,I2C[1].R_reg,'h');
 		serialWrite('x');
 		if(serialRead()){

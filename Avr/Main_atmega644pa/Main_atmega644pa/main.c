@@ -20,7 +20,9 @@ volatile uint8_t A6;
 volatile uint8_t pass=0xFF;
 struct I2C_struct{
 	 uint8_t volatile addr;
-	 uint8_t volatile R_reg;
+	 uint8_t volatile R_size;
+	 uint8_t volatile R_reg[6];
+	 uint8_t volatile W_size;
 	 uint8_t volatile W_reg;
 	 uint8_t volatile W_data;
 	};
@@ -132,14 +134,23 @@ void session_init(){
 	{
 		I2C[i].addr =read_pair();
 			if(I2C[i].addr!=pass){
-				I2C[i].W_reg=read_pair();
-				I2C[i].W_data=read_pair();
-				if(I2C[i].W_data!=pass){
+				I2C[i].R_size=serialRead();
+				I2C[i].W_size=serialRead();
+				int j=0;
+				for (j;j<I2C[i].W_size;j++)
+				{
+					I2C[i].W_reg=read_pair();
+					
+					I2C[i].W_data=read_pair();
+					
 					I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
 				}
-				I2C[i].R_reg=read_pair();
+				int k=0;
+				for (k;k<I2C[i].R_size;k++)
+				{
+					I2C[i].R_reg[k]=read_pair();
+				}
 			}
-
 	}
 	SPI1_reg=read_pair();
 	SPI2_reg=read_pair();
@@ -203,12 +214,21 @@ void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 
 	
 }
-void I2C_sensor(uint16_t addr,uint16_t read_reg,char id)
+void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 {
 	uint8_t* dat;
 	dat = (uint8_t *)malloc(sizeof(uint8_t));
 	i2c_readReg(addr,read_reg,dat,1);
 	//serialWrite(data[0]);
+	print(addr,'g');
+	serialWrite('x');
+	_delay_ms(4000);
+	print(read_reg,'g');
+	serialWrite('x');
+	_delay_ms(4000);
+	print(*dat,'g');
+	serialWrite('x');
+	_delay_ms(4000);
 	print(*dat,id);
 	free(dat);
 	
@@ -229,14 +249,15 @@ ISR(TIMER1_COMPA_vect)
 		Analog_digital_sensor(3,A4,'d');
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
+		
 		if(I2C[0].addr!=pass){
-			I2C_sensor(I2C[0].addr,I2C[0].R_reg,'g');
+			int h=0;
+			for (h;h<I2C[0].R_size;h++)
+			{
+				//I2C[0].R_reg[h]
+				I2C_sensor(0x32,0x20,'g');
+			}
 		}
-		
-		if(I2C[1].addr!=pass){
-			I2C_sensor(I2C[1].addr,I2C[1].R_reg,'h');
-		}
-		
 		serialWrite('x');
 		if(serialRead()){
 			session_init();

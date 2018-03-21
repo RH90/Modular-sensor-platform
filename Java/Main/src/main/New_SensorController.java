@@ -17,9 +17,11 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -44,6 +46,24 @@ public class New_SensorController implements Initializable {
     @FXML
     private Label lc;
     @FXML
+    private Text label_i2c_addr;
+    @FXML
+    private Text label_i2c_data;
+    @FXML
+    private Text label_i2c_read;
+    @FXML
+    private Text label_spi_data;
+    @FXML
+    private Text label_spi_read;
+    @FXML
+    private Button button_i2c_write;
+    @FXML
+    private Button button_i2c_read;
+    @FXML
+    private Button button_spi_write;
+    @FXML
+    private Button button_spi_read;
+    @FXML
     private TextField tfa1;
     @FXML
     private TextField tfa2;
@@ -60,10 +80,6 @@ public class New_SensorController implements Initializable {
     @FXML
     private TextField tfb6;
     @FXML
-    private TextField tfb7;
-    @FXML
-    private TextField tfb8;
-    @FXML
     private TextField tfc1;
     @FXML
     private TextField tfc2;
@@ -72,22 +88,68 @@ public class New_SensorController implements Initializable {
     @FXML
     private TextField tfc4;
     @FXML
-    private TextField tfc5;
-    @FXML
-    private TextField tfc6;
-    @FXML
     private ChoiceBox cba;
+
+    private String i2c_write_reg = "";
+    private String i2c_write_data = "";
+    private String i2c_read_reg = "";
+    private String spi_write_data = "";
+    private String spi_read_reg = "";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cba.setItems(FXCollections.observableArrayList(
                 "Simple Read", "Pulse"));
         try {
-            sql.start(UserName,UserPass,PortNr,IP_address,Schema);
+            sql.start(UserName, UserPass, PortNr, IP_address, Schema);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(New_SensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    @FXML
+    private void next(ActionEvent event) throws SQLException {
+        Button button = ((Button) event.getSource());
+        String id = button.getId();
+        byte[] b;
+        if (id.equalsIgnoreCase("button_i2c_write")) {
+            if (tfb4.getText().length() == 2 && tfb5.getText().length() == 2) {
+                try {
+                    b = new BigInteger(tfb4.getText(), 16).toByteArray();
+                    b = new BigInteger(tfb5.getText(), 16).toByteArray();
+                    int num = Integer.parseInt(button.getText().charAt(0) + "");
+                    if (num < 7) {
+                    label_i2c_addr.setText(num + 1 + "" + ". Write address");
+                    label_i2c_data.setText(num + 1 + "" + ". Write data");
+                    i2c_write_reg += tfb4.getText();
+                    i2c_write_data += tfb5.getText();
+                    button.setText(num+ 1 + "" + ". Next");
+                    tfb4.setText("");
+                    tfb5.setText("");
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
+        } else if (id.equalsIgnoreCase("button_i2c_read")) {
+            if (tfb6.getText().length() == 2) {
+                try {
+                    b = new BigInteger(tfb6.getText(), 16).toByteArray();
+                    int num = Integer.parseInt(button.getText().charAt(0) + "");
+                    if (num < 7) {
+                        button.setText(num + 1 + "" + ". Next");
+                        label_i2c_read.setText(num + 1 + "" + ". Read address");
+                        i2c_read_reg += tfb6.getText();
+                        tfb6.setText("");
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
+        } else if (id.equalsIgnoreCase("button_spi_write")) {
+        } else if (id.equalsIgnoreCase("button_spi_read")) {
+        }
     }
 
     @FXML
@@ -112,13 +174,10 @@ public class New_SensorController implements Initializable {
             //InvocationTargetException
             lb.setText("Insufficent data!");
         } else {
-
             if (tfb3.getText().length() == 2 || tfb3.getText().length() == 0
                     && tfb4.getText().length() == 2 || tfb4.getText().length() == 0
                     && tfb5.getText().length() == 2 || tfb5.getText().length() == 0
-                    && tfb6.getText().length() == 2 || tfb6.getText().length() == 0
-                    && tfb7.getText().length() == 2 || tfb7.getText().length() == 0
-                    && tfb8.getText().length() == 2 || tfb8.getText().length() == 0) {
+                    && tfb6.getText().length() == 2 || tfb6.getText().length() == 0) {
                 try {
                     byte[] b;
                     if (tfb3.getText().length() == 2) {
@@ -133,13 +192,10 @@ public class New_SensorController implements Initializable {
                     if (tfb6.getText().length() == 2) {
                         b = new BigInteger(tfb6.getText(), 16).toByteArray();
                     }
-                    if (tfb7.getText().length() == 2) {
-                        b = new BigInteger(tfb7.getText(), 16).toByteArray();
-                    }
-                    if (tfb8.getText().length() == 2) {
-                        b = new BigInteger(tfb8.getText(), 16).toByteArray();
-                    }
-                    sql.add_sensor(tfb1.getText(), tfb2.getText(), tfb3.getText(), tfb4.getText(), tfb5.getText(), tfb6.getText(), tfb7.getText(), tfb8.getText());
+                    i2c_write_reg+=tfb4.getText();
+                    i2c_write_data+=tfb5.getText();
+                    i2c_read_reg+=tfb6.getText();
+                    sql.add_sensor(tfb1.getText(), tfb2.getText(), tfb3.getText(), i2c_write_reg, i2c_write_data, i2c_read_reg);
                     lb.setText("Sensor added!");
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -156,8 +212,7 @@ public class New_SensorController implements Initializable {
             lc.setText("Insufficent data!");
         } else {
 
-            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0 && tfc4.getText().length() == 2 || tfc4.getText().length() == 0
-                    && tfc5.getText().length() == 2 || tfc5.getText().length() == 0 && tfc6.getText().length() == 2 || tfc6.getText().length() == 0) {
+            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0 && tfc4.getText().length() == 2 || tfc4.getText().length() == 0) {
                 try {
                     byte[] b;
                     if (tfc3.getText().length() == 2) {
@@ -166,13 +221,7 @@ public class New_SensorController implements Initializable {
                     if (tfc4.getText().length() == 2) {
                         b = new BigInteger(tfc4.getText(), 16).toByteArray();
                     }
-                    if (tfc5.getText().length() == 2) {
-                        b = new BigInteger(tfc5.getText(), 16).toByteArray();
-                    }
-                    if (tfc6.getText().length() == 2) {
-                        b = new BigInteger(tfc6.getText(), 16).toByteArray();
-                    }
-                    sql.add_sensor(tfc1.getText(), tfc2.getText(), tfc3.getText(), tfc4.getText(), tfc5.getText(), tfc6.getText());
+                    sql.add_sensor(tfc1.getText(), tfc2.getText(), tfc3.getText(), tfc4.getText(), "", "");
                     lc.setText("Sensor added!");
                 } catch (SQLException ex) {
                     lc.setText("Error!");

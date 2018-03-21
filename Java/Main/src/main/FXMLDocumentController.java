@@ -75,7 +75,7 @@ public class FXMLDocumentController implements Initializable {
     static String[] list_string_a = new String[10];
     private final int size = 10;
     private boolean simulink = false;
-    private short[] sensor_value = new short[10];
+    private short[][] sensor_value = new short[10][6];
     private boolean test = false;
     private boolean on_off = true;
     private Thread thread1 = null;
@@ -98,6 +98,7 @@ public class FXMLDocumentController implements Initializable {
     static int PortNr = 0;
     static String IP_address = "";
     static String Schema = "";
+    private int[] i2c_size = new int[2];
 
     // This method updates the Text on the UI
     @Override
@@ -106,7 +107,7 @@ public class FXMLDocumentController implements Initializable {
             list_string_a[i] = "No Sensor!";
         }
         for (int i = 0; i < sensor_value.length; i++) {
-            sensor_value[i] = 0;
+            sensor_value[i][0] = 0;
             sensor_on[i] = false;
         }
         Task task = new Task<Void>() {
@@ -117,21 +118,24 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            // l1b.setText(sensor_value[0] + "");
-                            // l2b.setText(sensor_value[1] + "");
-                            //l8b.setText(sensor_value[2] + "");
                             for (int j = 0; j < Label_list_a.size(); j++) {
-
                                 Label_list_a.get(j).setText(list_string_a[j]);
                                 if (sensor_on[j]) {
-                                    Label_list_b.get(j).setText(sensor_value[j] + "");
+                                    if (j == 6 || j == 7) {
+                                        String ss = "";
+                                        for (int k = 0; k < i2c_size[j - 6]; k++) {
+                                            ss += sensor_value[j][k] + "\n";
+                                        }
+                                        Label_list_b.get(j).setText(ss);
+                                    } else {
+                                        Label_list_b.get(j).setText(sensor_value[j][0] + "");
+                                    }
                                 } else {
                                     Label_list_b.get(j).setText("0");
                                 }
                             }
                             lib.setText(L9b_s);
                             lia.setText(L9a_s);
-
                         }
                     });
                     Thread.sleep(10);
@@ -149,7 +153,6 @@ public class FXMLDocumentController implements Initializable {
     private void add_sensor(ActionEvent event) {
 
         try {
-
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("new_Sensor.fxml"));
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage_add = new Stage();
@@ -293,7 +296,7 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
             for (int i = 0; i < sensor_value.length; i++) {
-                sensor_value[i] = 0;
+                sensor_value[i][0] = 0;
             }
         }
     }
@@ -321,7 +324,7 @@ public class FXMLDocumentController implements Initializable {
 //                }
                 //System.out.println(br.readLine());
                 for (int i = 0; i < size; i++) {
-                    byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i]).array();
+                    byte[] bytes = ByteBuffer.allocate(2).putShort(sensor_value[i][0]).array();
                     bo.write(bytes);
 
                     bo.flush();
@@ -394,25 +397,37 @@ public class FXMLDocumentController implements Initializable {
                             String b = sql.getWReg(id[i]);
                             String c = sql.getWData(id[i]);
                             String d = sql.getReg(id[i]);
+                            i2c_size[i - 6] = d.length() / 2;
+                            System.out.println("i2c_size: " + i2c_size[i - 6]);
                             if (b.equalsIgnoreCase("")) {
-                                b = "0";
+                                b = "ff";
                             }
                             if (c.equalsIgnoreCase("")) {
-                                c = "0";
+                                c = "ff";
                             }
-                            System.out.println(a);
-                            System.out.println(b);
-                            System.out.println(c);
-                            System.out.println(d);
+                            System.out.println("a: " + a);
+                            System.out.println("b: " + b);
+                            System.out.println("c: " + c);
+                            System.out.println("d: " + d);
 
                             writer.write(new BigInteger(a.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(a.charAt(0) + "", 16).toByteArray()[0]);
+
+                            writer.write(i2c_size[i - 6]);
+                            writer.write(1);
+
                             writer.write(new BigInteger(b.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(b.charAt(0) + "", 16).toByteArray()[0]);
+                            
                             writer.write(new BigInteger(c.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(c.charAt(0) + "", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(d.charAt(1) + "", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(d.charAt(0) + "", 16).toByteArray()[0]);
+                            
+                            
+                            for (int j = 0; j < i2c_size[i - 6]; j += 2) {
+                                writer.write(new BigInteger(d.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                writer.write(new BigInteger(d.charAt(j) + "", 16).toByteArray()[0]);
+                            }
+
                             break;
                         case "SPI":
                             System.out.println("SPI");
@@ -423,8 +438,8 @@ public class FXMLDocumentController implements Initializable {
                     }
 
                 } else {
-                    writer.write(15);
-                    writer.write(15);
+                    writer.write(new BigInteger("f", 16).toByteArray()[0]);
+                    writer.write(new BigInteger("f", 16).toByteArray()[0]);
                 }
             }
 //            writer.write(2);
@@ -435,60 +450,68 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Go");
             L9a_s = "Wireless Connected";
             String line = "";
+            int g = 0;
+            int h = 0;
             while (true) {
 
                 char c = (char) reader.read();
                 switch (c) {
                     case 'a':
-                        sensor_value[0] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'b':
-                        sensor_value[1] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[1][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'c':
-                        sensor_value[2] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[2][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'd':
-                        sensor_value[3] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[3][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'e':
-                        sensor_value[4] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[4][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'f':
-                        sensor_value[5] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[5][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'g':
                         int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
+                        System.out.println(tmp);
                         //System.out.println("Acc: " + tmp);
-                        sensor_value[6] = (short) tmp;
+                        
+                        sensor_value[6][g] = (short) tmp;
+                        g++;
                         line = "";
                         break;
                     case 'h':
                         int tmp1 = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp1 = (tmp1 & 0x80) == 0 ? tmp1 : tmp1 - 256;
                         //System.out.println("Acc: " + tmp);
-                        sensor_value[7] = (short) tmp1;
+                        sensor_value[7][h] = (short) tmp1;
+                        h++;
                         line = "";
                         break;
                     case 'i':
-                        sensor_value[8] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[8][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'j':
-                        sensor_value[9] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[9][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;
                     case 'x':
                         simulink = true;
                         mutex.acquire();
-                        sql.add_value(sensor_value, sensor_on, id);
+                        g = 0;
+                        h = 0;
+                        sql.add_value(sensor_value, sensor_on, id, i2c_size);
                         mutex.release();
                         writer.write(0);
                         writer.flush();

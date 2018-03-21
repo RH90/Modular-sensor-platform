@@ -46,19 +46,31 @@ public class SQL {
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      */
-    public void add_value(short[] sensor_value, boolean[] sensor_on, int[] id) throws InterruptedException, SQLException {
+    public void add_value(short[][] sensor_value, boolean[] sensor_on, int[] id, int[] i2c_size) throws InterruptedException, SQLException {
         Thread thread1 = new Thread() {
             public void run() {
                 try {
                     for (int i = 0; i < sensor_value.length; i++) {
                         if (sensor_on[i]) {
-                            short value = sensor_value[i];
-                            String name = i + 1 + "";
-                            ps.setString(1, id[i] + "");
-                            ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                            ps.setInt(3, value);
-                            ps.setInt(4, session);
-                            ps.executeUpdate();
+                            if (i == 6 || i == 7) {
+                                for (int j = 0; j < i2c_size[i-6]; j++) {
+                                    short value = sensor_value[i][j];
+                                    ps.setString(1, id[i] + "");
+                                    ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                                    ps.setInt(3, value);
+                                    ps.setInt(4, j);
+                                    ps.setInt(5, session);
+                                    ps.executeUpdate();
+                                }
+                            } else {
+                                short value = sensor_value[i][0];
+                                ps.setString(1, id[i] + "");
+                                ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                                ps.setInt(3, value);
+                                ps.setInt(4, 0);
+                                ps.setInt(5, session);
+                                ps.executeUpdate();
+                            }
                         }
                     }
                 } catch (Exception ex) {
@@ -94,7 +106,7 @@ public class SQL {
     }
 
     public String getReg(int id) throws SQLException {
-        rs = stmt.executeQuery("select Read_addr1 from sensors where Sensor_id=" + id);
+        rs = stmt.executeQuery("select Read_addr from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
@@ -143,9 +155,9 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr1, String read_addr2, String read_addr3) throws SQLException {
+    public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,I2c_Address,"
-                + "Write_addr,Write_data,Read_addr1,Read_addr2,Read_addr3) VALUES (?,?,?,?,?,?,?,?,?)";
+                + "Write_addr,Write_data,Read_addr) VALUES (?,?,?,?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "I2C");
@@ -153,23 +165,19 @@ public class SQL {
         ps.setString(4, I2C_addr);
         ps.setString(5, write_addr);
         ps.setString(6, write_data);
-        ps.setString(7, read_addr1);
-        ps.setString(8, read_addr2);
-        ps.setString(9, read_addr3);
+        ps.setString(7, read_addr);
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type, String write_data, String read_addr1, String read_addr2, String read_addr3) throws SQLException {
+    public void add_sensor(String name, String sensing_type, String write_data, String read_addr) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,"
-                + "Write_data,Read_addr1,Read_addr2,Read_addr3) VALUES (?,?,?,?,?,?,?)";
+                + "Write_data,Read_addr) VALUES (?,?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "SPI");
         ps.setString(3, sensing_type);
         ps.setString(4, write_data);
-        ps.setString(5, read_addr1);
-        ps.setString(6, read_addr2);
-        ps.setString(7, read_addr3);
+        ps.setString(5, read_addr);
         ps.executeUpdate();
     }
 
@@ -211,11 +219,9 @@ public class SQL {
                     + "Interface VARCHAR(25),"
                     + "Reading_method VARCHAR(25),"
                     + "I2c_Address VARCHAR(4),"
-                    + "Write_addr VARCHAR(4),"
-                    + "Write_data VARCHAR(4),"
-                    + "Read_addr1 VARCHAR(4),"
-                    + "Read_addr2 VARCHAR(4),"
-                    + "Read_addr3 VARCHAR(4),"
+                    + "Write_addr VARCHAR(12),"
+                    + "Write_data VARCHAR(12),"
+                    + "Read_addr VARCHAR(12),"
                     + "PRIMARY KEY(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
@@ -253,11 +259,9 @@ public class SQL {
                         + "Interface VARCHAR(25),"
                         + "Reading_method VARCHAR(25),"
                         + "I2c_Address VARCHAR(4),"
-                        + "Write_addr VARCHAR(4),"
-                        + "Write_data VARCHAR(4),"
-                        + "Read_addr1 VARCHAR(4),"
-                        + "Read_addr2 VARCHAR(4),"
-                        + "Read_addr3 VARCHAR(4),"
+                        + "Write_addr VARCHAR(12),"
+                        + "Write_data VARCHAR(12),"
+                        + "Read_addr VARCHAR(12),"
                         + "PRIMARY KEY(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
@@ -269,6 +273,7 @@ public class SQL {
                         + "Sensor_id INT,"
                         + "Date TIMESTAMP,"
                         + "Value INT, "
+                        + "Value_nr INT, "
                         + "Session INT,"
                         + "PRIMARY KEY(id),"
                         + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
@@ -286,7 +291,7 @@ public class SQL {
             session = 0;
         }
         System.out.println("Session: " + session);
-        String query = "INSERT INTO Sensor_Sessions (Sensor_id,Date,Value,Session) VALUES (?,?,?,?)";
+        String query = "INSERT INTO Sensor_Sessions (Sensor_id,Date,Value,Value_nr,Session) VALUES (?,?,?,?,?)";
         ps = con.prepareStatement(query);
         return session;
     }
