@@ -98,7 +98,7 @@ public class FXMLDocumentController implements Initializable {
     static int PortNr = 0;
     static String IP_address = "";
     static String Schema = "";
-    private int[] i2c_size = new int[2];
+    private int[] i2c_size = new int[4];
 
     // This method updates the Text on the UI
     @Override
@@ -121,7 +121,7 @@ public class FXMLDocumentController implements Initializable {
                             for (int j = 0; j < Label_list_a.size(); j++) {
                                 Label_list_a.get(j).setText(list_string_a[j]);
                                 if (sensor_on[j]) {
-                                    if (j == 6 || j == 7) {
+                                    if (j == 6 || j == 7 || j == 8 || j == 9) {
                                         String ss = "";
                                         for (int k = 0; k < i2c_size[j - 6]; k++) {
                                             if (k % 2 == 0 && k != 0) {
@@ -303,7 +303,7 @@ public class FXMLDocumentController implements Initializable {
                 for (int j = 0; j < 6; j++) {
                     sensor_value[i][j] = 0;
                 }
-                
+
             }
         }
     }
@@ -405,7 +405,7 @@ public class FXMLDocumentController implements Initializable {
                             String c = sql.getWData(id[i]);
                             String d = sql.getReg(id[i]);
                             i2c_size[i - 6] = d.length() / 2;
-                            int W_size=b.length()/2;
+                            int W_size = b.length() / 2;
                             System.out.println("i2c_size: " + i2c_size[i - 6]);
                             if (b.equalsIgnoreCase("")) {
                                 b = "ff";
@@ -417,18 +417,21 @@ public class FXMLDocumentController implements Initializable {
                             System.out.println("b: " + b);
                             System.out.println("c: " + c);
                             System.out.println("d: " + d);
-                            
+
                             writer.write(new BigInteger(a.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(a.charAt(0) + "", 16).toByteArray()[0]);
-                            System.out.println("w_size: "+W_size);
+                            System.out.println("w_size: " + W_size);
                             writer.write(i2c_size[i - 6]);
                             writer.write(W_size);
-                            if(W_size>0){
-                            writer.write(new BigInteger(b.charAt(1) + "", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(b.charAt(0) + "", 16).toByteArray()[0]);
+                            if (W_size > 0) {
+                                for (int j = 0; j < W_size * 2; j += 2) {
+                                    writer.write(new BigInteger(b.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                    writer.write(new BigInteger(b.charAt(j) + "", 16).toByteArray()[0]);
 
-                            writer.write(new BigInteger(c.charAt(1) + "", 16).toByteArray()[0]);
-                            writer.write(new BigInteger(c.charAt(0) + "", 16).toByteArray()[0]);
+                                    writer.write(new BigInteger(c.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                    writer.write(new BigInteger(c.charAt(j) + "", 16).toByteArray()[0]);
+                                }
+
                             }
 
                             for (int j = 0; j < i2c_size[i - 6] * 2; j += 2) {
@@ -440,6 +443,35 @@ public class FXMLDocumentController implements Initializable {
                             break;
                         case "SPI":
                             System.out.println("SPI");
+                            String spi_Wreg = sql.getWReg(id[i]);
+                            String spi_Wdata = sql.getWData(id[i]);
+                            String spi_Rreg = sql.getReg(id[i]);
+                            System.out.println(spi_Rreg);
+                            i2c_size[i - 6] = spi_Rreg.length() / 2;
+                            int spi_Wsize = spi_Wdata.length() / 2;
+                            writer.write(new BigInteger(spi_Rreg.charAt(1) + "", 16).toByteArray()[0]);
+                            writer.write(new BigInteger(spi_Rreg.charAt(0) + "", 16).toByteArray()[0]);
+
+                            writer.write(i2c_size[i - 6]);
+                            writer.write(spi_Wsize);
+                            
+                            for (int j = 2; j < i2c_size[i - 6] * 2; j += 2) {
+                                writer.write(new BigInteger(spi_Rreg.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                writer.write(new BigInteger(spi_Rreg.charAt(j) + "", 16).toByteArray()[0]);
+                            }
+                            
+                            if (spi_Wsize > 0) {
+                                for (int j = 0; j < spi_Wsize * 2; j += 2) {
+                                    writer.write(new BigInteger(spi_Wreg.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                    writer.write(new BigInteger(spi_Wreg.charAt(j) + "", 16).toByteArray()[0]);
+
+                                    writer.write(new BigInteger(spi_Wdata.charAt(j + 1) + "", 16).toByteArray()[0]);
+                                    writer.write(new BigInteger(spi_Wdata.charAt(j) + "", 16).toByteArray()[0]);
+                                }
+                            }
+
+                            
+
                             break;
                         default:
                             break;
@@ -461,6 +493,8 @@ public class FXMLDocumentController implements Initializable {
             String line = "";
             int g = 0;
             int h = 0;
+            int i = 0;
+            int j = 0;
             while (true) {
 
                 char c = (char) reader.read();
@@ -508,11 +542,13 @@ public class FXMLDocumentController implements Initializable {
                         line = "";
                         break;
                     case 'i':
-                        sensor_value[8][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[8][i] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        i++;
                         line = "";
                         break;
                     case 'j':
-                        sensor_value[9][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        sensor_value[9][j] = Short.parseShort(new StringBuffer(line).reverse().toString());
+                        j++;
                         line = "";
                         break;
                     case 'x':
@@ -520,6 +556,8 @@ public class FXMLDocumentController implements Initializable {
                         mutex.acquire();
                         g = 0;
                         h = 0;
+                        i = 0;
+                        j = 0;
                         sql.add_value(sensor_value, sensor_on, id, i2c_size);
                         mutex.release();
                         writer.write(0);

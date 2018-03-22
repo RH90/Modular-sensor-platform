@@ -169,15 +169,16 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type, String write_data, String read_addr) throws SQLException {
+    public void add_sensor(String name, String sensing_type,String write_addr, String write_data, String read_addr) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,"
-                + "Write_data,Read_addr) VALUES (?,?,?,?,?)";
+                + "Write_addr,Write_data,Read_addr) VALUES (?,?,?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "SPI");
         ps.setString(3, sensing_type);
-        ps.setString(4, write_data);
-        ps.setString(5, read_addr);
+        ps.setString(4, write_addr);
+        ps.setString(5, write_data);
+        ps.setString(6, read_addr);
         ps.executeUpdate();
     }
 

@@ -52,6 +52,8 @@ public class New_SensorController implements Initializable {
     @FXML
     private Text label_i2c_read;
     @FXML
+    private Text label_spi_data1;
+    @FXML
     private Text label_spi_data;
     @FXML
     private Text label_spi_read;
@@ -86,6 +88,8 @@ public class New_SensorController implements Initializable {
     @FXML
     private TextField tfc3;
     @FXML
+    private TextField tfc31;
+    @FXML
     private TextField tfc4;
     @FXML
     private ChoiceBox cba;
@@ -93,6 +97,7 @@ public class New_SensorController implements Initializable {
     private String i2c_write_reg = "";
     private String i2c_write_data = "";
     private String i2c_read_reg = "";
+    private String spi_write_reg = "";
     private String spi_write_data = "";
     private String spi_read_reg = "";
 
@@ -120,13 +125,13 @@ public class New_SensorController implements Initializable {
                     b = new BigInteger(tfb5.getText(), 16).toByteArray();
                     int num = Integer.parseInt(button.getText().charAt(0) + "");
                     if (num < 7) {
-                    label_i2c_addr.setText(num + 1 + "" + ". Write address");
-                    label_i2c_data.setText(num + 1 + "" + ". Write data");
-                    i2c_write_reg += tfb4.getText();
-                    i2c_write_data += tfb5.getText();
-                    button.setText(num+ 1 + "" + ". Next");
-                    tfb4.setText("");
-                    tfb5.setText("");
+                        label_i2c_addr.setText(num + 1 + "" + ". Write address");
+                        label_i2c_data.setText(num + 1 + "" + ". Write data");
+                        i2c_write_reg += tfb4.getText();
+                        i2c_write_data += tfb5.getText();
+                        button.setText(num + 1 + "" + ". Next");
+                        tfb4.setText("");
+                        tfb5.setText("");
                     }
                 } catch (Exception ex) {
 
@@ -147,8 +152,41 @@ public class New_SensorController implements Initializable {
 
                 }
             }
+
         } else if (id.equalsIgnoreCase("button_spi_write")) {
+            if (tfc3.getText().length() == 2 && tfc31.getText().length() == 2) {
+                try {
+                    b = new BigInteger(tfc3.getText(), 16).toByteArray();
+                    b = new BigInteger(tfc31.getText(), 16).toByteArray();
+                    int num = Integer.parseInt(button.getText().charAt(0) + "");
+                    if (num < 7) {
+                        label_spi_data.setText(num + 1 + "" + ". Write address");
+                        label_spi_data1.setText(num + 1 + "" + ". Write data");
+                        spi_write_reg += tfc3.getText();
+                        spi_write_data += tfc31.getText();
+                        button.setText(num + 1 + "" + ". Next");
+                        tfc3.setText("");
+                        tfc31.setText("");
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
         } else if (id.equalsIgnoreCase("button_spi_read")) {
+            if (tfc4.getText().length() == 2) {
+                try {
+                    b = new BigInteger(tfc4.getText(), 16).toByteArray();
+                    int num = Integer.parseInt(button.getText().charAt(0) + "");
+                    if (num < 7) {
+                        button.setText(num + 1 + "" + ". Next");
+                        label_spi_read.setText(num + 1 + "" + ". Read address");
+                        spi_read_reg += tfc4.getText();
+                        tfc4.setText("");
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
         }
     }
 
@@ -192,9 +230,9 @@ public class New_SensorController implements Initializable {
                     if (tfb6.getText().length() == 2) {
                         b = new BigInteger(tfb6.getText(), 16).toByteArray();
                     }
-                    i2c_write_reg+=tfb4.getText();
-                    i2c_write_data+=tfb5.getText();
-                    i2c_read_reg+=tfb6.getText();
+                    i2c_write_reg += tfb4.getText();
+                    i2c_write_data += tfb5.getText();
+                    i2c_read_reg += tfb6.getText();
                     sql.add_sensor(tfb1.getText(), tfb2.getText(), tfb3.getText(), i2c_write_reg, i2c_write_data, i2c_read_reg);
                     lb.setText("Sensor added!");
                 } catch (Exception ex) {
@@ -212,18 +250,27 @@ public class New_SensorController implements Initializable {
             lc.setText("Insufficent data!");
         } else {
 
-            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0 && tfc4.getText().length() == 2 || tfc4.getText().length() == 0) {
+            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0 && 
+                    tfc31.getText().length() == 2 || tfc31.getText().length() == 0 &&
+                    tfc4.getText().length() == 2 || tfc4.getText().length() == 0) {
                 try {
                     byte[] b;
                     if (tfc3.getText().length() == 2) {
                         b = new BigInteger(tfc3.getText(), 16).toByteArray();
                     }
+                    if (tfc31.getText().length() == 2) {
+                        b = new BigInteger(tfc31.getText(), 16).toByteArray();
+                    }
                     if (tfc4.getText().length() == 2) {
                         b = new BigInteger(tfc4.getText(), 16).toByteArray();
                     }
-                    sql.add_sensor(tfc1.getText(), tfc2.getText(), tfc3.getText(), tfc4.getText(), "", "");
+                    spi_read_reg += tfc4.getText();
+                    spi_write_data += tfc3.getText();
+                    spi_write_reg += tfc31.getText();
+                    sql.add_sensor(tfc1.getText(), tfc2.getText(),spi_write_reg,spi_write_data, spi_read_reg);
                     lc.setText("Sensor added!");
                 } catch (SQLException ex) {
+                    ex.printStackTrace();
                     lc.setText("Error!");
                 }
             }

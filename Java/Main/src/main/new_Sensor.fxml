@@ -32,10 +32,11 @@
       <TextField fx:id="tfc2" layoutX="353.0" layoutY="92.0" />
       <Text fx:id="label_i2c_data" layoutX="185.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Write data" />
       <Text fx:id="label_i2c_read" layoutX="184.0" layoutY="298.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Read address" />
-      <Text fx:id="label_spi_data" layoutX="354.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Write data" />
-      <TextField fx:id="tfc3" layoutX="354.0" layoutY="134.0" />
-      <Text fx:id="label_spi_read" layoutX="354.0" layoutY="204.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Read address" />
-      <TextField fx:id="tfc4" layoutX="354.0" layoutY="205.0" />
+      <Text fx:id="label_spi_data" layoutX="353.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Write data" />
+      <TextField fx:id="tfc31" layoutX="352.0" layoutY="137.0" />
+      <TextField fx:id="tfc3" layoutX="354.0" layoutY="188.0" />
+      <Text fx:id="label_spi_read" layoutX="354.0" layoutY="252.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Read address" />
+      <TextField fx:id="tfc4" layoutX="352.0" layoutY="256.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="441.0" layoutX="169.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="441.0" layoutX="339.0" layoutY="-3.0" stroke="BLACK" strokeType="INSIDE" width="11.0" />
       <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Analog/digital">
@@ -62,7 +63,8 @@
       <Label fx:id="lc" layoutX="369.0" layoutY="382.0" />
       <Button fx:id="button_i2c_write" layoutX="282.0" layoutY="239.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
       <Button fx:id="button_i2c_read" layoutX="282.0" layoutY="328.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
-      <Button fx:id="button_spi_write" layoutX="449.0" layoutY="163.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
-      <Button fx:id="button_spi_read" layoutX="449.0" layoutY="230.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
+      <Button fx:id="button_spi_write" layoutX="449.0" layoutY="214.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
+      <Button fx:id="button_spi_read" layoutX="449.0" layoutY="281.0" mnemonicParsing="false" onAction="#next" text="1. Next" />
+      <Text fx:id="label_spi_data1" layoutX="353.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Write address" />
    </children>
 </AnchorPane>

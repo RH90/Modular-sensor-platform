@@ -26,8 +26,16 @@ struct I2C_struct{
 	 uint8_t volatile W_reg;
 	 uint8_t volatile W_data;
 	};
+struct SPI_struct{
+	uint8_t volatile R_size;
+	uint8_t volatile R_reg[6];
+	uint8_t volatile W_size;
+	uint8_t volatile W_reg;
+	uint8_t volatile W_data;
+	};
 
 struct I2C_struct I2C[2];
+struct SPI_struct SPI[2];
 volatile uint8_t SPI1_reg;
 volatile uint8_t SPI2_reg;
 
@@ -73,6 +81,44 @@ void Timer1init() {
 	// 3125=0.2 s
 	sei();
 }
+uint8_t spi_tranceiver (uint8_t data)
+{
+	// Load data into the buffer
+	//PORTB&= (1<<pinnmr);
+	SPDR = data;
+	
+	//Wait until transmission complete
+	while(!(SPSR & (1<<SPIF) ));
+	
+	//data = SPDR;
+	
+	//PORTB|= (1<<pinnmr);
+	
+	// Return received data
+	return(SPDR);
+}
+
+void spi_init_master (void)
+{
+	// Set MOSI, SCK as Output
+	DDRB |= (1<<7)|(1<<5)|(1<<4);
+	DDRB &= ~(1<<6);
+	PORTB|=(1<<4);
+	
+	// Enable SPI, Set as Master
+	//Prescaler: Fosc/16, Enable Interrupts (1<<SPR0)
+	SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+}
+void ReadSPI(uint8_t reg,char c) {
+	int temp;
+	PORTB &= ~(1<<4);
+	spi_tranceiver(reg); // Call on register address for MSB temperature byte
+	temp = spi_tranceiver(0xFF); // Exchange a garbage byte for the temperature byte
+	PORTB |= (1<<4);
+	//return temp; // Return the 8 bit temperature
+	print(temp,c);
+}
+
 uint16_t adc_read(uint8_t ch)
 {
 	// select the corresponding channel 0~7
@@ -150,9 +196,30 @@ void session_init(){
 				}
 			}
 	}
-	SPI1_reg=read_pair();
-	SPI2_reg=read_pair();
 	
+	int j=0;
+	for (j;j<2;j++)
+	{
+		SPI[j].R_reg[0]=read_pair();
+		if(SPI[j].R_reg[0]!=pass)
+		{
+		SPI[j].R_size=serialRead();
+		SPI[j].W_size=serialRead();
+		int k=1;
+		for (k;k<SPI[j].R_size;k++)
+		{
+			SPI[j].R_reg[k]=read_pair();
+		}
+		int l=0;
+		for (l;l<SPI[j].W_size;l++)
+		{
+			PORTB &= ~(1<<4);
+			spi_tranceiver(read_pair()); //7a Call on register address for MSB temperature byte
+			spi_tranceiver(read_pair()); // Exchange a garbage byte for the temperature byte
+			PORTB |= (1<<4);
+		}
+	}	
+	}	
 	//read =serialRead();
 	//read =serialRead();
 
@@ -162,6 +229,7 @@ void session_init(){
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
+	spi_init_master();
 	adc_init();
 	serial_init(MYUBRR);
 	i2c_init();
@@ -250,6 +318,21 @@ ISR(TIMER1_COMPA_vect)
 					I2C_sensor(I2C[l].addr,I2C[l].R_reg[h],'g');
 					if(l==1)
 					I2C_sensor(I2C[l].addr,I2C[l].R_reg[h],'h');
+				}
+			}
+		}
+		int h=0;
+		for (h;h<2;h++)
+		{
+			if(SPI[h].R_reg[0]!=pass){
+				int v=0;
+				for (v;v<SPI[h].R_size;v++)
+				{
+					//I2C[0].R_reg[h]
+					if(h==0)
+					ReadSPI(SPI[h].R_reg[v],'i');
+					if(h==1)
+					ReadSPI(SPI[h].R_reg[v],'j');
 				}
 			}
 		}
