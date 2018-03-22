@@ -124,7 +124,11 @@ public class FXMLDocumentController implements Initializable {
                                     if (j == 6 || j == 7) {
                                         String ss = "";
                                         for (int k = 0; k < i2c_size[j - 6]; k++) {
-                                            ss += sensor_value[j][k] + "\n";
+                                            if (k % 2 == 0 && k != 0) {
+                                                ss += "\n";
+                                            }
+                                            ss += String.format("%d: %-6s", k, sensor_value[j][k]);
+
                                         }
                                         Label_list_b.get(j).setText(ss);
                                     } else {
@@ -296,7 +300,10 @@ public class FXMLDocumentController implements Initializable {
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
             for (int i = 0; i < sensor_value.length; i++) {
-                sensor_value[i][0] = 0;
+                for (int j = 0; j < 6; j++) {
+                    sensor_value[i][j] = 0;
+                }
+                
             }
         }
     }
@@ -398,6 +405,7 @@ public class FXMLDocumentController implements Initializable {
                             String c = sql.getWData(id[i]);
                             String d = sql.getReg(id[i]);
                             i2c_size[i - 6] = d.length() / 2;
+                            int W_size=b.length()/2;
                             System.out.println("i2c_size: " + i2c_size[i - 6]);
                             if (b.equalsIgnoreCase("")) {
                                 b = "ff";
@@ -409,21 +417,22 @@ public class FXMLDocumentController implements Initializable {
                             System.out.println("b: " + b);
                             System.out.println("c: " + c);
                             System.out.println("d: " + d);
-
+                            
                             writer.write(new BigInteger(a.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(a.charAt(0) + "", 16).toByteArray()[0]);
-
+                            System.out.println("w_size: "+W_size);
                             writer.write(i2c_size[i - 6]);
-                            writer.write(1);
-
+                            writer.write(W_size);
+                            if(W_size>0){
                             writer.write(new BigInteger(b.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(b.charAt(0) + "", 16).toByteArray()[0]);
-                            
+
                             writer.write(new BigInteger(c.charAt(1) + "", 16).toByteArray()[0]);
                             writer.write(new BigInteger(c.charAt(0) + "", 16).toByteArray()[0]);
-                            
-                            
-                            for (int j = 0; j < i2c_size[i - 6]; j += 2) {
+                            }
+
+                            for (int j = 0; j < i2c_size[i - 6] * 2; j += 2) {
+                                System.out.println("h: " + d.charAt(j) + d.charAt(j + 1));
                                 writer.write(new BigInteger(d.charAt(j + 1) + "", 16).toByteArray()[0]);
                                 writer.write(new BigInteger(d.charAt(j) + "", 16).toByteArray()[0]);
                             }
@@ -485,7 +494,7 @@ public class FXMLDocumentController implements Initializable {
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
                         System.out.println(tmp);
                         //System.out.println("Acc: " + tmp);
-                        
+
                         sensor_value[6][g] = (short) tmp;
                         g++;
                         line = "";

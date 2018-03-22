@@ -63,8 +63,14 @@
         <Label layoutX="364.0" layoutY="46.0" text="7" />
         <Label layoutX="473.0" layoutY="51.0" text="9" />
         <Label layoutX="469.0" layoutY="141.0" text="10" />
-        <Label fx:id="l1b" layoutX="244.0" layoutY="184.0" text="0" />
-        <Label fx:id="l8b" layoutX="353.0" layoutY="186.0" text="0" />
+        <Label fx:id="l1b" layoutX="228.0" layoutY="178.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+        <Label fx:id="l8b" layoutX="335.0" layoutY="178.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
         <Button fx:id="Start" layoutX="433.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="51.0" prefWidth="77.0" text="Start">
             <effect>
                 <Lighting bumpInput="$null" diffuseConstant="2.0">
@@ -74,7 +80,10 @@
                 </Lighting>
             </effect>
         </Button>
-        <Label fx:id="l2b" layoutX="148.0" layoutY="184.0" text="0" />
+        <Label fx:id="l2b" layoutX="130.0" layoutY="178.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
         <Ellipse fill="DODGERBLUE" layoutX="232.0" layoutY="315.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="51.0" layoutX="175.0" layoutY="264.0" stroke="DODGERBLUE" strokeType="INSIDE" width="113.0" />
         <Ellipse fill="DODGERBLUE" layoutX="232.0" layoutY="265.0" radiusX="57.0" radiusY="12.0" stroke="BLACK" strokeType="INSIDE" />
@@ -86,10 +95,16 @@
         <Label fx:id="lib" layoutX="27.0" layoutY="300.0" textAlignment="CENTER" />
         <Rectangle fx:id="b6" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="63.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
         <Label layoutX="64.0" layoutY="46.0" text="6" />
-        <Label fx:id="l6b" layoutX="50.0" layoutY="91.0" text="0" />
+        <Label fx:id="l6b" layoutX="32.0" layoutY="83.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
         <Rectangle fx:id="b3" arcHeight="5.0" arcWidth="5.0" fill="#cc6262" height="73.0" layoutX="29.0" layoutY="156.0" onMouseClicked="#search_sensor" stroke="BLACK" strokeType="INSIDE" width="77.0" />
         <Label layoutX="64.0" layoutY="139.0" text="3" />
-        <Label fx:id="l3b" layoutX="50.0" layoutY="184.0" text="0" />
+        <Label fx:id="l3b" layoutX="32.0" layoutY="178.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
         <Label fx:id="L212" layoutX="30.0" layoutY="13.0" prefHeight="46.0" prefWidth="264.0" text="ANALOG/DIGITAL">
             <font>
                 <Font name="System Bold" size="31.0" />
@@ -117,11 +132,26 @@
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label fx:id="l7b" layoutX="350.0" layoutY="91.0" text="0" />
-        <Label fx:id="l4b" layoutX="244.0" layoutY="91.0" text="0" />
-        <Label fx:id="l5b" layoutX="148.0" layoutY="91.0" text="0" />
-        <Label fx:id="l9b" layoutX="466.0" layoutY="91.0" text="0" />
-        <Label fx:id="l10b" layoutX="466.0" layoutY="186.0" text="0" />
+        <Label fx:id="l7b" layoutX="332.0" layoutY="83.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+        <Label fx:id="l4b" layoutX="229.0" layoutY="82.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+        <Label fx:id="l5b" layoutX="130.0" layoutY="83.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+        <Label fx:id="l9b" layoutX="443.0" layoutY="91.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+        <Label fx:id="l10b" layoutX="443.0" layoutY="178.0" text="0">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
         
         <Label fx:id="l1a" layoutX="229.0" layoutY="163.0" text="No Sensor ">
             <font>

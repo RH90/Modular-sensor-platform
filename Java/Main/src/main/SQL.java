@@ -230,6 +230,7 @@ public class SQL {
                     + "Sensor_id INT,"
                     + "Date TIMESTAMP,"
                     + "Value INT, "
+                    +  "Value_nr INT,"
                     + "Session INT,"
                     + "PRIMARY KEY(id),"
                     + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";

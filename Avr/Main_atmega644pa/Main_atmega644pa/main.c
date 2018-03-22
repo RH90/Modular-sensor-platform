@@ -140,9 +140,7 @@ void session_init(){
 				for (j;j<I2C[i].W_size;j++)
 				{
 					I2C[i].W_reg=read_pair();
-					
 					I2C[i].W_data=read_pair();
-					
 					I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
 				}
 				int k=0;
@@ -220,15 +218,6 @@ void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 	dat = (uint8_t *)malloc(sizeof(uint8_t));
 	i2c_readReg(addr,read_reg,dat,1);
 	//serialWrite(data[0]);
-	print(addr,'g');
-	serialWrite('x');
-	_delay_ms(4000);
-	print(read_reg,'g');
-	serialWrite('x');
-	_delay_ms(4000);
-	print(*dat,'g');
-	serialWrite('x');
-	_delay_ms(4000);
 	print(*dat,id);
 	free(dat);
 	
@@ -249,15 +238,22 @@ ISR(TIMER1_COMPA_vect)
 		Analog_digital_sensor(3,A4,'d');
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
-		
-		if(I2C[0].addr!=pass){
-			int h=0;
-			for (h;h<I2C[0].R_size;h++)
-			{
-				//I2C[0].R_reg[h]
-				I2C_sensor(0x32,0x20,'g');
+		int l=0;
+		for (l;l<2;l++)
+		{
+			if(I2C[l].addr!=pass){
+				int h=0;
+				for (h;h<I2C[l].R_size;h++)
+				{
+					//I2C[0].R_reg[h]
+					if(l==0)
+					I2C_sensor(I2C[l].addr,I2C[l].R_reg[h],'g');
+					if(l==1)
+					I2C_sensor(I2C[l].addr,I2C[l].R_reg[h],'h');
+				}
 			}
 		}
+		
 		serialWrite('x');
 		if(serialRead()){
 			session_init();
