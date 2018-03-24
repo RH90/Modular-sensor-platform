@@ -94,31 +94,37 @@ public class SQL {
     }
 
     public String getMethod(int id) throws SQLException {
-        rs = stmt.executeQuery("select Reading_method from sensors where Sensor_id=" + id);
+        rs = stmt.executeQuery("select Reading_method from Analog_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
     public String getAddr(int id) throws SQLException {
-        rs = stmt.executeQuery("select I2c_Address from sensors where Sensor_id=" + id);
+        rs = stmt.executeQuery("select I2c_Address from i2c_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
     public String getReg(int id) throws SQLException {
-        rs = stmt.executeQuery("select Read_addr from sensors where Sensor_id=" + id);
+        rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
+        rs.first();
+        rs = stmt.executeQuery("select Read_addr from "+rs.getString(1)+"_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
     public String getWReg(int id) throws SQLException {
-        rs = stmt.executeQuery("select Write_addr from sensors where Sensor_id=" + id);
+        rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
+        rs.first();
+        rs = stmt.executeQuery("select Write_addr from "+rs.getString(1)+"_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
     public String getWData(int id) throws SQLException {
-        rs = stmt.executeQuery("select Write_data from sensors where Sensor_id=" + id);
+        rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
+        rs.first();
+        rs = stmt.executeQuery("select Write_data from "+rs.getString(1)+"_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
@@ -147,39 +153,65 @@ public class SQL {
     }
 
     public void add_sensor(String name, String sensing_type, String reading_method) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,Reading_method) VALUES (?,?,?,?)";
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "Analog_digital");
         ps.setString(3, sensing_type);
-        ps.setString(4, reading_method);
+        ps.executeUpdate();
+        rs =stmt.executeQuery("select sensor_id from sensors");
+        rs.last();
+        int sensorID =rs.getInt(1);
+        
+        query = "INSERT INTO analog_sensors (Reading_method,sensor_id) VALUES (?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, reading_method);
+        ps.setInt(2, sensorID);
         ps.executeUpdate();
     }
 
     public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,I2c_Address,"
-                + "Write_addr,Write_data,Read_addr) VALUES (?,?,?,?,?,?,?)";
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "I2C");
         ps.setString(3, sensing_type);
-        ps.setString(4, I2C_addr);
-        ps.setString(5, write_addr);
-        ps.setString(6, write_data);
-        ps.setString(7, read_addr);
+        ps.executeUpdate();
+        rs =stmt.executeQuery("select sensor_id from sensors");
+        rs.last();
+        int sensorID =rs.getInt(1);
+        
+        
+        query = "INSERT INTO I2C_sensors (I2c_Address,"
+                + "Write_addr,Write_data,Read_addr,sensor_id) VALUES (?,?,?,?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, I2C_addr);
+        ps.setString(2, write_addr);
+        ps.setString(3, write_data);
+        ps.setString(4, read_addr);
+        ps.setInt(5, sensorID);
         ps.executeUpdate();
     }
 
     public void add_sensor(String name, String sensing_type, String write_addr, String write_data, String read_addr) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,"
-                + "Write_addr,Write_data,Read_addr) VALUES (?,?,?,?,?,?)";
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "SPI");
         ps.setString(3, sensing_type);
-        ps.setString(4, write_addr);
-        ps.setString(5, write_data);
-        ps.setString(6, read_addr);
+        ps.executeUpdate();
+        rs =stmt.executeQuery("select sensor_id from sensors");
+        rs.last();
+        int sensorID =rs.getInt(1);
+        
+        
+        
+        query = "INSERT INTO SPI_Sensors (Write_addr,Write_data,Read_addr,sensor_id) VALUES (?,?,?,?)";
+        ps = con.prepareStatement(query);
+        ps.setString(1, write_addr);
+        ps.setString(2, write_data);
+        ps.setString(3, read_addr);
+        ps.setInt(4, sensorID);
         ps.executeUpdate();
     }
 
@@ -229,7 +261,7 @@ public class SQL {
                     + "Write_addr VARCHAR(12),"
                     + "Write_data VARCHAR(12),"
                     + "Read_addr VARCHAR(12),"
-                    + "PRIMARY KEY(id))"
+                    + "PRIMARY KEY(id),"
                     + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
@@ -239,7 +271,7 @@ public class SQL {
                     + "Write_addr VARCHAR(12),"
                     + "Write_data VARCHAR(12),"
                     + "Read_addr VARCHAR(12),"
-                    + "PRIMARY KEY(id))"
+                    + "PRIMARY KEY(id),"
                     + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
@@ -247,7 +279,7 @@ public class SQL {
                     + "id INT(64) NOT NULL AUTO_INCREMENT,"
                     + "Sensor_id INT(64),"
                     + "Reading_method VARCHAR(25),"
-                    + "PRIMARY KEY(id))"
+                    + "PRIMARY KEY(id),"
                     + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
@@ -300,45 +332,45 @@ public class SQL {
                         + "PRIMARY KEY(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            if(db2){
+            if (db2) {
                 stmt = con.createStatement();
                 String myTableName
-                = "CREATE TABLE I2C_Sensors ("
-                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
-                    + "Sensor_id INT(64),"
-                    + "I2c_Address VARCHAR(4),"
-                    + "Write_addr VARCHAR(12),"
-                    + "Write_data VARCHAR(12),"
-                    + "Read_addr VARCHAR(12),"
-                    + "PRIMARY KEY(id))"
-                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                        = "CREATE TABLE I2C_Sensors ("
+                        + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                        + "Sensor_id INT(64),"
+                        + "I2c_Address VARCHAR(4),"
+                        + "Write_addr VARCHAR(12),"
+                        + "Write_data VARCHAR(12),"
+                        + "Read_addr VARCHAR(12),"
+                        + "PRIMARY KEY(id),"
+                        + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            if(db3){
+            if (db3) {
                 stmt = con.createStatement();
                 String myTableName
-                = "CREATE TABLE SPI_Sensors ("
-                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
-                    + "Sensor_id INT(64),"
-                    + "Write_addr VARCHAR(12),"
-                    + "Write_data VARCHAR(12),"
-                    + "Read_addr VARCHAR(12),"
-                    + "PRIMARY KEY(id))"
-                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                        = "CREATE TABLE SPI_Sensors ("
+                        + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                        + "Sensor_id INT(64),"
+                        + "Write_addr VARCHAR(12),"
+                        + "Write_data VARCHAR(12),"
+                        + "Read_addr VARCHAR(12),"
+                        + "PRIMARY KEY(id),"
+                        + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            if(db4){
+            if (db4) {
                 stmt = con.createStatement();
                 String myTableName
-                 = "CREATE TABLE Analog_Sensors ("
-                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
-                    + "Sensor_id INT(64),"
-                    + "Reading_method VARCHAR(25),"
-                    + "PRIMARY KEY(id))"
-                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                        = "CREATE TABLE Analog_Sensors ("
+                        + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                        + "Sensor_id INT(64),"
+                        + "Reading_method VARCHAR(25),"
+                        + "PRIMARY KEY(id),"
+                        + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            
+
             if (db5) {
                 stmt = con.createStatement();
                 String myTableName
@@ -353,7 +385,6 @@ public class SQL {
                         + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            
 
         }
 

@@ -579,6 +579,7 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception ex) {
 //            writer.write(1);
 //            writer.flush();
+            ex.printStackTrace();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }
