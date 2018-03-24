@@ -51,8 +51,6 @@ public class Get_sensorController implements Initializable {
         // TODO
 //        getString();
         System.out.println("url: " + url.getPath());
-        lv.setStyle("-fx-font-name:Consolas;-fx-font-size:12");
-        // FXMLDocumentController.Label_list_a.get(0).setText("hellp");
         SQL sql = new SQL();
 
         try {
@@ -65,34 +63,13 @@ public class Get_sensorController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
         lv.setItems(list);
-//        VirtualFlow ch = (VirtualFlow) lv.getChildrenUnmodifiable();
-//        for (int i = 0; i < ch.getCellCount(); i++) {
-//            System.out.println("he");
-//            Cell cell = ch.getCell(i);
-//            Font anyfont = new Font("Consolas", 12);
-//            cell.setFont(anyfont);
-//        }
+        
         Font anyfont = new Font("Consolas", 12);
-        lv.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
-
-            // @Override
-            public ListCell<Object> call(final ListView<Object> param) {
-                final ListCell<Object> cell = new ListCell<Object>() {
-                    @Override
-                    protected void updateItem(final Object item, final boolean empty) {
-                        if (isEmpty()) {
-                            setFont(anyfont);
-                            setText((String) item);
-                            super.updateItem(item, empty);
-
-                            //  setStyle("-fx-font-name: Consolas");
-                        }
-                    }
-                };
-                return cell;
-            }
-        });
+        lv.setCellFactory(new CallbackImpl(anyfont));
         System.out.println("node: " + getNode());
     }
 
@@ -128,6 +105,29 @@ public class Get_sensorController implements Initializable {
         FXMLDocumentController.list_string_a[s - 1] = "No sensor!";
         ((Node) (event.getSource())).getScene().getWindow().hide();
 
+    }
+
+    private class CallbackImpl implements Callback<ListView<Object>, ListCell<Object>> {
+
+        private final Font anyfont;
+
+        public CallbackImpl(Font anyfont) {
+            this.anyfont = anyfont;
+        }
+
+        // @Override
+        @Override
+        public ListCell<Object> call(final ListView<Object> param) {
+            final ListCell<Object> cell = new ListCell<Object>() {
+                @Override
+                protected void updateItem(final Object item, final boolean empty) {
+                    super.updateItem(item, empty);
+                    setFont(anyfont);
+                    setText((String) item);
+                }
+            };
+            return cell;
+        }
     }
 
 }

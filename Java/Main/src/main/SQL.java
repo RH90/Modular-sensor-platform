@@ -53,7 +53,7 @@ public class SQL {
                     for (int i = 0; i < sensor_value.length; i++) {
                         if (sensor_on[i]) {
                             if (i == 6 || i == 7) {
-                                for (int j = 0; j < i2c_size[i-6]; j++) {
+                                for (int j = 0; j < i2c_size[i - 6]; j++) {
                                     short value = sensor_value[i][j];
                                     ps.setString(1, id[i] + "");
                                     ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
@@ -139,6 +139,7 @@ public class SQL {
         while (rs.next()) {
             String format = String.format("%4s¤ %-16s ¤ %-10s", rs.getString(1), rs.getString(2), rs.getString(3));
             list.add(format);
+
             System.out.println(rs.getString(1) + "  : " + rs.getString(2));
         }
         return list;
@@ -169,7 +170,7 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type,String write_addr, String write_data, String read_addr) throws SQLException {
+    public void add_sensor(String name, String sensing_type, String write_addr, String write_data, String read_addr) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,"
                 + "Write_addr,Write_data,Read_addr) VALUES (?,?,?,?,?,?)";
         ps = con.prepareStatement(query);
@@ -218,12 +219,36 @@ public class SQL {
                     + "Sensing_type VARCHAR(25),"
                     + "Name VARCHAR(25),"
                     + "Interface VARCHAR(25),"
-                    + "Reading_method VARCHAR(25),"
+                    + "PRIMARY KEY(Sensor_id))";
+            stmt.executeUpdate(myTableName);
+            myTableName
+                    = "CREATE TABLE I2C_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
                     + "I2c_Address VARCHAR(4),"
                     + "Write_addr VARCHAR(12),"
                     + "Write_data VARCHAR(12),"
                     + "Read_addr VARCHAR(12),"
-                    + "PRIMARY KEY(Sensor_id))";
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+            stmt.executeUpdate(myTableName);
+            myTableName
+                    = "CREATE TABLE SPI_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
+                    + "Write_addr VARCHAR(12),"
+                    + "Write_data VARCHAR(12),"
+                    + "Read_addr VARCHAR(12),"
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+            stmt.executeUpdate(myTableName);
+            myTableName
+                    = "CREATE TABLE Analog_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
+                    + "Reading_method VARCHAR(25),"
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
                     = "CREATE TABLE Sensor_Sessions ("
@@ -231,7 +256,7 @@ public class SQL {
                     + "Sensor_id INT,"
                     + "Date TIMESTAMP,"
                     + "Value INT, "
-                    +  "Value_nr INT,"
+                    + "Value_nr INT,"
                     + "Session INT,"
                     + "PRIMARY KEY(id),"
                     + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
@@ -242,14 +267,27 @@ public class SQL {
             rs.beforeFirst();
             boolean db1 = true;
             boolean db2 = true;
+            boolean db3 = true;
+            boolean db4 = true;
+            boolean db5 = true;
             while (rs.next()) {
                 System.out.println(rs.getString(1));
-                if (rs.getString(1).equalsIgnoreCase("Sensor_Sessions")) {
-                    db2 = false;
-                }
                 if (rs.getString(1).equalsIgnoreCase("Sensors")) {
                     db1 = false;
                 }
+                if (rs.getString(1).equalsIgnoreCase("I2C_Sensors")) {
+                    db2 = false;
+                }
+                if (rs.getString(1).equalsIgnoreCase("SPI_Sensors")) {
+                    db3 = false;
+                }
+                if (rs.getString(1).equalsIgnoreCase("Analog_Sensors")) {
+                    db4 = false;
+                }
+                if (rs.getString(1).equalsIgnoreCase("Sensor_Sessions")) {
+                    db5 = false;
+                }
+
             }
             if (db1) {
                 stmt = con.createStatement();
@@ -259,15 +297,49 @@ public class SQL {
                         + "Sensing_type VARCHAR(25),"
                         + "Name VARCHAR(25),"
                         + "Interface VARCHAR(25),"
-                        + "Reading_method VARCHAR(25),"
-                        + "I2c_Address VARCHAR(4),"
-                        + "Write_addr VARCHAR(12),"
-                        + "Write_data VARCHAR(12),"
-                        + "Read_addr VARCHAR(12),"
                         + "PRIMARY KEY(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
-            if (db2) {
+            if(db2){
+                stmt = con.createStatement();
+                String myTableName
+                = "CREATE TABLE I2C_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
+                    + "I2c_Address VARCHAR(4),"
+                    + "Write_addr VARCHAR(12),"
+                    + "Write_data VARCHAR(12),"
+                    + "Read_addr VARCHAR(12),"
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                stmt.executeUpdate(myTableName);
+            }
+            if(db3){
+                stmt = con.createStatement();
+                String myTableName
+                = "CREATE TABLE SPI_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
+                    + "Write_addr VARCHAR(12),"
+                    + "Write_data VARCHAR(12),"
+                    + "Read_addr VARCHAR(12),"
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                stmt.executeUpdate(myTableName);
+            }
+            if(db4){
+                stmt = con.createStatement();
+                String myTableName
+                 = "CREATE TABLE Analog_Sensors ("
+                    + "id INT(64) NOT NULL AUTO_INCREMENT,"
+                    + "Sensor_id INT(64),"
+                    + "Reading_method VARCHAR(25),"
+                    + "PRIMARY KEY(id))"
+                    + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
+                stmt.executeUpdate(myTableName);
+            }
+            
+            if (db5) {
                 stmt = con.createStatement();
                 String myTableName
                         = "CREATE TABLE Sensor_Sessions ("
@@ -281,6 +353,7 @@ public class SQL {
                         + "FOREIGN KEY (Sensor_id) REFERENCES sensors(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }
+            
 
         }
 

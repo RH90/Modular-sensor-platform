@@ -1,0 +1,8 @@
+Sensor_id,Sensing_type,Name,Interface,Reading_method,I2c_Address,Write_addr,Write_data,Read_addr
+42,uv,si1145,I2C,NULL,c0,1807171818,0117f1a10f,222324
+46,temp,bmp280,SPI,NULL,NULL,74,4b,fafb
+47,acc,lm,I2C,NULL,30,20,37,292b2d
+48,mag,lm,I2C,NULL,3c,02,00,030405060708
+49,proximity,Ultrasonic,Analog_digital,Pulse,NULL,NULL,NULL,NULL
+50,lux,lux,Analog_digital,"Simple Read",NULL,NULL,NULL,NULL
+51,pressure,bmp,SPI,NULL,NULL,74,2b,f7f8
