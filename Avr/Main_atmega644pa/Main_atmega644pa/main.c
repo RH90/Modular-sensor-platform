@@ -101,20 +101,22 @@ uint8_t spi_tranceiver (uint8_t data)
 void spi_init_master (void)
 {
 	// Set MOSI, SCK as Output
-	DDRB |= (1<<7)|(1<<5)|(1<<4);
+	DDRB |= (1<<7)|(1<<5)|(1<<4)|(1<<0)|(1<<1);
 	DDRB &= ~(1<<6);
-	PORTB|=(1<<4);
+	PORTB|=(1<<4)|(1<<0)|(1<<1);
 	
 	// Enable SPI, Set as Master
 	//Prescaler: Fosc/16, Enable Interrupts (1<<SPR0)
-	SPCR |= (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	SPCR |= (1<<SPE)|(1<<MSTR);
 }
-void ReadSPI(uint8_t reg,char c) {
+void ReadSPI(uint8_t reg,char c,uint8_t pin) {
 	int temp;
 	PORTB &= ~(1<<4);
+	PORTB &= ~(1<<pin);
 	spi_tranceiver(reg); // Call on register address for MSB temperature byte
 	temp = spi_tranceiver(0xFF); // Exchange a garbage byte for the temperature byte
 	PORTB |= (1<<4);
+	PORTB |= (1<<pin);
 	//return temp; // Return the 8 bit temperature
 	print(temp,c);
 }
@@ -214,9 +216,11 @@ void session_init(){
 		for (l;l<SPI[j].W_size;l++)
 		{
 			PORTB &= ~(1<<4);
+			PORTB &= ~(1<<j);
 			spi_tranceiver(read_pair()); //7a Call on register address for MSB temperature byte
 			spi_tranceiver(read_pair()); // Exchange a garbage byte for the temperature byte
 			PORTB |= (1<<4);
+			PORTB |= (1<<j);
 		}
 	}	
 	}	
@@ -330,9 +334,9 @@ ISR(TIMER1_COMPA_vect)
 				{
 					//I2C[0].R_reg[h]
 					if(h==0)
-					ReadSPI(SPI[h].R_reg[v],'i');
+					ReadSPI(SPI[h].R_reg[v],'i',h);
 					if(h==1)
-					ReadSPI(SPI[h].R_reg[v],'j');
+					ReadSPI(SPI[h].R_reg[v],'j',h);
 				}
 			}
 		}
