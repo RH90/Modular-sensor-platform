@@ -341,15 +341,16 @@ ISR(TIMER1_COMPA_vect)
 			}
 		}
 		
-		serialWrite('x');
-		if(serialRead()){
-			session_init();
-		}
+		
 	} 
 	else
 	{
 		count_delay++;
 	}
+	serialWrite('x');
+		if(serialRead()){
+			session_init();
+		}
 	
 	
 }

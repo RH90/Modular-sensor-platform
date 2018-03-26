@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
@@ -80,7 +81,8 @@ public class FXMLDocumentController implements Initializable {
     private boolean on_off = true;
     private Thread thread1 = null;
     private Thread thread = null;
-    private Socket socket;
+    private Socket socket=null;
+    private boolean socket_OnOff=true;
     private String L9a_s = "";
     private String L9b_s = "";
     static boolean[] sensor_on = new boolean[10];
@@ -241,6 +243,8 @@ public class FXMLDocumentController implements Initializable {
             Start.setText("Stop");
             on_off = false;
             test = false;
+            socket=null;
+            socket_OnOff=true;
             if (thread == null || thread1 == null) {
                 thread = new Thread() {
                     @Override
@@ -268,7 +272,9 @@ public class FXMLDocumentController implements Initializable {
         } else {
 
             simulink = true;
+
             thread1.interrupt();
+            socket_OnOff=false;
             test = true;
             while (thread1.isAlive()) {
                 //System.out.println("Alive");
@@ -314,12 +320,19 @@ public class FXMLDocumentController implements Initializable {
                 serverSocket = new ServerSocket(8080);
                 //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
             }
-            serverSocket.setSoTimeout(10000);
-
-            socket = serverSocket.accept();
+            serverSocket.setSoTimeout(1000);
+            while(socket==null&&socket_OnOff){
+            try{
+                socket = serverSocket.accept();
+            }catch(Exception ex){
+                
+            }
+            //System.out.println("Socket: " +socket);
+            }
+            
+            BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             System.out.println("Connected");
             L9b_s = "Simulink Connected";
-            BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             //PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
             //BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -454,12 +467,12 @@ public class FXMLDocumentController implements Initializable {
 
                             writer.write(i2c_size[i - 6]);
                             writer.write(spi_Wsize);
-                            
+
                             for (int j = 2; j < i2c_size[i - 6] * 2; j += 2) {
                                 writer.write(new BigInteger(spi_Rreg.charAt(j + 1) + "", 16).toByteArray()[0]);
                                 writer.write(new BigInteger(spi_Rreg.charAt(j) + "", 16).toByteArray()[0]);
                             }
-                            
+
                             if (spi_Wsize > 0) {
                                 for (int j = 0; j < spi_Wsize * 2; j += 2) {
                                     writer.write(new BigInteger(spi_Wreg.charAt(j + 1) + "", 16).toByteArray()[0]);
@@ -469,8 +482,6 @@ public class FXMLDocumentController implements Initializable {
                                     writer.write(new BigInteger(spi_Wdata.charAt(j) + "", 16).toByteArray()[0]);
                                 }
                             }
-
-                            
 
                             break;
                         default:
@@ -579,7 +590,7 @@ public class FXMLDocumentController implements Initializable {
         } catch (Exception ex) {
 //            writer.write(1);
 //            writer.flush();
-           // ex.printStackTrace();
+//            ex.printStackTrace();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
         }
