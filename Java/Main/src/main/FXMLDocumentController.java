@@ -40,6 +40,7 @@ import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,6 +62,8 @@ public class FXMLDocumentController implements Initializable {
     private Label lia;
     @FXML
     private Label lib;
+    @FXML
+    private Label wireless_module_l;
     @FXML
     private Label ldba;
     @FXML
@@ -155,6 +158,21 @@ public class FXMLDocumentController implements Initializable {
         // L1.setText("hej");
     }
 
+    @FXML
+    private void chooseModule(MouseEvent event) {
+        if (on_off) {
+            if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
+                wireless_module_l.setText("Wifi");
+                Rectangle r = (Rectangle) event.getSource();
+                r.setFill(Paint.valueOf("0xffff00"));
+            } else {
+                wireless_module_l.setText("BlueTooth");
+                Rectangle r = (Rectangle) event.getSource();
+                r.setFill(Paint.valueOf("0x1e90ff"));
+            }
+        }
+    }
+
     // Method for the add sensor button
     @FXML
     private void add_sensor(ActionEvent event) {
@@ -245,7 +263,7 @@ public class FXMLDocumentController implements Initializable {
             on_off = false;
             test = false;
             socket = null;
-            
+
             socket_OnOff = true;
             if (thread == null || thread1 == null) {
                 thread = new Thread() {
@@ -384,18 +402,25 @@ public class FXMLDocumentController implements Initializable {
     public void Blue() throws Exception {
         System.out.println("Ready");
         try {
-            // Bluetooth Blue = new Bluetooth();
-            
-            if (socket1 == null) {
-                //  sc = Blue.go();
-                //  reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
-                //  writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
-                socket1 = new Socket("192.168.1.120", 80);
-                System.out.println("Socket");
-                // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
-                writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
-                reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
-                System.out.println("hej");
+            if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
+                Bluetooth Blue = new Bluetooth();
+
+                if (sc == null) {
+                    sc = Blue.go();
+                    reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
+                    writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
+                    // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
+                    System.out.println("hej");
+                }
+
+            } else {
+                if (socket1 == null) {
+                    socket1 = new Socket("192.168.1.12", 80);
+                    System.out.println("Socket");
+                    writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
+                    reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
+                    System.out.println("hej");
+                }
             }
             int delay_data = 10;
             try {
@@ -522,7 +547,7 @@ public class FXMLDocumentController implements Initializable {
             while (true) {
                 //  System.out.println("ff");
                 char c = (char) reader.read();
-                System.out.println(c);
+                //System.out.println(c);
                 switch (c) {
                     case 'a':
                         sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
@@ -576,8 +601,7 @@ public class FXMLDocumentController implements Initializable {
                         j++;
                         line = "";
                         break;
-                       
-                    case 'x':
+                    case 'y':
                         simulink = true;
                         mutex.acquire();
                         g = 0;
@@ -586,6 +610,9 @@ public class FXMLDocumentController implements Initializable {
                         j = 0;
                         sql.add_value(sensor_value, sensor_on, id, i2c_size);
                         mutex.release();
+                        line = "";
+                        break;
+                    case 'x':
                         writer.write(0);
                         writer.flush();
                         line = "";

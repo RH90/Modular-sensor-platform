@@ -71,7 +71,7 @@
          <font>
             <Font size="11.0" />
          </font></Label>
-        <Button fx:id="Start" layoutX="433.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="51.0" prefWidth="77.0" text="Start">
+        <Button fx:id="Start" layoutX="423.0" layoutY="306.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="96.0" text="Start">
             <effect>
                 <Lighting bumpInput="$null" diffuseConstant="2.0">
                     <light>
@@ -235,5 +235,7 @@
          <font>
             <Font size="9.0" />
          </font></TextField>
+      <Rectangle fx:id="wireless_module_r" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="63.0" layoutX="423.0" layoutY="244.0" onMouseClicked="#chooseModule" stroke="BLACK" strokeType="INSIDE" width="96.0" />
+      <Label fx:id="wireless_module_l" layoutX="442.0" layoutY="267.0" text="BlueTooth" />
     </children>
 </AnchorPane>

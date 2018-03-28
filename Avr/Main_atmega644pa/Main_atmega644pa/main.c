@@ -355,7 +355,7 @@ ISR(TIMER1_COMPA_vect)
 				}
 			}
 		}
-
+	serialWrite('y');
 	} 
 	else
 	{
