@@ -24,42 +24,62 @@ WiFi.begin(ssid, password);
 
 while (WiFi.status() != WL_CONNECTED) {
 delay(500);
-Serial.print(".");
 }
-Serial.println("");
-Serial.println("WiFi connected");
-
+ 
 // Start the server
 server.begin();
-Serial.println("Server started");
 
-// Print the IP address
-Serial.print("Use this URL to connect: ");
-Serial.print("http://");
-Serial.print(WiFi.localIP());
-Serial.println("/");
 }
 
 void loop() {
+
 // Check if a client has connected
 WiFiClient client = server.available();
 if (!client) {
 return;
 }
 
-// Wait until the client sends some data
-
-while(!Serial.available()) 
-{  
-  
+//while(true){
+  while(!client.available()){
+delay(1);
 }
-
-while((test = Serial.read())!='a')
-{
-  client.print(test);
+byte b[1];
+while(client.available()>0){
+b[0]=client.read();
+Serial.write(b,1);
+Serial.flush();
+delay(1);
 }
+//Serial.println("done");
+while(true){
+
+while(!Serial.available()) {
+delay(1);
+}  
+//while(Serial.available()>0){
+  char r= Serial.read();
+  //Serial.print(Serial.read());
+  if(r!='x'){
+  client.write(r);
+  client.flush();
+  }else{
+    client.write(r);
+    client.flush();
+    //delay(1);
+    while(!client.available()){
+    delay(1);
+    }
+    byte b1[1];
+   // while(client.available()>0){
+    b1[0]=client.read();
+    Serial.write(b1,1);
+    Serial.flush();
+    //delay(1);
+  //}
+//}
+
 //Serial.println(string);
-
-
+}
+}
 //client.print(test);
 }

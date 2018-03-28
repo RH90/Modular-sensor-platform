@@ -161,12 +161,21 @@ uint8_t read_pair()
 }
 
 void session_init(){
+//	uint8_t read_test=1;
+	
+//	while(read_test!=50){
+	//	read_test=serialRead();
+//	}
+	//serialWrite(read_test);
 	
 	delay=serialRead();
+	//
 	if(delay<=0){
 		delay=10;
 	}
+	//serialWrite(delay);
 	A1=read_pair();
+	
 	A2=read_pair();
 	A3=read_pair();
 	A4=read_pair();
@@ -224,9 +233,13 @@ void session_init(){
 		}
 	}	
 	}	
+	//print(45,'c');
+	//serialWrite(123);
+	//serialWrite(456);
+	//serialWrite('x');
 	//read =serialRead();
 	//read =serialRead();
-
+	
 }
 
 
@@ -238,7 +251,9 @@ int main (void)
 	serial_init(MYUBRR);
 	i2c_init();
 	session_init();
+	
 	Timer1init();
+	
 	while(1) // main loop
 	{	// Send 'Hello' to the LCD
 
@@ -278,11 +293,8 @@ void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 	}
 	else if(method==2){
 		print(adc_read(pin_nmr),id);
-	}else{
-		
+	}else{	
 	}
-
-	
 }
 void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 {
@@ -304,10 +316,13 @@ ISR(TIMER1_COMPA_vect)
 	if (count_delay>=delay)
 	{
 		count_delay=1;
+		
+
 		Analog_digital_sensor(0,A1,'a');
 		Analog_digital_sensor(1,A2,'b');
 		Analog_digital_sensor(2,A3,'c');
 		Analog_digital_sensor(3,A4,'d');
+		
 		//Analog_digital_sensor(4,A5,'e');
 		//Analog_digital_sensor(1,A6,'f');
 		int l=0;
@@ -340,8 +355,6 @@ ISR(TIMER1_COMPA_vect)
 				}
 			}
 		}
-		
-		
 	} 
 	else
 	{
@@ -351,8 +364,6 @@ ISR(TIMER1_COMPA_vect)
 		if(serialRead()){
 			session_init();
 		}
-	
-	
 }
 
 
