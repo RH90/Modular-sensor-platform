@@ -82,6 +82,7 @@ public class FXMLDocumentController implements Initializable {
     private Thread thread1 = null;
     private Thread thread = null;
     private Socket socket = null;
+    private Socket socket1 = null;
     private boolean socket_OnOff = true;
     private String L9a_s = "";
     private String L9b_s = "";
@@ -244,6 +245,7 @@ public class FXMLDocumentController implements Initializable {
             on_off = false;
             test = false;
             socket = null;
+            
             socket_OnOff = true;
             if (thread == null || thread1 == null) {
                 thread = new Thread() {
@@ -263,7 +265,7 @@ public class FXMLDocumentController implements Initializable {
                         try {
                             Simulink();
                         } catch (IOException | InterruptedException ex) {
-                           // Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                            // Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 };
@@ -302,7 +304,12 @@ public class FXMLDocumentController implements Initializable {
             on_off = true;
             System.out.println("");
             System.out.println("");
-
+//            try {
+//                socket1.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            socket1=null;
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
             for (int i = 0; i < sensor_value.length; i++) {
@@ -329,7 +336,6 @@ public class FXMLDocumentController implements Initializable {
                 }
                 //System.out.println("Socket: " +socket);
             }
-
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             System.out.println("Connected");
             L9b_s = "Simulink Connected";
@@ -363,7 +369,7 @@ public class FXMLDocumentController implements Initializable {
                 }
                 Thread.sleep(100);
             }
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
                 serverSocket = null;
@@ -379,14 +385,14 @@ public class FXMLDocumentController implements Initializable {
         System.out.println("Ready");
         try {
             // Bluetooth Blue = new Bluetooth();
-
-            if (sc == null) {
+            
+            if (socket1 == null) {
                 //  sc = Blue.go();
                 //  reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                 //  writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
-                Socket socket1 = new Socket("192.168.1.12", 80);
-
-               // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
+                socket1 = new Socket("192.168.1.120", 80);
+                System.out.println("Socket");
+                // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
                 writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
                 reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
                 System.out.println("hej");
@@ -403,8 +409,7 @@ public class FXMLDocumentController implements Initializable {
             }
             System.out.println("Sample rate: " + delay_data);
             writer.write(delay_data);
-            
-            
+
             for (int i = 0; i < id.length; i++) {
                 if (sensor_on[i]) {
                     switch (sql.getInterface(id[i])) {
@@ -515,9 +520,9 @@ public class FXMLDocumentController implements Initializable {
             int i = 0;
             int j = 0;
             while (true) {
-              //  System.out.println("ff");
+                //  System.out.println("ff");
                 char c = (char) reader.read();
-                //System.out.println(c);
+                System.out.println(c);
                 switch (c) {
                     case 'a':
                         sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
@@ -571,6 +576,7 @@ public class FXMLDocumentController implements Initializable {
                         j++;
                         line = "";
                         break;
+                       
                     case 'x':
                         simulink = true;
                         mutex.acquire();
