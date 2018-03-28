@@ -415,7 +415,7 @@ public class FXMLDocumentController implements Initializable {
 
             } else {
                 if (socket1 == null) {
-                    socket1 = new Socket("192.168.1.12", 80);
+                    socket1 = new Socket("192.168.137.143", 8800);
                     System.out.println("Socket");
                     writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
                     reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
