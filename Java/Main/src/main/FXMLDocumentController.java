@@ -80,6 +80,8 @@ public class FXMLDocumentController implements Initializable {
     private Label WIFI_L;
     @FXML
     private TextField WIFI_TF;
+    @FXML
+    private Rectangle wireless_module_r;
     static String[] list_string_a = new String[10];
     private final int size = 10;
     private boolean simulink = false;
@@ -123,6 +125,9 @@ public class FXMLDocumentController implements Initializable {
         for (int i = 0; i < sensor_value.length; i++) {
             sensor_value[i][0] = 0;
             sensor_on[i] = false;
+        }
+        for (int i = 0; i < i2c_size.length; i++) {
+            i2c_size[i]=1;
         }
         Task task = new Task<Void>() {
             @Override
@@ -173,14 +178,12 @@ public class FXMLDocumentController implements Initializable {
                 WIFI_TF.setDisable(false);
                 WIFI_L.setDisable(false);
                 wireless_module_l.setText("Wifi");
-                Rectangle r = (Rectangle) event.getSource();
-                r.setFill(Paint.valueOf("0xffff00"));
+                wireless_module_r.setFill(Paint.valueOf("0xffff00"));
             } else {
                 WIFI_TF.setDisable(true);
                 WIFI_L.setDisable(true);
                 wireless_module_l.setText("BlueTooth");
-                Rectangle r = (Rectangle) event.getSource();
-                r.setFill(Paint.valueOf("0x1e90ff"));
+                wireless_module_r.setFill(Paint.valueOf("0x1e90ff"));
             }
         }
     }
@@ -345,8 +348,12 @@ public class FXMLDocumentController implements Initializable {
             for (int i = 0; i < sensor_value.length; i++) {
                 for (int j = 0; j < 6; j++) {
                     sensor_value[i][j] = 0;
+                    
                 }
-
+                
+            }
+            for (int i = 0; i < i2c_size.length; i++) {
+                i2c_size[i]=1;
             }
         }
     }

@@ -13,7 +13,6 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import java.util.ArrayList?>
-
 <AnchorPane id="AnchorPane" prefHeight="339.0" prefWidth="529.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.FXMLDocumentController">
     <children>
         <Rectangle arcHeight="5.0" arcWidth="5.0" height="227.0" layoutX="417.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="102.0">
@@ -236,7 +235,10 @@
             <Font size="9.0" />
          </font></TextField>
       <Rectangle fx:id="wireless_module_r" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="35.0" layoutX="423.0" layoutY="244.0" onMouseClicked="#chooseModule" stroke="BLACK" strokeType="INSIDE" width="96.0" />
-      <Label fx:id="wireless_module_l" layoutX="445.0" layoutY="255.0" text="BlueTooth" />
+      <Label fx:id="wireless_module_l" focusTraversable="false" layoutX="445.0" layoutY="255.0" onMouseClicked="#chooseModule" text="BlueTooth">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Label>
       <TextField fx:id="WIFI_TF" layoutX="434.0" layoutY="279.0" prefHeight="25.0" prefWidth="84.0">
          <font>
             <Font size="9.0" />
