@@ -19,20 +19,20 @@ volatile uint8_t A5;
 volatile uint8_t A6;
 volatile uint8_t pass=0xFF;
 struct I2C_struct{
-	 uint8_t volatile addr;
-	 uint8_t volatile R_size;
-	 uint8_t volatile R_reg[6];
-	 uint8_t volatile W_size;
-	 uint8_t volatile W_reg;
-	 uint8_t volatile W_data;
-	};
+	uint8_t volatile addr;
+	uint8_t volatile R_size;
+	uint8_t volatile R_reg[6];
+	uint8_t volatile W_size;
+	uint8_t volatile W_reg;
+	uint8_t volatile W_data;
+};
 struct SPI_struct{
 	uint8_t volatile R_size;
 	uint8_t volatile R_reg[6];
 	uint8_t volatile W_size;
 	uint8_t volatile W_reg;
 	uint8_t volatile W_data;
-	};
+};
 
 struct I2C_struct I2C[2];
 struct SPI_struct SPI[2];
@@ -42,6 +42,8 @@ volatile uint8_t SPI2_reg;
 volatile uint16_t delay=5;
 volatile uint16_t count_delay=1;
 
+// Used for converting a number to a string and send it together with a character that 
+// identifies what sensor the number belongs to.
 void print(int num,char c){
 	char string[16];
 	int j=0;
@@ -61,16 +63,16 @@ void print(int num,char c){
 	//}
 	serialWrite(c);
 }
-
+// Initilize the ADC
 void adc_init()
 {
 	// AREF = AVcc
 	ADMUX = (1<<REFS0);
-	
 	// ADC Enable and pre scaler of 128
 	// 16000000/128 = 125000
 	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
 }
+// Initialize the Timmer1 with a interrupt every 100 ms
 void Timer1init() {
 	TIMSK1 = _BV(OCIE1A);  // Enable Interrupt TimerCounter0 Compare Match A (SIG_OUTPUT_COMPARE0A)
 	//  TCCR1A = _BV(WGM11);  // Mode = CTC
@@ -81,23 +83,20 @@ void Timer1init() {
 	// 3125=0.2 s
 	sei();
 }
+// Send/recieve spi data
 uint8_t spi_tranceiver (uint8_t data)
 {
 	// Load data into the buffer
 	//PORTB&= (1<<pinnmr);
 	SPDR = data;
-	
 	//Wait until transmission complete
 	while(!(SPSR & (1<<SPIF) ));
-	
 	//data = SPDR;
-	
 	//PORTB|= (1<<pinnmr);
-	
 	// Return received data
 	return(SPDR);
 }
-
+// Initilize SPI
 void spi_init_master (void)
 {
 	// Set MOSI, SCK as Output
@@ -109,6 +108,7 @@ void spi_init_master (void)
 	//Prescaler: Fosc/16, Enable Interrupts (1<<SPR0)
 	SPCR |= (1<<SPE)|(1<<MSTR);
 }
+// Used for reading and writing to SPI device
 void ReadSPI(uint8_t reg,char c,uint8_t pin) {
 	int temp;
 	PORTB &= ~(1<<4);
@@ -120,7 +120,7 @@ void ReadSPI(uint8_t reg,char c,uint8_t pin) {
 	//return temp; // Return the 8 bit temperature
 	print(temp,c);
 }
-
+// Reading Analog data from a specific pin and convert it to digital data 
 uint16_t adc_read(uint8_t ch)
 {
 	// select the corresponding channel 0~7
@@ -128,11 +128,9 @@ uint16_t adc_read(uint8_t ch)
 	// of ‘ch’ between 0 and 7
 	ch &= 0b00000111;  // AND operation with 7
 	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
-	
 	// start single conversion
 	// write ’1? to ADSC
 	ADCSRA |= (1<<ADSC);
-	
 	// wait for conversion to complete
 	// ADSC becomes ’0? again
 	// till then, run loop continuously
@@ -140,42 +138,41 @@ uint16_t adc_read(uint8_t ch)
 	
 	return (ADC);
 }
+// Function for writing to I2C device
 void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 {
-		uint8_t* data;
-		data = (uint8_t *)malloc(sizeof(uint8_t));
-		//dat = (uint8_t *)malloc(sizeof(uint8_t));
-		data[0]=dat;
-		i2c_writeReg(dev,reg,data,1);
-		free(data);
+	uint8_t* data;
+	data = (uint8_t *)malloc(sizeof(uint8_t));
+	//dat = (uint8_t *)malloc(sizeof(uint8_t));
+	data[0]=dat;
+	i2c_writeReg(dev,reg,data,1);
+	free(data);
 	
 }
-// TODO!
+// Had problems with reading a full byte from the Java program, therefor we read a byte 4 bits a time 
+// and then shift it and combine it to a single byte and return it.
 uint8_t read_pair()
 {
 	uint8_t a=serialRead();
 	uint8_t b=serialRead();
 	uint8_t c=a|(b<<4);	
-	
 	return c;
 }
-
+// This function get what type of sensors are used from user
 void session_init(){
-//	uint8_t read_test=1;
 	
-//	while(read_test!=50){
-	//	read_test=serialRead();
-//	}
-	//serialWrite(read_test);
-	
+	uint8_t junk =serialRead();
+	while(junk!=0x01){
+		junk=serialRead();
+	}
+	// get the delay from user
 	delay=serialRead();
-	//
+	//delay cannot be 0
 	if(delay<=0){
 		delay=10;
 	}
-	//serialWrite(delay);
-	A1=read_pair();
 	
+	A1=read_pair();
 	A2=read_pair();
 	A3=read_pair();
 	A4=read_pair();
@@ -190,22 +187,22 @@ void session_init(){
 	for (i;i<2;i++)
 	{
 		I2C[i].addr =read_pair();
-			if(I2C[i].addr!=pass){
-				I2C[i].R_size=serialRead();
-				I2C[i].W_size=serialRead();
-				int j=0;
-				for (j;j<I2C[i].W_size;j++)
-				{
-					I2C[i].W_reg=read_pair();
-					I2C[i].W_data=read_pair();
-					I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
-				}
-				int k=0;
-				for (k;k<I2C[i].R_size;k++)
-				{
-					I2C[i].R_reg[k]=read_pair();
-				}
+		if(I2C[i].addr!=pass){
+			I2C[i].R_size=serialRead();
+			I2C[i].W_size=serialRead();
+			int j=0;
+			for (j;j<I2C[i].W_size;j++)
+			{
+				I2C[i].W_reg=read_pair();
+				I2C[i].W_data=read_pair();
+				I2CW(I2C[i].addr,I2C[i].W_reg,I2C[i].W_data);
 			}
+			int k=0;
+			for (k;k<I2C[i].R_size;k++)
+			{
+				I2C[i].R_reg[k]=read_pair();
+			}
+		}
 	}
 	
 	int j=0;
@@ -214,24 +211,24 @@ void session_init(){
 		SPI[j].R_reg[0]=read_pair();
 		if(SPI[j].R_reg[0]!=pass)
 		{
-		SPI[j].R_size=serialRead();
-		SPI[j].W_size=serialRead();
-		int k=1;
-		for (k;k<SPI[j].R_size;k++)
-		{
-			SPI[j].R_reg[k]=read_pair();
-		}
-		int l=0;
-		for (l;l<SPI[j].W_size;l++)
-		{
-			PORTB &= ~(1<<4);
-			PORTB &= ~(1<<j);
-			spi_tranceiver(read_pair()); //7a Call on register address for MSB temperature byte
-			spi_tranceiver(read_pair()); // Exchange a garbage byte for the temperature byte
-			PORTB |= (1<<4);
-			PORTB |= (1<<j);
-		}
-	}	
+			SPI[j].R_size=serialRead();
+			SPI[j].W_size=serialRead();
+			int k=1;
+			for (k;k<SPI[j].R_size;k++)
+			{
+				SPI[j].R_reg[k]=read_pair();
+			}
+			int l=0;
+			for (l;l<SPI[j].W_size;l++)
+			{
+				PORTB &= ~(1<<4);
+				PORTB &= ~(1<<j);
+				spi_tranceiver(read_pair()); //7a Call on register address for MSB temperature byte
+				spi_tranceiver(read_pair()); // Exchange a garbage byte for the temperature byte
+				PORTB |= (1<<4);
+				PORTB |= (1<<j);
+			}
+		}	
 	}	
 	//print(45,'c');
 	//serialWrite(123);
@@ -251,17 +248,15 @@ int main (void)
 	serial_init(MYUBRR);
 	i2c_init();
 	session_init();
-	
 	Timer1init();
-	
 	while(1) // main loop
-	{	// Send 'Hello' to the LCD
-
+	{	
 		;;		
-	} //End main loop.
+	} 
 	
 	return 0;
 }
+// Read data from Analog or digital device
 void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 {
 	if(method==1){
@@ -296,6 +291,7 @@ void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 	}else{	
 	}
 }
+// reading data from I2C device
 void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 {
 	uint8_t* dat;
@@ -306,11 +302,12 @@ void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 	free(dat);
 	
 }
+
 void SPI_sensor()
 {
 
 }
-
+// the Timmer interrupt
 ISR(TIMER1_COMPA_vect)
 {
 	if (count_delay>=delay)
@@ -355,16 +352,20 @@ ISR(TIMER1_COMPA_vect)
 				}
 			}
 		}
-	serialWrite('y');
+		//this character tells the Java program that all sensors have been read
+		serialWrite('y');
 	} 
 	else
 	{
 		count_delay++;
 	}
+	// This is used to tell if the micro controller should stop reading the sensors or not
+	// when it sends the character 'x' the Java program will send 1 if the user want to pause the program
+	// or 0 if it should not stop reading from sensors
 	serialWrite('x');
-		if(serialRead()){
-			session_init();
-		}
+	if(serialRead()){
+		session_init();
+	}
 }
 
 

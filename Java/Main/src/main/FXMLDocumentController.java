@@ -76,6 +76,10 @@ public class FXMLDocumentController implements Initializable {
     private Button add_sensor_b;
     @FXML
     private Button config_db_b;
+    @FXML
+    private Label WIFI_L;
+    @FXML
+    private TextField WIFI_TF;
     static String[] list_string_a = new String[10];
     private final int size = 10;
     private boolean simulink = false;
@@ -109,6 +113,10 @@ public class FXMLDocumentController implements Initializable {
     // This method updates the Text on the UI
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        WIFI_TF.setText("192.168.137.100");
+        WIFI_TF.setDisable(true);
+        WIFI_L.setDisable(true);
         for (int i = 0; i < list_string_a.length; i++) {
             list_string_a[i] = "No Sensor!";
         }
@@ -162,10 +170,14 @@ public class FXMLDocumentController implements Initializable {
     private void chooseModule(MouseEvent event) {
         if (on_off) {
             if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
+                WIFI_TF.setDisable(false);
+                WIFI_L.setDisable(false);
                 wireless_module_l.setText("Wifi");
                 Rectangle r = (Rectangle) event.getSource();
                 r.setFill(Paint.valueOf("0xffff00"));
             } else {
+                WIFI_TF.setDisable(true);
+                WIFI_L.setDisable(true);
                 wireless_module_l.setText("BlueTooth");
                 Rectangle r = (Rectangle) event.getSource();
                 r.setFill(Paint.valueOf("0x1e90ff"));
@@ -270,7 +282,7 @@ public class FXMLDocumentController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            Blue();
+                            WirelessModule();
                         } catch (Exception ex) {
                             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -399,7 +411,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void Blue() throws Exception {
+    public void WirelessModule() throws Exception {
         System.out.println("Ready");
         try {
             if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
@@ -415,7 +427,8 @@ public class FXMLDocumentController implements Initializable {
 
             } else {
                 if (socket1 == null) {
-                    socket1 = new Socket("192.168.137.143", 8800);
+                    System.out.println(WIFI_TF.getText());
+                    socket1 = new Socket(WIFI_TF.getText(), 8800);
                     System.out.println("Socket");
                     writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
                     reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
@@ -433,6 +446,7 @@ public class FXMLDocumentController implements Initializable {
                 delay.setText("1");
             }
             System.out.println("Sample rate: " + delay_data);
+            writer.write(0x01);
             writer.write(delay_data);
 
             for (int i = 0; i < id.length; i++) {
@@ -637,32 +651,4 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Wireless connection error");
         }
     }
-
-    public void Wifi() throws IOException {
-        String tt = "";
-        while (true) {
-
-            Socket socket1 = new Socket("192.168.1.12", 80);
-
-            PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-            BufferedInputStream bi = new BufferedInputStream(socket.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            //    System.out.println("Hej");
-            //while((tmp=(char)br.read())!='0'){
-            //    System.out.println(tmp);
-            //  }
-            String s;
-            while ((s = br.readLine()) != null) {
-                if (!s.equals(tt)) {
-                    System.out.println(new StringBuffer(s).reverse().toString());
-                }
-                // System.out.println("Då");
-                tt = s;
-                break;
-            }
-            // System.out.println(tt + " asf");
-        }
-    }
-
 }

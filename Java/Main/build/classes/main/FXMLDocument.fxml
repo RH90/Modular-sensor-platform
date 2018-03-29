@@ -235,7 +235,12 @@
          <font>
             <Font size="9.0" />
          </font></TextField>
-      <Rectangle fx:id="wireless_module_r" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="63.0" layoutX="423.0" layoutY="244.0" onMouseClicked="#chooseModule" stroke="BLACK" strokeType="INSIDE" width="96.0" />
-      <Label fx:id="wireless_module_l" layoutX="442.0" layoutY="267.0" text="BlueTooth" />
+      <Rectangle fx:id="wireless_module_r" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="35.0" layoutX="423.0" layoutY="244.0" onMouseClicked="#chooseModule" stroke="BLACK" strokeType="INSIDE" width="96.0" />
+      <Label fx:id="wireless_module_l" layoutX="445.0" layoutY="255.0" text="BlueTooth" />
+      <TextField fx:id="WIFI_TF" layoutX="434.0" layoutY="279.0" prefHeight="25.0" prefWidth="84.0">
+         <font>
+            <Font size="9.0" />
+         </font></TextField>
+      <Label fx:id="WIFI_L" layoutX="422.0" layoutY="283.0" text="IP:" />
     </children>
 </AnchorPane>
