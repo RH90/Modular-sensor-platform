@@ -5,22 +5,17 @@
  */
 package main;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Cell;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Font;
@@ -32,6 +27,7 @@ import javafx.util.Callback;
  * @author Rilind
  */
 public class Get_sensorController implements Initializable {
+
     private String UserName = "";
     private String UserPass = "";
     private int PortNr = 0;
@@ -52,12 +48,13 @@ public class Get_sensorController implements Initializable {
 //        getString();
         System.out.println("url: " + url.getPath());
         SQL sql = new SQL();
-
+        int a =0;
         try {
-            sql.start(UserName,UserPass,PortNr,IP_address,Schema);
+            a = sql.start(UserName, UserPass, PortNr, IP_address, Schema);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        if(a!=-1){
         try {
             list = sql.list(s);
         } catch (SQLException ex) {
@@ -67,10 +64,13 @@ public class Get_sensorController implements Initializable {
             System.out.println(list.get(i));
         }
         lv.setItems(list);
-        
+
         Font anyfont = new Font("Consolas", 12);
         lv.setCellFactory(new CallbackImpl(anyfont));
         System.out.println("node: " + getNode());
+        }else{
+            lv.setItems(FXCollections.observableArrayList("No DB connection!"));
+        }
     }
 
     public void sensor_node(int s) {
