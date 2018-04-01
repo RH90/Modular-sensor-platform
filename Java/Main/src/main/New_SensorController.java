@@ -98,6 +98,7 @@ public class New_SensorController implements Initializable {
     private String spi_write_reg = "";
     private String spi_write_data = "";
     private String spi_read_reg = "";
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

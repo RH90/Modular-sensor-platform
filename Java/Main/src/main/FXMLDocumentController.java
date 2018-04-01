@@ -107,6 +107,11 @@ public class FXMLDocumentController implements Initializable {
     static String IP_address = "";
     static String Schema = "";
     private int[] i2c_size = new int[4];
+    private BufferedReader Reader_Wifi = null;
+    private BufferedReader Reader_Blue = null;
+    private BufferedWriter Writer_Wifi = null;
+    private BufferedWriter Writer_Blue = null;
+    private boolean retry = true;
 
     // This method updates the Text on the UI
     @Override
@@ -123,7 +128,7 @@ public class FXMLDocumentController implements Initializable {
             sensor_on[i] = false;
         }
         for (int i = 0; i < i2c_size.length; i++) {
-            i2c_size[i]=1;
+            i2c_size[i] = 1;
         }
         Task task = new Task<Void>() {
             @Override
@@ -344,12 +349,12 @@ public class FXMLDocumentController implements Initializable {
             for (int i = 0; i < sensor_value.length; i++) {
                 for (int j = 0; j < 6; j++) {
                     sensor_value[i][j] = 0;
-                    
+
                 }
-                
+
             }
             for (int i = 0; i < i2c_size.length; i++) {
-                i2c_size[i]=1;
+                i2c_size[i] = 1;
             }
         }
     }
@@ -422,10 +427,17 @@ public class FXMLDocumentController implements Initializable {
 
                 if (sc == null) {
                     sc = Blue.go();
-                    reader = new BufferedReader(new InputStreamReader(sc.openInputStream()));
-                    writer = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
+
+                    Reader_Blue = new BufferedReader(new InputStreamReader(sc.openInputStream()));
+                    Writer_Blue = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
                     // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
+                    reader = Reader_Blue;
+                    writer = Writer_Blue;
                     System.out.println("hej");
+                } else {
+                    //sc.openInputStream();
+                    reader = Reader_Blue;
+                    writer = Writer_Blue;
                 }
 
             } else {
@@ -433,9 +445,14 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println(WIFI_TF.getText());
                     socket1 = new Socket(WIFI_TF.getText(), 8800);
                     System.out.println("Socket");
-                    writer = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
-                    reader = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
+                    Writer_Wifi = new BufferedWriter(new OutputStreamWriter(socket1.getOutputStream()));
+                    Reader_Wifi = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
+                    reader = Reader_Wifi;
+                    writer = Writer_Wifi;
                     System.out.println("hej");
+                } else {
+                    reader = Reader_Wifi;
+                    writer = Writer_Wifi;
                 }
             }
             int delay_data = 10;
@@ -561,10 +578,14 @@ public class FXMLDocumentController implements Initializable {
             int h = 0;
             int i = 0;
             int j = 0;
+            retry = true;
             while (true) {
                 //  System.out.println("ff");
                 char c = (char) reader.read();
-                //System.out.println(c);
+                if (((int) c) == 65535) {
+                    sc = null;
+                    WirelessModule();
+                }
                 switch (c) {
                     case 'a':
                         sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
@@ -652,6 +673,15 @@ public class FXMLDocumentController implements Initializable {
 //            ex.printStackTrace();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
+            if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
+                sc = null;
+            } else {
+                socket1 = null;
+            }
+            if (retry) {
+                retry = false;
+                WirelessModule();
+            }
         }
     }
 }
