@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -47,6 +48,12 @@ public class New_SensorController implements Initializable {
     private Text label_i2c_addr;
     @FXML
     private Text label_i2c_data;
+    @FXML
+    private CheckBox checkbox_a;
+    @FXML
+    private CheckBox checkbox_b;
+    @FXML
+    private CheckBox checkbox_c;
     @FXML
     private Text label_i2c_read;
     @FXML
@@ -98,7 +105,6 @@ public class New_SensorController implements Initializable {
     private String spi_write_reg = "";
     private String spi_write_data = "";
     private String spi_read_reg = "";
-    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -197,7 +203,11 @@ public class New_SensorController implements Initializable {
             //InvocationTargetException
             la.setText("Insufficent data!");
         } else {
-            sql.add_sensor(tfa1.getText(), tfa2.getText(), (String) cba.getValue());
+            String reference = "no";
+            if (checkbox_a.isSelected()) {
+                reference = "yes";
+            }
+            sql.add_sensor(tfa1.getText(), tfa2.getText(), (String) cba.getValue(), reference);
             la.setText("Sensor added!");
         }
     }
@@ -232,7 +242,11 @@ public class New_SensorController implements Initializable {
                     i2c_write_reg += tfb4.getText();
                     i2c_write_data += tfb5.getText();
                     i2c_read_reg += tfb6.getText();
-                    sql.add_sensor(tfb1.getText(), tfb2.getText(), tfb3.getText(), i2c_write_reg, i2c_write_data, i2c_read_reg);
+                    String reference = "no";
+                    if (checkbox_b.isSelected()) {
+                        reference = "yes";
+                    }
+                    sql.add_sensor(tfb1.getText(), tfb2.getText(), tfb3.getText(), i2c_write_reg, i2c_write_data, i2c_read_reg,reference);
                     lb.setText("Sensor added!");
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -249,9 +263,9 @@ public class New_SensorController implements Initializable {
             lc.setText("Insufficent data!");
         } else {
 
-            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0 && 
-                    tfc31.getText().length() == 2 || tfc31.getText().length() == 0 &&
-                    tfc4.getText().length() == 2 || tfc4.getText().length() == 0) {
+            if (tfc3.getText().length() == 2 || tfc3.getText().length() == 0
+                    && tfc31.getText().length() == 2 || tfc31.getText().length() == 0
+                    && tfc4.getText().length() == 2 || tfc4.getText().length() == 0) {
                 try {
                     byte[] b;
                     if (tfc3.getText().length() == 2) {
@@ -266,7 +280,11 @@ public class New_SensorController implements Initializable {
                     spi_read_reg += tfc4.getText();
                     spi_write_data += tfc3.getText();
                     spi_write_reg += tfc31.getText();
-                    sql.add_sensor(tfc1.getText(), tfc2.getText(),spi_write_reg,spi_write_data, spi_read_reg);
+                    String reference = "no";
+                    if (checkbox_c.isSelected()) {
+                        reference = "yes";
+                    }
+                    sql.add_sensor(tfc1.getText(), tfc2.getText(), spi_write_reg, spi_write_data, spi_read_reg,reference);
                     lc.setText("Sensor added!");
                 } catch (SQLException ex) {
                     ex.printStackTrace();

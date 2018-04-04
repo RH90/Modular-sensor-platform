@@ -18,7 +18,7 @@ public class Bluetooth {
     RemoteDevice hc05device;
     String hc05Url;
 
-    public StreamConnection go() throws Exception {
+    public StreamConnection go(String Name) throws Exception {
         //scan for all devices:
         scanFinished = false;
 
@@ -28,7 +28,8 @@ public class Bluetooth {
                 try {
                     String name = btDevice.getFriendlyName(false);
                     System.out.format("%s (%s)\n", name, btDevice.getBluetoothAddress());
-                    if (name.matches("FireFly-6786")) {
+                    if (name.matches(Name)) {
+                        //FireFly-6786
                         hc05device = btDevice;
                         System.out.println("got it!");
                     }

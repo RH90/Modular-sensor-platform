@@ -122,18 +122,18 @@ public class SQL {
     public ObservableList<String> list(int i) throws SQLException {
         System.out.println(i);
         if (i >= 1 && i <= 6) {
-            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'Analog_digital'");
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type,Reference from sensors where Interface= 'Analog_digital'");
         } else if (i == 7 || i == 8) {
-            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'I2C'");
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type,Reference from sensors where Interface= 'I2C'");
         } else {
-            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type from sensors where Interface= 'SPI'");
+            rs = stmt.executeQuery("select Sensor_id,Name,Sensing_type,Reference from sensors where Interface= 'SPI'");
         }
 
         rs.beforeFirst();
         ObservableList<String> list = FXCollections.observableArrayList();
 
         while (rs.next()) {
-            String format = String.format("%4s¤ %-16s ¤ %-10s", rs.getString(1), rs.getString(2), rs.getString(3));
+            String format = String.format("%4s¤ %-16s ¤ %-12s ¤ %-5s", rs.getString(1), rs.getString(2), rs.getString(3),rs.getString(4));
             list.add(format);
 
             System.out.println(rs.getString(1) + "  : " + rs.getString(2));
@@ -142,12 +142,13 @@ public class SQL {
 
     }
 
-    public void add_sensor(String name, String sensing_type, String reading_method) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
+    public void add_sensor(String name, String sensing_type, String reading_method,String reference) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "Analog_digital");
         ps.setString(3, sensing_type);
+        ps.setString(4, reference);
         ps.executeUpdate();
         rs =stmt.executeQuery("select sensor_id from sensors");
         rs.last();
@@ -160,12 +161,13 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
+    public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr,String reference) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "I2C");
         ps.setString(3, sensing_type);
+        ps.setString(4, reference);
         ps.executeUpdate();
         rs =stmt.executeQuery("select sensor_id from sensors");
         rs.last();
@@ -183,12 +185,13 @@ public class SQL {
         ps.executeUpdate();
     }
 
-    public void add_sensor(String name, String sensing_type, String write_addr, String write_data, String read_addr) throws SQLException {
-        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type) VALUES (?,?,?)";
+    public void add_sensor(String name, String sensing_type, String write_addr, String write_data, String read_addr,String reference) throws SQLException {
+        String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, name);
         ps.setString(2, "SPI");
         ps.setString(3, sensing_type);
+        ps.setString(4, reference);
         ps.executeUpdate();
         rs =stmt.executeQuery("select sensor_id from sensors");
         rs.last();
@@ -241,6 +244,7 @@ public class SQL {
                     + "Sensing_type VARCHAR(25),"
                     + "Name VARCHAR(25),"
                     + "Interface VARCHAR(25),"
+                    + "Reference VARCHAR(12),"
                     + "PRIMARY KEY(Sensor_id))";
             stmt.executeUpdate(myTableName);
             myTableName
@@ -319,6 +323,7 @@ public class SQL {
                         + "Sensing_type VARCHAR(25),"
                         + "Name VARCHAR(25),"
                         + "Interface VARCHAR(25),"
+                        + "Reference VARCHAR(12),"
                         + "PRIMARY KEY(Sensor_id))";
                 stmt.executeUpdate(myTableName);
             }

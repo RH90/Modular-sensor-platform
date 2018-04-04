@@ -89,12 +89,14 @@ public class Get_sensorController implements Initializable {
     @FXML
     private void get(ActionEvent event) {
         String ss = (String) lv.getSelectionModel().getSelectedItem();
+        if(ss!=null){
         String[] array = ss.split("¤");
         FXMLDocumentController.sensor_on[s - 1] = true;
         FXMLDocumentController.id[s - 1] = Integer.parseInt(array[0].trim());
         System.out.println(Integer.parseInt(array[0].trim()));
         FXMLDocumentController.list_string_a[s - 1] = array[1];
         ((Node) (event.getSource())).getScene().getWindow().hide();
+        }
 
     }
 

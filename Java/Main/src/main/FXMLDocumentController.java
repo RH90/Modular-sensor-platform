@@ -116,10 +116,10 @@ public class FXMLDocumentController implements Initializable {
     // This method updates the Text on the UI
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        WIFI_TF.setText("192.168.137.100");
-        WIFI_TF.setDisable(true);
-        WIFI_L.setDisable(true);
+        WIFI_TF.setText("FireFly-6786");
+        //WIFI_TF.setDisable(true);
+        //WIFI_L.setDisable(true);
+        WIFI_L.setText("ID:");
         for (int i = 0; i < list_string_a.length; i++) {
             list_string_a[i] = "No Sensor!";
         }
@@ -176,14 +176,18 @@ public class FXMLDocumentController implements Initializable {
     private void chooseModule(MouseEvent event) {
         if (on_off) {
             if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
-                WIFI_TF.setDisable(false);
-                WIFI_L.setDisable(false);
+                //WIFI_TF.setDisable(false);
+                //WIFI_L.setDisable(false);
+                WIFI_L.setText("IP:");
                 wireless_module_l.setText("Wifi");
+                WIFI_TF.setText("192.168.137.100");
                 wireless_module_r.setFill(Paint.valueOf("0xffff00"));
             } else {
-                WIFI_TF.setDisable(true);
-                WIFI_L.setDisable(true);
-                wireless_module_l.setText("BlueTooth");
+                //WIFI_TF.setDisable(true);
+                //WIFI_L.setDisable(true);
+                WIFI_L.setText("ID:");
+                wireless_module_l.setText("BlueTooth"); 
+                WIFI_TF.setText("FireFly-6786");
                 wireless_module_r.setFill(Paint.valueOf("0x1e90ff"));
             }
         }
@@ -426,7 +430,7 @@ public class FXMLDocumentController implements Initializable {
                 Bluetooth Blue = new Bluetooth();
 
                 if (sc == null) {
-                    sc = Blue.go();
+                    sc = Blue.go(WIFI_TF.getText());
 
                     Reader_Blue = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                     Writer_Blue = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
