@@ -1,4 +1,4 @@
-LX51 LINKER/LOCATER V4.66.30.0                                                          04/08/2018  18:15:10  PAGE 1
+LX51 LINKER/LOCATER V4.66.30.0                                                          04/08/2018  18:17:57  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.66.30.0, INVOKED BY:
@@ -64,7 +64,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 000000H   000002H   000003H   ---    OFFS..   CODE           ?CO?SILABS_STARTUP?3
 000003H   000021H   00001FH   BYTE   UNIT     CODE           ?PR?_SMB_READ_REG?F99X_SMBUS_MASTER
 000022H   00003AH   000019H   BYTE   UNIT     CODE           ?PR?TIMER16_3_ENTER_MODE2_FROM_DEFAULTMODE?INITDEVICE
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 2
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 2
 
 
 00003BH   00003DH   000003H   BYTE   OFFS..   CODE           ?INTERRUPTS?0003B
@@ -129,7 +129,7 @@ MAIN/F99X_SMBUS_MASTER                        ----- -----  0010H 0014H
   +--> _UART_INIT/F99X_SMBUS_MASTER
   +--> _SMB_WRITE_REG/F99X_SMBUS_MASTER
   +--> _SMB_READ_REG/F99X_SMBUS_MASTER
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 3
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 3
 
 
   +--> _UART_SEND/F99X_SMBUS_MASTER
@@ -194,7 +194,7 @@ _UART_INIT/F99X_SMBUS_MASTER                  ----- -----  0015H 0016H
 
 _SMB_WRITE_REG/F99X_SMBUS_MASTER              ----- -----  ----- -----
   +--> SMB_WRITE/F99X_SMBUS_MASTER
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 4
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 4
 
 
 
@@ -259,7 +259,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
 *SFR* 000000C4H   DATA     BYTE      ADC0GTH
 *SFR* 000000C3H   DATA     BYTE      ADC0GTL
 *SFR* 000000BEH   DATA     BYTE      ADC0H
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 5
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 5
 
 
 *SFR* 000000BDH   DATA     BYTE      ADC0L
@@ -324,7 +324,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       0100037DH   CODE     ---       enter_DefaultMode_from_RESET
       0100003EH   CODE     ---       enter_Mode2_from_DefaultMode
 *SFR* 000000B7H   DATA     BYTE      FLKEY
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 6
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 6
 
 
 *SFR* 000000B6H   DATA     BYTE      FLSCL
@@ -389,7 +389,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
 *SFR* 000000A0H   DATA     BYTE      P2
 *SFR* 000000A0H.7 DATA     BIT       P2_B7
 *SFR* 0000009DH   DATA     BYTE      P2DRV
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 7
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 7
 
 
 *SFR* 000000A6H   DATA     BYTE      P2MDOUT
@@ -454,7 +454,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
 *SFR* 00000098H.3 DATA     BIT       SCON0_TB8
 *SFR* 00000098H.1 DATA     BIT       SCON0_TI
 *SFR* 00000080H   DATA     BIT       SDA
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 8
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 8
 
 
 *SFR* 000000A7H   DATA     BYTE      SFRPAGE
@@ -519,7 +519,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
 *SFR* 000000C8H   DATA     BYTE      TMR2CN
 *SFR* 000000C8H.3 DATA     BIT       TMR2CN_T2SPLIT
 *SFR* 000000C8H   DATA     BIT       TMR2CN_T2XCLK0
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 9
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 9
 
 
 *SFR* 000000C8H.1 DATA     BIT       TMR2CN_T2XCLK1
@@ -584,7 +584,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000A0H   SFRSYM    DATA     BYTE      P2
       00000097H   SFRSYM    DATA     BYTE      ADC0CF
       000000C8H   SFRSYM    DATA     BIT       TMR2CN_T2XCLK0
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 10
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 10
 
 
       000000C8H.1 SFRSYM    DATA     BIT       TMR2CN_T2XCLK1
@@ -649,7 +649,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000E2H   SFRSYM    DATA     BYTE      XBR1
       000000D2H   SFRSYM    DATA     BYTE      CS0SCAN0
       000000E3H   SFRSYM    DATA     BYTE      XBR2
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 11
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 11
 
 
       000000D3H   SFRSYM    DATA     BYTE      CS0SCAN1
@@ -714,7 +714,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000D5H   SFRSYM    DATA     BYTE      P1SKIP
       000000A8H   SFRSYM    DATA     BIT       IE_EX0
       000000B0H.5 SFRSYM    DATA     BIT       CS0CN_CSINT
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 12
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 12
 
 
       000000E5H   SFRSYM    DATA     BYTE      FLWR
@@ -779,7 +779,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       00000090H.5 SFRSYM    DATA     BIT       P1_B5
       00000080H.6 SFRSYM    DATA     BIT       P0_B6
       000000B0H   SFRSYM    DATA     BYTE      CS0CN
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 13
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 13
 
 
       000000C0H.6 SFRSYM    DATA     BIT       SMB0CN_TXMODE
@@ -844,7 +844,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000D0H.7 SFRSYM    DATA     BIT       PSW_CY
       000000B0H   SFRSYM    DATA     BIT       CS0CN_CSCMPF
       000000A3H   SFRSYM    DATA     BYTE      SPI0DAT
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 14
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 14
 
 
       000000BDH   SFRSYM    DATA     WORD      ADC0
@@ -909,7 +909,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       01000053H   LINE      CODE     ---       #156
       01000053H   LINE      CODE     ---       #157
       01000053H   LINE      CODE     ---       #158
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 15
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 15
 
 
       01000056H   LINE      CODE     ---       #159
@@ -974,7 +974,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       01000066H   LINE      CODE     ---       #288
       01000066H   LINE      CODE     ---       #289
       01000069H   LINE      CODE     ---       #290
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 16
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 16
 
 
       0100006BH   LINE      CODE     ---       #291
@@ -1039,7 +1039,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       00000092H   SFRSYM    DATA     BYTE      TMR3RLL
       000000EAH   SFRSYM    DATA     BYTE      PCA0CPH1
       00000098H.3 SFRSYM    DATA     BIT       SCON0_TB8
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 17
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 17
 
 
       000000F0H   SFRSYM    DATA     BIT       B_B0
@@ -1104,7 +1104,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000C8H.7 SFRSYM    DATA     BIT       TMR2CN_TF2H
       000000C8H.3 SFRSYM    DATA     BIT       TMR2CN_T2SPLIT
       000000C7H   SFRSYM    DATA     BYTE      P0MASK
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 18
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 18
 
 
       000000F8H   SFRSYM    DATA     BYTE      SPI0CN
@@ -1169,7 +1169,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000B8H.1 SFRSYM    DATA     BIT       IP_PT0
       000000B8H.3 SFRSYM    DATA     BIT       IP_PT1
       000000B8H.5 SFRSYM    DATA     BIT       IP_PT2
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 19
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 19
 
 
       0000008AH   SFRSYM    DATA     BYTE      TL0
@@ -1234,7 +1234,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000C5H   SFRSYM    DATA     BYTE      ADC0LTL
       000000B8H.6 SFRSYM    DATA     BIT       IP_PSPI0
       000000D6H   SFRSYM    DATA     BYTE      IREF0CN
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 20
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 20
 
 
       000000F4H   SFRSYM    DATA     BYTE      SMB0ADR
@@ -1299,7 +1299,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       0100040EH   LINE      CODE     ---       #103
       01000411H   LINE      CODE     ---       #107
       ---         BLOCKEND  ---      ---       LVL=0
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 21
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 21
 
 
 
@@ -1364,7 +1364,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       010003C3H   LINE      CODE     ---       #358
       010003C6H   LINE      CODE     ---       #359
       010003C9H   LINE      CODE     ---       #363
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 22
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 22
 
 
       ---         BLOCKEND  ---      ---       LVL=0
@@ -1429,7 +1429,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000F9H   SFRSYM    DATA     WORD      PCA0
       000000AEH   SFRSYM    DATA     BYTE      RTC0KEY
       000000E6H   SFRSYM    DATA     BYTE      EIE1
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 23
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 23
 
 
       000000E7H   SFRSYM    DATA     BYTE      EIE2
@@ -1494,7 +1494,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000C0H.2 SFRSYM    DATA     BIT       SMB0CN_ARBLOST
       000000E0H   SFRSYM    DATA     BIT       ACC_ACC0
       000000D1H   SFRSYM    DATA     BYTE      REF0CN
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 24
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 24
 
 
       000000F8H.1 SFRSYM    DATA     BIT       SPI0CN_TXBMT
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000A8H.2 SFRSYM    DATA     BIT       IE_EX1
       0000009FH   SFRSYM    DATA     BYTE      CPT0MX
       00000098H.7 SFRSYM    DATA     BIT       SCON0_SMODE
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 25
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 25
 
 
       000000B3H   SFRSYM    DATA     BYTE      OSCICL
@@ -1624,7 +1624,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       00000090H.7 SFRSYM    DATA     BIT       P1_B7
       000000A0H.7 SFRSYM    DATA     BIT       P2_B7
       00000083H   SFRSYM    DATA     BYTE      DPH
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 26
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 26
 
 
       000000E8H.5 SFRSYM    DATA     BIT       ADC0CN_ADINT
@@ -1689,7 +1689,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       000000DFH   SFRSYM    DATA     BYTE      PCA0PWM
       000000E2H   SFRSYM    DATA     BYTE      REVID
       000000C0H.4 SFRSYM    DATA     BIT       SMB0CN_STO
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 27
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 27
 
 
       0000008DH   SFRSYM    DATA     BYTE      TOFFL
@@ -1754,7 +1754,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       010002B0H   LINE      CODE     ---       #131
       010002B0H   LINE      CODE     ---       #132
       010002B3H   LINE      CODE     ---       #133
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 28
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 28
 
 
       010002B5H   LINE      CODE     ---       #134
@@ -1819,7 +1819,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SMBUS_MASTER.OMF.CRBUILD (F99X_SMBUS_MASTER)
       00010000H   SYMBOL    NUMBER   ---       XBPSTACKTOP
       00000000H   SYMBOL    NUMBER   ---       XDATALEN
       00000000H   SYMBOL    NUMBER   ---       XDATASTART
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:15:10  PAGE 29
+LX51 LINKER/LOCATER V4.66.30.0                                                        04/08/2018  18:17:57  PAGE 29
 
 
 

@@ -1,4 +1,4 @@
-18:15:09 **** Incremental Build of configuration Keil 8051 v9.53 - Debug for project F99x-98x_SMBus_Master ****
+18:17:55 **** Incremental Build of configuration Keil 8051 v9.53 - Debug for project F99x-98x_SMBus_Master ****
 make all 
 PATH=/c/SiliconLabs/SimplicityStudio/v4/developer/toolchains/keil_8051/9.53/BIN:/c/SiliconLabs/SimplicityStudio/v4/support/8051:/usr/bin:/c/SiliconLabs/SimplicityStudio/v4/features/com.silabs.external.java.windows.x86.feature_1.8.0.92/jre/bin/client:/c/SiliconLabs/SimplicityStudio/v4/features/com.silabs.external.java.windows.x86.feature_1.8.0.92/jre/bin:/c/SiliconLabs/SimplicityStudio/v4/features/com.silabs.external.java.windows.x86.feature_1.8.0.92/jre/lib/i386:/c/ProgramData/Oracle/Java/javapath:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/c/Program Files/nodejs/:/c/Program Files/Git/cmd:/c/Program Files/MATLAB/R2017b/runtime/win64:/c/Program Files/MATLAB/R2017b/bin:/c/Program Files/MySQL/MySQL Utilities 1.6/:/c/Users/Rilind/AppData/Local/Microsoft/WindowsApps:/c/Users/Rilind/AppData/Roaming/npm:/c/Program Files/Microsoft VS Code/bin:/c/Users/Rilind/AppData/Local/GitHubDesktop/bin:"C:/Android/:/c/Android/platform-tools":.:/c/SiliconLabs/SimplicityStudio/v4
  
@@ -30,5 +30,5 @@ Program Size: data=25.3 xdata=1 const=0 code=1059
 LX51 RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
 Finished building target: F99x-98x_SMBus_Master.omf
 
-18:15:10 Build Finished (took 1s.631ms)
+18:17:57 Build Finished (took 1s.714ms)
 

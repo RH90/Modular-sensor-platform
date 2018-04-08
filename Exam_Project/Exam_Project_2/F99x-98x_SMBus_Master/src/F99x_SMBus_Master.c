@@ -227,7 +227,7 @@ int main (void)
 
 
 	//  printf("weds");
-	 for(a=0;a<100000;a++){
+	 for(a=0;a<10000;a++){
 		 ;;
 		 // Wait 50 ms until the next cycle
 	 }
