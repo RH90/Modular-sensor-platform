@@ -9,7 +9,7 @@
 #include "i2cmaster.h"
 unsigned char serialCheckTxReady(void)
 {
-	return( UCSR0A & _BV(UDRE0) ) ;  // nonzero if transmit register is ready to receive new data.
+	return( UCSR1A & _BV(UDRE1) ) ;  // nonzero if transmit register is ready to receive new data.
 }
 
 
@@ -17,30 +17,31 @@ void serialWrite(int DataOut)
 {
 	while (serialCheckTxReady() == 0)  // while NOT ready to transmit
 	{;;}
-	UDR0 = DataOut;
+	//UDR0 = DataOut;
+	UDR1 = DataOut;
 }
 
 
 unsigned char serialCheckRxComplete(void)
 {
-	return( UCSR0A & _BV(RXC0)) ;  // _BV(x) macro set bit x in a byte which is equivalent to 1<<x. nonzero if serial data is available to read.
+	return( UCSR1A & _BV(RXC1)) ;  // _BV(x) macro set bit x in a byte which is equivalent to 1<<x. nonzero if serial data is available to read.
 }
 
 
 unsigned char serialRead(void)
 {
-	while( !(UCSR0A & (1 << RXC0)) )
+	while( !(UCSR1A & (1 << RXC1)) )
 	;
-	return UDR0;
+	return UDR1;
 }
 void serial_init(unsigned int bittimer)
 {
 	/* Set the baud rate */
-	UBRR0H = (unsigned char) (bittimer >> 8);
-	UBRR0L = (unsigned char) bittimer;
+	UBRR1H = (unsigned char) (bittimer >> 8);
+	UBRR1L = (unsigned char) bittimer;
 	/* set the framing to 8N1 (8 data bits + 1 stop bit (default) */
-	UCSR0C = (3 << UCSZ00);
+	UCSR1C = (3 << UCSZ10);
 	/* Enable receiver and transmitter */
-	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+	UCSR1B = (1 << RXEN1) | (1 << TXEN1);
 	return;
 }

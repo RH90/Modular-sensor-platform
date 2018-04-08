@@ -1,0 +1,376 @@
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE F99X_SMBUS_MASTER
+OBJECT MODULE PLACED IN .\src\F99x_SMBus_Master.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\Rilind\
+                    -Desktop\System_project\Exam_Project\Exam_Project_2\F99x-98x_SMBus_Master\src\F99x_SMBus_Master.c OMF2 SMALL DEBUG OBJECT
+                    -EXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:
+                    -/Users/Rilind/Desktop/System_project/Exam_Project/Exam_Project_2/F99x-98x_SMBus_Master/inc;C:/SiliconLabs/SimplicityStud
+                    -io/v4/developer/sdks/8051/v4.1.1//Device/shared/si8051base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.1
+                    -//Device/C8051F990/inc) PRINT(.\src\F99x_SMBus_Master.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\F99x_SMBus_Ma
+                    -ster.OBJ)
+
+line level    source
+
+   1          //-----------------------------------------------------------------------------
+   2          // F99x_SMBus_Master.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2014 Silicon Laboratories, Inc.
+   5          // http://developer.silabs.com/legal/version/v11/Silicon_Labs_Software_License_Agreement.txt
+   6          //
+   7          // Program Description:
+   8          //
+   9          // Example software to demonstrate the SMBus interface in
+  10          // Master mode.
+  11          // - Interrupt-driven SMBus implementation
+  12          // - Only master states defined (no slave or arbitration)
+  13          // - 1-byte SMBus data holders used for each transmit and receive
+  14          // - Timer1 used as SMBus clock source
+  15          // - Timer3 used by SMBus for SCL low timeout detection
+  16          // - SCL frequency defined by SMBus 0 module in Configurator
+  17          // - SMB0CN_ARBLOST support included
+  18          // - Pinout:
+  19          //    P0.0 -> SDA (SMBus)
+  20          //    P0.1 -> SCL (SMBus)
+  21          //
+  22          //    P1.3 -> YELLOW_LED
+  23          //
+  24          //    P2.7 -> C2D (debug interface)
+  25          //
+  26          //    all other port pins unused
+  27          //
+  28          // How To Test:
+  29          //
+  30          // 1) Verify that J13 and J14 are not populated.
+  31          // 2) Ensure that jumpers are placed on the following:
+  32          //       J11:  PWR/WALL_PWR
+  33          //       J17:  VDD_PIN/PWR
+  34          // 3) Connect the device to another 'Fxxx device running SMBus - Slave code.
+  35          // 4) Connect the USB Debug Adapter to J4.
+  36          // 5) Turn the POWER switch (SW5) to the "ON" position.
+  37          // 6) Compile and download code to a 'F99x device on a C8051F99x-TB development
+  38          //    board by selecting Run -> Debug from the menus, clicking the Debug button
+  39          //    in the quick menu, or pressing F11.
+  40          // 7) Run the code by selecting Run -> Resume from the menus, clicking the
+  41          //    Resume button in the quick menu, or pressing F8:
+  42          //         a) The test will indicate proper communication with the slave by
+  43          //            toggling the YELLOW_LED on and off each time a value is sent and
+  44          //            received.
+  45          //         b) The best method to view the proper functionality is to run to
+  46          //            the indicated line of code in the TEST CODE section of main and
+  47          //            view the SMB_DATA_IN and SMB_DATA_OUT variables in the Watch
+  48          //            Window.
+  49          //
+  50          //
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 2   
+
+  51          // Target:         C8051F99x-C8051F98x
+  52          // Tool chain:     Simplicity Studio / Keil C51 9.51
+  53          // Command Line:   None
+  54          //
+  55          // Release 1.1 (BL)
+  56          //    - Updated Description / How to Test
+  57          //    - 13 JAN 2014
+  58          //
+  59          // Release 1.0
+  60          //    - Initial Revision (FB)
+  61          //    - 19 MAY 2010
+  62          //
+  63          
+  64          //-----------------------------------------------------------------------------
+  65          // Includes
+  66          //-----------------------------------------------------------------------------
+  67          #include <compiler_defs.h>
+  68          #include <SI_C8051F990_Register_Enums.h>                  // SFR declarations
+  69          #include "InitDevice.h"
+  70          #include <stdio.h>
+  71          #include "F99x_SMBus_Master.h"
+  72          
+  73          //-----------------------------------------------------------------------------
+  74          // Global VARIABLES
+  75          //-----------------------------------------------------------------------------
+  76          U8 SMB_DATA_IN;                        // Global holder for SMBus data
+  77                                                 // All receive data is written here
+  78          
+  79          U8 SMB_DATA_OUT;
+  80          U8 SMB_REG_OUT;
+  81          U8 START_SMB;
+  82          U8 RW_Reg; // Global holder for SMBus data.
+  83                                                 // All transmit data is read from here
+  84          
+  85          U8 TARGET;                             // Target SMBus slave address
+  86          
+  87          volatile bit SMB_BUSY;                 // Software flag to indicate when the
+  88                                                 // SMB_Read() or SMB_Write() functions
+  89                                                 // have claimed the SMBus
+  90          
+  91          volatile bit SMB_RW;                   // Software flag to indicate the
+  92                                                 // direction of the current transfer
+  93          
+  94          U16 NUM_ERRORS;                        // Counter for the number of errors.
+  95          
+  96          SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
+  97          SBIT (SCL, SFR_P0, 1);                 // and P0.1
+  98          
+  99          LOCATED_VARIABLE_NO_INIT (reserved, U8, SEG_XDATA, 0x0000);
+ 100          
+ 101          //-----------------------------------------------------------------------------
+ 102          // Function PROTOTYPES
+ 103          //-----------------------------------------------------------------------------
+ 104          
+ 105          void SMB_Write (void);
+ 106          void SMB_Read (void);
+ 107          void T0_Wait_ms (U8 ms);
+ 108          void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat);
+ 109          U8 SMB_Read_Reg(U8 Addr, U8 Reg);
+ 110          
+ 111          
+ 112          //-----------------------------------------------------------------------------
+ 113          // SiLabs_Startup() Routine
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 3   
+
+ 114          // ----------------------------------------------------------------------------
+ 115          // This function is called immediately after reset, before the initialization
+ 116          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
+ 117          // useful place to disable the watchdog timer, which is enable by default
+ 118          // and may trigger before main() in some instances.
+ 119          //-----------------------------------------------------------------------------
+ 120          void SiLabs_Startup (void)
+ 121          {
+ 122   1        // Disable the watchdog here
+ 123   1      }
+ 124          
+ 125          //-----------------------------------------------------------------------------
+ 126          // main() Routine
+ 127          // ----------------------------------------------------------------------------
+ 128          void UART_Init(int baudrate)
+ 129          {
+ 130   1              SCON0 = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
+ 131   1          TMOD = 0x20;  //Timer1 in Mode2.
+ 132   1         // TH1 = 256 - (24500000UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
+ 133   1          TH1 = (0x2B << TH1_TH1__SHIFT);
+ 134   1          TCON |= (1<<6);      //Turn ON the timer for Baud rate generation
+ 135   1      }
+*** WARNING C280 IN LINE 128 OF C:\Users\Rilind\Desktop\System_project\Exam_Project\Exam_Project_2\F99x-98x_SMBus_Master
+             -\src\F99x_SMBus_Master.c: 'baudrate': unreferenced local variable
+ 136          
+ 137          void UART_Send(char c)
+ 138          {
+ 139   1              SBUF0 = c;      // Load the data to be transmitted
+ 140   1              while(SCON0_TI==0);   // Wait till the data is trasmitted
+ 141   1              SCON0_TI = 0;
+ 142   1      }
+ 143          U8 SMB_Read_Reg(U8 Addr, U8 Reg)
+ 144          {
+ 145   1              RW_Reg=0;
+ 146   1              TARGET = Addr;
+ 147   1              SMB_REG_OUT = Reg;
+ 148   1              START_SMB=1;// Define next outgoing byte
+ 149   1              SMB_Write();                     // Initiate SMBus write
+ 150   1              START_SMB=1;
+ 151   1              TARGET = Addr|0x01;             // Target the F3xx/Si8250 Slave for next                                                                   // SMBus transfer
+ 152   1              SMB_Read();
+ 153   1              return SMB_DATA_IN;
+ 154   1      }
+ 155          
+ 156          void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
+ 157          {
+ 158   1              RW_Reg=1;
+ 159   1                      TARGET = Addr;             // Target the F3xx/Si8250 Slave for next
+ 160   1                      START_SMB=1;
+ 161   1                      SMB_DATA_OUT = Dat;
+ 162   1                      SMB_REG_OUT = Reg;// SMBus transfer
+ 163   1                      SMB_Write();
+ 164   1      
+ 165   1                      while(SMB_BUSY){
+ 166   2                              ;;
+ 167   2                      }
+ 168   1      
+ 169   1      }
+ 170          
+ 171          int main (void)
+ 172          {
+ 173   1              volatile U8 dat;                    // Test counter
+ 174   1              U8 i;                               // Dummy variable counters
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 4   
+
+ 175   1              double a;
+ 176   1              //Enter default mode
+ 177   1              enter_DefaultMode_from_RESET();
+ 178   1              //printf("%d",0x22);
+ 179   1              // If slave is holding SDA low because of an improper SMBus reset or error
+ 180   1              while(!SDA)
+ 181   1              {
+ 182   2                // Provide clock pulses to allow the slave to advance out
+ 183   2                // of its current state. This will allow it to release SDA.
+ 184   2                XBR2 = 0x40;                     // Enable Crossbar
+ 185   2                SCL = 0;                         // Drive the clock low
+ 186   2                for(i = 0; i < 255; i++);        // Hold the clock low
+ 187   2                SCL = 1;                         // Release the clock
+ 188   2                while(!SCL);                     // Wait for open-drain
+ 189   2                                                                                 // clock output to rise
+ 190   2                for(i = 0; i < 10; i++);         // Hold the clock high
+ 191   2                XBR2 = 0x00;                     // Disable Crossbar
+ 192   2              }
+ 193   1      
+ 194   1              enter_Mode2_from_DefaultMode();
+ 195   1               UART_Init(57600);
+ 196   1              //printf("%d",0x22);
+ 197   1              //YELLOW_LED = LED_OFF;
+ 198   1              //printf("hej");
+ 199   1              dat = 0;                            // Output data counter
+ 200   1              NUM_ERRORS = 0;                     // Error counter
+ 201   1      
+ 202   1              SMB_Write_Reg(0x30,0x20,0x37);
+ 203   1              while (1)
+ 204   1              {
+ 205   2      
+ 206   2      
+ 207   2      
+ 208   2      
+ 209   2      
+ 210   2      
+ 211   2                UART_Send(SMB_Read_Reg(0x30,0x2B));
+ 212   2               // UART_Send('\n');
+ 213   2                UART_Send('\r');
+ 214   2                // Check transfer data
+ 215   2                if(SMB_DATA_IN != 0x20)  // Received data match transmit data?
+ 216   2                {
+ 217   3                       NUM_ERRORS++;                 // Increment error counter if no match
+ 218   3                }
+ 219   2      
+ 220   2                // Indicate that an error has occurred (YELLOW_LED no longer lit)
+ 221   2      
+ 222   2                       YELLOW_LED = !YELLOW_LED;
+ 223   2      
+ 224   2                       //YELLOW_LED= 1;
+ 225   2      
+ 226   2                // Run to here to view the SMB_DATA_IN and SMB_DATA_OUT variables
+ 227   2      
+ 228   2      
+ 229   2              //  printf("weds");
+ 230   2               for(a=0;a<100000;a++){
+ 231   3                       ;;
+ 232   3                       // Wait 50 ms until the next cycle
+ 233   3               }
+ 234   2                                                                                      // so that YELLOW_LED blinks slow
+ 235   2                                                                                      // enough to see
+ 236   2      
+ 237   2              }
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 5   
+
+ 238   1      
+ 239   1              // END TEST CODE---------------------------------------------------------------
+ 240   1      
+ 241   1              // NOTREACHED
+ 242   1              return 0;
+ 243   1      }
+ 244          
+ 245          //-----------------------------------------------------------------------------
+ 246          // Support Functions
+ 247          //-----------------------------------------------------------------------------
+ 248          
+ 249          //-----------------------------------------------------------------------------
+ 250          // SMB_Write
+ 251          //-----------------------------------------------------------------------------
+ 252          //
+ 253          // Return Value : None
+ 254          // Parameters   : None
+ 255          //
+ 256          // Writes a single byte to the slave with address specified by the <TARGET>
+ 257          // variable.
+ 258          // Calling sequence:
+ 259          // 1) Write target slave address to the <TARGET> variable
+ 260          // 2) Write outgoing data to the <SMB_DATA_OUT> variable
+ 261          // 3) Call SMB_Write()
+ 262          //
+ 263          //-----------------------------------------------------------------------------
+ 264          void SMB_Write (void)
+ 265          {
+ 266   1         while (SMB_BUSY);                   // Wait for SMBus to be free.
+ 267   1         SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+ 268   1         SMB_RW = 0;                         // Mark this transfer as a WRITE
+ 269   1         SMB0CN_STA = 1;                            // Start transfer
+ 270   1      }
+ 271          
+ 272          //-----------------------------------------------------------------------------
+ 273          // SMB_Read
+ 274          //-----------------------------------------------------------------------------
+ 275          //
+ 276          // Return Value : None
+ 277          // Parameters   : None
+ 278          //
+ 279          // Reads a single byte from the slave with address specified by the <TARGET>
+ 280          // variable.
+ 281          // Calling sequence:
+ 282          // 1) Write target slave address to the <TARGET> variable
+ 283          // 2) Call SMB_Write()
+ 284          // 3) Read input data from <SMB_DATA_IN> variable
+ 285          //
+ 286          //-----------------------------------------------------------------------------
+ 287          void SMB_Read (void)
+ 288          {
+ 289   1         while (SMB_BUSY != 0);               // Wait for transfer to complete
+ 290   1         SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+ 291   1         SMB_RW = 1;                         // Mark this transfer as a READ
+ 292   1      
+ 293   1         SMB0CN_STA = 1;                            // Start transfer
+ 294   1      
+ 295   1         while (SMB_BUSY);                   // Wait for transfer to complete
+ 296   1      }
+ 297          
+ 298          //-----------------------------------------------------------------------------
+ 299          // T0_Wait_ms
+ 300          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 04/08/2018 18:15:09 PAGE 6   
+
+ 301          //
+ 302          // Return Value : None
+ 303          // Parameters   :
+ 304          //   1) U8 ms - number of milliseconds to wait
+ 305          //                        range is full range of character: 0 to 255
+ 306          //
+ 307          // Configure Timer0 to wait for <ms> milliseconds using SYSCLK as its time
+ 308          // base.
+ 309          //
+ 310          //-----------------------------------------------------------------------------
+ 311          void T0_Wait_ms (U8 ms)
+ 312          {
+ 313   1      
+ 314   1         while (ms) {
+ 315   2            TCON_TR0 = 0;                         // Stop Timer0
+ 316   2            TH0 = ((-(SYSCLK/1000)) >> 8);   // Overflow in 1ms
+ 317   2            TL0 = ((-(SYSCLK/1000)) & 0xFF);
+ 318   2            TCON_TF0 = 0;                         // Clear overflow indicator
+ 319   2            TCON_TR0 = 1;                         // Start Timer0
+ 320   2            while (!TCON_TF0);                    // Wait for overflow
+ 321   2            ms--;                            // Update ms counter
+ 322   2         }
+ 323   1      
+ 324   1         TCON_TR0 = 0;                            // Stop Timer0
+ 325   1      }
+ 326          
+ 327          //-----------------------------------------------------------------------------
+ 328          // End Of File
+ 329          //-----------------------------------------------------------------------------
+*** WARNING C294 IN LINE 242 OF C:\Users\Rilind\Desktop\System_project\Exam_Project\Exam_Project_2\F99x-98x_SMBus_Master
+             -\src\F99x_SMBus_Master.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    271    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
