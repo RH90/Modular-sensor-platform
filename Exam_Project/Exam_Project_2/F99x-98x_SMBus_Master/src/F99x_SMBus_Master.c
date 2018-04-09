@@ -107,6 +107,9 @@ void SMB_Read (void);
 void T0_Wait_ms (U8 ms);
 void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat);
 U8 SMB_Read_Reg(U8 Addr, U8 Reg);
+void UART_Init(int baudrate);
+void UART_Send(char c);
+void print(char* string,U8 num);
 
 
 //-----------------------------------------------------------------------------
@@ -139,6 +142,35 @@ void UART_Send(char c)
 	SBUF0 = c;      // Load the data to be transmitted
 	while(SCON0_TI==0);   // Wait till the data is trasmitted
 	SCON0_TI = 0;
+}
+void print(char* string,U8 num)
+{
+	char c=0;
+	char s[10];
+	int8_t j=0;
+	int8_t i=0;
+	U8 len = 0;
+	while ((c=(*(string++))) != '\0') {
+		UART_Send(c);
+		len++;
+	}
+
+	for(;j<10;j++){
+			*(string++)=(num%10)+'0';
+			s[j]=((num%10)+'0');
+			num=num/10;
+			if(num==0)
+			break;
+	}
+	for(i=(j);i>=0;i--)
+	{
+		UART_Send(s[i]);
+	}
+	UART_Send('\r');
+	//UART_Send('\n');
+
+
+
 }
 U8 SMB_Read_Reg(U8 Addr, U8 Reg)
 {
@@ -193,24 +225,28 @@ int main (void)
 
 	enter_Mode2_from_DefaultMode();
 	 UART_Init(57600);
-	//printf("%d",0x22);
-	//YELLOW_LED = LED_OFF;
-	//printf("hej");
+
 	dat = 0;                            // Output data counter
 	NUM_ERRORS = 0;                     // Error counter
 
-	SMB_Write_Reg(0x30,0x20,0x37);
+	//SMB_Write_Reg(0x30,0x20,0x37);
+
+	SMB_Write_Reg(0xEE,0xE0,0xB6);
+	SMB_Write_Reg(0xEE,0x72,0x01);
+	SMB_Write_Reg(0xEE,0x74,0x25);
 	while (1)
 	{
+		SMB_Write_Reg(0xEE,0x74,0x25);
+	 // UART_Send(SMB_Read_Reg(0x30,0x2B));
+	  //UART_Send(SMB_Read_Reg(0xEE,0xD0));
 
+	//	UART_Send(SMB_Read_Reg(0xEE,0x23));
 
-
-
-
-
-	  UART_Send(SMB_Read_Reg(0x30,0x2B));
+		print("TEMP_H: ",SMB_Read_Reg(0xEE,0x22));
+		print("TEMP_L: ",SMB_Read_Reg(0xEE,0x23));
+		print("----------",0);
 	 // UART_Send('\n');
-	  UART_Send('\r');
+
 	  // Check transfer data
 	  if(SMB_DATA_IN != 0x20)  // Received data match transmit data?
 	  {
@@ -227,7 +263,7 @@ int main (void)
 
 
 	//  printf("weds");
-	 for(a=0;a<10000;a++){
+	 for(a=0;a<100000;a++){
 		 ;;
 		 // Wait 50 ms until the next cycle
 	 }
