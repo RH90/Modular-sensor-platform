@@ -82,6 +82,19 @@ U8 RW_Reg; // Global holder for SMBus data.
 // All transmit data is read from here
 
 U8 TARGET;                             // Target SMBus slave address
+U8  par_g1;
+U16 par_g2;
+U8  par_g3;// Dummy variable counters
+U16 par_t1;
+int16_t par_t2;
+int8_t  par_t3;// Dummy variable counters
+uint32_t temp_adc;
+int16_t calc_temp;
+int16_t var1;
+int32_t var2;
+int16_t var3;
+int32_t t_fine;
+int32_t a;
 
 volatile bit SMB_BUSY;                 // Software flag to indicate when the
 // SMB_Read() or SMB_Write() functions
@@ -89,8 +102,6 @@ volatile bit SMB_BUSY;                 // Software flag to indicate when the
 
 volatile bit SMB_RW;                   // Software flag to indicate the
 // direction of the current transfer
-
-U16 NUM_ERRORS;                        // Counter for the number of errors.
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
 SBIT (SCL, SFR_P0, 1);                 // and P0.1
@@ -106,9 +117,10 @@ void SMB_Read (void);
 void T0_Wait_ms (U8 ms);
 void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat);
 U8 SMB_Read_Reg(U8 Addr, U8 Reg);
-void UART_Init(int baudrate);
+void UART_Init(void);
 void UART_Send(char c);
 void print(char* string,U16 num);
+int16_t getTemp(void);
 
 
 //-----------------------------------------------------------------------------
@@ -127,8 +139,9 @@ void SiLabs_Startup (void)
 //-----------------------------------------------------------------------------
 // main() Routine
 // ----------------------------------------------------------------------------
-void UART_Init(int baudrate)
+void UART_Init(void)
 {
+	//baud rate=57600
 	SCON0 = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
 	TMOD = 0x20;  //Timer1 in Mode2.
 	// TH1 = 256 - (24500000UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
@@ -153,7 +166,6 @@ void print(char* string,U16 num)
 		UART_Send(c);
 		len++;
 	}
-
 	for(;j<10;j++){
 		*(string++)=(num%10)+'0';
 		s[j]=((num%10)+'0');
@@ -196,24 +208,23 @@ void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
 	}
 
 }
+int16_t getTemp(void)
+{
+	temp_adc=((uint32_t)(SMB_Read_Reg(0xEE,0x22))<<12)|((SMB_Read_Reg(0xEE,0x23)<<4));
+	var1 = ((int32_t)temp_adc >> 3) - ((int32_t)par_t1 << 1);
+	var2 = (var1 *  (int32_t)par_t2) >> 11;
+	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
+	var3 = ((var3) * ((int32_t)par_t3 << 4)) >> 14;
+	t_fine =(int32_t)(var2 + var3);
+
+	calc_temp =(((t_fine * 5) + 128) >> 8);
+	calc_temp/=100;
+	return calc_temp;
+}
 
 int main (void)
 {
-	volatile U8 dat;                    // Test counter
 	U8  i;
-	U8  par_g1;
-	U16 par_g2;
-	U8  par_g3;// Dummy variable counters
-	U16 par_t1;
-	int16_t par_t2;
-	int8_t  par_t3;// Dummy variable counters
-	uint32_t temp_adc;
-	int32_t calc_temp;
-	int32_t var1;
-	int32_t var2;
-	int32_t var3;
-	int32_t t_fine;
-	double a;
 	//Enter default mode
 	enter_DefaultMode_from_RESET();
 	//printf("%d",0x22);
@@ -233,16 +244,13 @@ int main (void)
 	}
 
 	enter_Mode2_from_DefaultMode();
-	UART_Init(57600);
-
-	dat = 0;                            // Output data counter
-	NUM_ERRORS = 0;                     // Error counter
+	UART_Init();
 
 	//SMB_Write_Reg(0x30,0x20,0x37);
 
 	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
 	SMB_Write_Reg(0xEE,0x72,0x01);// hum:1x
-	SMB_Write_Reg(0xEE,0x74,0x31);// temp:8x, pressure:8x
+	SMB_Write_Reg(0xEE,0x74,0x25);// temp:8x, pressure:8x
 
 	par_g1=SMB_Read_Reg(0xEE,0xED);
 	par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
@@ -257,24 +265,10 @@ int main (void)
 	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
 	while (1)
 	{
-		SMB_Write_Reg(0xEE,0x74,0x31);// trigger forced mode
+		SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
 
-		temp_adc=((uint32_t)(SMB_Read_Reg(0xEE,0x22))<<12)|((SMB_Read_Reg(0xEE,0x23)<<4));
-
-		var1=(int32_t)temp_adc;
-		var1 = ((int32_t)temp_adc >> 3) - ((int32_t)par_t1 << 1);
-		var2 = (var1 *  (int32_t)par_t2) >> 11;
-		var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
-		var3 = ((var3) * ((int32_t)par_t3 << 4)) >> 14;
-		t_fine =(int32_t)(var2 + var3);
-
-		calc_temp =(((t_fine * 5) + 128) >> 8);
-		calc_temp/=100;
-		print("Temp: ",calc_temp);
-		print("TEMP_X: ",SMB_Read_Reg(0xEE,0x24));
-		print("TEMP_H: ",SMB_Read_Reg(0xEE,0x22));
-		print("TEMP_L: ",SMB_Read_Reg(0xEE,0x23));
-		print("----------------------",0);
+		print("Temp: ",getTemp());
+		print("--------",0);
 
 		YELLOW_LED = !YELLOW_LED;
 

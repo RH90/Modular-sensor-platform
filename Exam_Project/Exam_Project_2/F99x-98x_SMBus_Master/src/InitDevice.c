@@ -26,8 +26,6 @@ extern void enter_DefaultMode_from_RESET(void) {
 	TIMER01_0_enter_DefaultMode_from_RESET();
 	UART_0_enter_DefaultMode_from_RESET();
 	// [Config Calls]$
-
-
 }
 
 
@@ -41,52 +39,8 @@ extern void PCA_0_enter_DefaultMode_from_RESET(void) {
 	SFRPAGE = 0x00;
 	PCA0MD &= ~PCA0MD_WDTE__BMASK;
 
-	// [Watchdog Disable]$
 
-	// $[PCA0CPM0 - PCA Channel 0 Capture/Compare Mode 0]
-	// [PCA0CPM0 - PCA Channel 0 Capture/Compare Mode 0]$
 
-	// $[PCA0CPL0 - PCA Channel 0 Capture Module Low Byte]
-	// [PCA0CPL0 - PCA Channel 0 Capture Module Low Byte]$
-
-	// $[PCA0CPH0 - PCA Channel 0 Capture Module High Byte]
-	// [PCA0CPH0 - PCA Channel 0 Capture Module High Byte]$
-
-	// $[PCA0CPM1 - PCA Channel 1 Capture/Compare Mode]
-	// [PCA0CPM1 - PCA Channel 1 Capture/Compare Mode]$
-
-	// $[PCA0CPL1 - PCA Channel 1 Capture Module Low Byte]
-	// [PCA0CPL1 - PCA Channel 1 Capture Module Low Byte]$
-
-	// $[PCA0CPH1 - PCA Channel 1 Capture Module High Byte]
-	// [PCA0CPH1 - PCA Channel 1 Capture Module High Byte]$
-
-	// $[PCA0CPM2 - PCA Channel 2 Capture/Compare Mode]
-	// [PCA0CPM2 - PCA Channel 2 Capture/Compare Mode]$
-
-	// $[PCA0CPL2 - PCA Channel 2 Capture Module Low Byte]
-	// [PCA0CPL2 - PCA Channel 2 Capture Module Low Byte]$
-
-	// $[PCA0CPH2 - PCA Channel 2 Capture Module High Byte]
-	// [PCA0CPH2 - PCA Channel 2 Capture Module High Byte]$
-
-	// $[PCA0CN - PCA Control]
-	// [PCA0CN - PCA Control]$
-
-	// $[PCA0L - PCA Counter/Timer Low Byte]
-	// [PCA0L - PCA Counter/Timer Low Byte]$
-
-	// $[PCA0H - PCA Counter/Timer High Byte]
-	// [PCA0H - PCA Counter/Timer High Byte]$
-
-	// $[PCA0PWM - PCA PWM Configuration]
-	// [PCA0PWM - PCA PWM Configuration]$
-
-	// $[PCA0MD - PCA Mode]
-	// [PCA0MD - PCA Mode]$
-
-	// $[WDT - Watchdog run Control]
-	// [WDT - Watchdog run Control]$
 
 
 }
@@ -146,26 +100,7 @@ extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
 //================================================================================
 extern void PORTS_1_enter_Mode2_from_DefaultMode(void) {
 	// $[P1 - Port 1 Pin Latch]
-	// [P1 - Port 1 Pin Latch]$
 
-	// $[P1MDOUT - Port 1 Output Mode]
-	/*
-	// B0 (Port 1 Bit 0 Output Mode) = OPEN_DRAIN (P1.0 output is open-
-	//     drain.)
-	// B1 (Port 1 Bit 1 Output Mode) = OPEN_DRAIN (P1.1 output is open-
-	//     drain.)
-	// B2 (Port 1 Bit 2 Output Mode) = OPEN_DRAIN (P1.2 output is open-
-	//     drain.)
-	// B3 (Port 1 Bit 3 Output Mode) = PUSH_PULL (P1.3 output is push-pull.)
-	// B4 (Port 1 Bit 4 Output Mode) = OPEN_DRAIN (P1.4 output is open-
-	//     drain.)
-	// B5 (Port 1 Bit 5 Output Mode) = OPEN_DRAIN (P1.5 output is open-
-	//     drain.)
-	// B6 (Port 1 Bit 6 Output Mode) = OPEN_DRAIN (P1.6 output is open-
-	//     drain.)
-	// B7 (Port 1 Bit 7 Output Mode) = OPEN_DRAIN (P1.7 output is open-
-	//     drain.)
-	*/
 	SFRPAGE = 0x00;
 	P1MDOUT = P1MDOUT_B0__OPEN_DRAIN | P1MDOUT_B1__OPEN_DRAIN | P1MDOUT_B2__OPEN_DRAIN
 	| P1MDOUT_B3__PUSH_PULL | P1MDOUT_B4__OPEN_DRAIN | P1MDOUT_B5__OPEN_DRAIN

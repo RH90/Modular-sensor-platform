@@ -28,8 +28,6 @@
 #define LED_ON           0             // Turns the LED on
 #define LED_OFF          1             // Turns the LED off
 
-// Device addresses (7 bits, LSB is a don't care)
-#define  SLAVE_ADDR     0xF0           // Device address for slave target
 
 // Status vector - top 4 bits only
 #define  SMB_MTSTA      0xE0           // (MT) start transmitted
@@ -123,7 +121,6 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 			{
 				SMB0CN_STO = 1;                // Send STOP condition, followed
 				SMB0CN_STA = 1;                // By a START
-				NUM_ERRORS++;           // Indicate error
 			}
 			break;
 
@@ -162,9 +159,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 		SMB_BUSY = 0;                    // Free SMBus
 
 		FAIL = 0;
-		YELLOW_LED = LED_OFF;
-
-		NUM_ERRORS++;                    // Indicate an error occurred
+                // Indicate an error occurred
 	}
 
 	SMB0CN_SI = 0;                             // Clear interrupt flag
