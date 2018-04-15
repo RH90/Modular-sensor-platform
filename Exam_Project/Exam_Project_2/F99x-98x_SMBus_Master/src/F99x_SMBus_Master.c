@@ -67,29 +67,28 @@
 #include <compiler_defs.h>
 #include <SI_C8051F990_Register_Enums.h>                  // SFR declarations
 #include "InitDevice.h"
-#include <stdio.h>
 #include "F99x_SMBus_Master.h"
 
 //-----------------------------------------------------------------------------
 // Global VARIABLES
 //-----------------------------------------------------------------------------
 U8 SMB_DATA_IN;                        // Global holder for SMBus data
-                                       // All receive data is written here
+// All receive data is written here
 
 U8 SMB_DATA_OUT;
 U8 SMB_REG_OUT;
 U8 START_SMB;
 U8 RW_Reg; // Global holder for SMBus data.
-                                       // All transmit data is read from here
+// All transmit data is read from here
 
 U8 TARGET;                             // Target SMBus slave address
 
 volatile bit SMB_BUSY;                 // Software flag to indicate when the
-                                       // SMB_Read() or SMB_Write() functions
-                                       // have claimed the SMBus
+// SMB_Read() or SMB_Write() functions
+// have claimed the SMBus
 
 volatile bit SMB_RW;                   // Software flag to indicate the
-                                       // direction of the current transfer
+// direction of the current transfer
 
 U16 NUM_ERRORS;                        // Counter for the number of errors.
 
@@ -109,7 +108,7 @@ void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat);
 U8 SMB_Read_Reg(U8 Addr, U8 Reg);
 void UART_Init(int baudrate);
 void UART_Send(char c);
-void print(char* string,U8 num);
+void print(char* string,U16 num);
 
 
 //-----------------------------------------------------------------------------
@@ -122,7 +121,7 @@ void print(char* string,U8 num);
 //-----------------------------------------------------------------------------
 void SiLabs_Startup (void)
 {
-  // Disable the watchdog here
+	// Disable the watchdog here
 }
 
 //-----------------------------------------------------------------------------
@@ -131,10 +130,10 @@ void SiLabs_Startup (void)
 void UART_Init(int baudrate)
 {
 	SCON0 = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
-    TMOD = 0x20;  //Timer1 in Mode2.
-   // TH1 = 256 - (24500000UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
-    TH1 = (0x2B << TH1_TH1__SHIFT);
-    TCON |= (1<<6);      //Turn ON the timer for Baud rate generation
+	TMOD = 0x20;  //Timer1 in Mode2.
+	// TH1 = 256 - (24500000UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
+	TH1 = (0x2B << TH1_TH1__SHIFT);
+	TCON |= (1<<6);      //Turn ON the timer for Baud rate generation
 }
 
 void UART_Send(char c)
@@ -143,7 +142,7 @@ void UART_Send(char c)
 	while(SCON0_TI==0);   // Wait till the data is trasmitted
 	SCON0_TI = 0;
 }
-void print(char* string,U8 num)
+void print(char* string,U16 num)
 {
 	char c=0;
 	char s[10];
@@ -156,11 +155,11 @@ void print(char* string,U8 num)
 	}
 
 	for(;j<10;j++){
-			*(string++)=(num%10)+'0';
-			s[j]=((num%10)+'0');
-			num=num/10;
-			if(num==0)
-			break;
+		*(string++)=(num%10)+'0';
+		s[j]=((num%10)+'0');
+		num=num/10;
+		if(num==0)
+		break;
 	}
 	for(i=(j);i>=0;i--)
 	{
@@ -168,8 +167,6 @@ void print(char* string,U8 num)
 	}
 	UART_Send('\r');
 	//UART_Send('\n');
-
-
 
 }
 U8 SMB_Read_Reg(U8 Addr, U8 Reg)
@@ -188,22 +185,34 @@ U8 SMB_Read_Reg(U8 Addr, U8 Reg)
 void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
 {
 	RW_Reg=1;
-		TARGET = Addr;             // Target the F3xx/Si8250 Slave for next
-		START_SMB=1;
-		SMB_DATA_OUT = Dat;
-		SMB_REG_OUT = Reg;// SMBus transfer
-		SMB_Write();
+	TARGET = Addr;             // Target the F3xx/Si8250 Slave for next
+	START_SMB=1;
+	SMB_DATA_OUT = Dat;
+	SMB_REG_OUT = Reg;// SMBus transfer
+	SMB_Write();
 
-		while(SMB_BUSY){
-			;;
-		}
+	while(SMB_BUSY){
+		;;
+	}
 
 }
 
 int main (void)
 {
 	volatile U8 dat;                    // Test counter
-	U8 i;                               // Dummy variable counters
+	U8  i;
+	U8  par_g1;
+	U16 par_g2;
+	U8  par_g3;// Dummy variable counters
+	U16 par_t1;
+	int16_t par_t2;
+	int8_t  par_t3;// Dummy variable counters
+	uint32_t temp_adc;
+	int32_t calc_temp;
+	int32_t var1;
+	int32_t var2;
+	int32_t var3;
+	int32_t t_fine;
 	double a;
 	//Enter default mode
 	enter_DefaultMode_from_RESET();
@@ -211,70 +220,71 @@ int main (void)
 	// If slave is holding SDA low because of an improper SMBus reset or error
 	while(!SDA)
 	{
-	  // Provide clock pulses to allow the slave to advance out
-	  // of its current state. This will allow it to release SDA.
-	  XBR2 = 0x40;                     // Enable Crossbar
-	  SCL = 0;                         // Drive the clock low
-	  for(i = 0; i < 255; i++);        // Hold the clock low
-	  SCL = 1;                         // Release the clock
-	  while(!SCL);                     // Wait for open-drain
-									   // clock output to rise
-	  for(i = 0; i < 10; i++);         // Hold the clock high
-	  XBR2 = 0x00;                     // Disable Crossbar
+		// Provide clock pulses to allow the slave to advance out
+		// of its current state. This will allow it to release SDA.
+		XBR2 = 0x40;                     // Enable Crossbar
+		SCL = 0;                         // Drive the clock low
+		for(i = 0; i < 255; i++);        // Hold the clock low
+		SCL = 1;                         // Release the clock
+		while(!SCL);                     // Wait for open-drain
+		// clock output to rise
+		for(i = 0; i < 10; i++);         // Hold the clock high
+		XBR2 = 0x00;                     // Disable Crossbar
 	}
 
 	enter_Mode2_from_DefaultMode();
-	 UART_Init(57600);
+	UART_Init(57600);
 
 	dat = 0;                            // Output data counter
 	NUM_ERRORS = 0;                     // Error counter
 
 	//SMB_Write_Reg(0x30,0x20,0x37);
 
-	SMB_Write_Reg(0xEE,0xE0,0xB6);
-	SMB_Write_Reg(0xEE,0x72,0x01);
-	SMB_Write_Reg(0xEE,0x74,0x25);
+	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
+	SMB_Write_Reg(0xEE,0x72,0x01);// hum:1x
+	SMB_Write_Reg(0xEE,0x74,0x31);// temp:8x, pressure:8x
+
+	par_g1=SMB_Read_Reg(0xEE,0xED);
+	par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
+	par_g3 =SMB_Read_Reg(0xEE,0xEE);
+
+	//par_t1=(SMB_Read_Reg(0xEE,0xEA)<<8)|SMB_Read_Reg(0xEE,0xE9);
+	//par_t2=(SMB_Read_Reg(0xEE,0x8B)<<8)|SMB_Read_Reg(0xEE,0x8A);
+	//par_t3 =SMB_Read_Reg(0xEE,0x8C);
+	par_t1=26487;
+	par_t2=26223;
+	par_t3 =3;
+	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
 	while (1)
 	{
-		SMB_Write_Reg(0xEE,0x74,0x25);
-	 // UART_Send(SMB_Read_Reg(0x30,0x2B));
-	  //UART_Send(SMB_Read_Reg(0xEE,0xD0));
+		SMB_Write_Reg(0xEE,0x74,0x31);// trigger forced mode
 
-	//	UART_Send(SMB_Read_Reg(0xEE,0x23));
+		temp_adc=((uint32_t)(SMB_Read_Reg(0xEE,0x22))<<12)|((SMB_Read_Reg(0xEE,0x23)<<4));
 
+		var1=(int32_t)temp_adc;
+		var1 = ((int32_t)temp_adc >> 3) - ((int32_t)par_t1 << 1);
+		var2 = (var1 *  (int32_t)par_t2) >> 11;
+		var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
+		var3 = ((var3) * ((int32_t)par_t3 << 4)) >> 14;
+		t_fine =(int32_t)(var2 + var3);
+
+		calc_temp =(((t_fine * 5) + 128) >> 8);
+		calc_temp/=100;
+		print("Temp: ",calc_temp);
+		print("TEMP_X: ",SMB_Read_Reg(0xEE,0x24));
 		print("TEMP_H: ",SMB_Read_Reg(0xEE,0x22));
 		print("TEMP_L: ",SMB_Read_Reg(0xEE,0x23));
-		print("----------",0);
-	 // UART_Send('\n');
+		print("----------------------",0);
 
-	  // Check transfer data
-	  if(SMB_DATA_IN != 0x20)  // Received data match transmit data?
-	  {
-		 NUM_ERRORS++;                 // Increment error counter if no match
-	  }
+		YELLOW_LED = !YELLOW_LED;
 
-	  // Indicate that an error has occurred (YELLOW_LED no longer lit)
-
-		 YELLOW_LED = !YELLOW_LED;
-
-		 //YELLOW_LED= 1;
-
-	  // Run to here to view the SMB_DATA_IN and SMB_DATA_OUT variables
-
-
-	//  printf("weds");
-	 for(a=0;a<100000;a++){
-		 ;;
-		 // Wait 50 ms until the next cycle
-	 }
-										// so that YELLOW_LED blinks slow
-										// enough to see
+		for(a=0;a<100000;a++){
+			;;
+			// Wait 50 ms until the next cycle
+		}
 
 	}
 
-	// END TEST CODE---------------------------------------------------------------
-
-	// NOTREACHED
 	return 0;
 }
 
@@ -299,10 +309,10 @@ int main (void)
 //-----------------------------------------------------------------------------
 void SMB_Write (void)
 {
-   while (SMB_BUSY);                   // Wait for SMBus to be free.
-   SMB_BUSY = 1;                       // Claim SMBus (set to busy)
-   SMB_RW = 0;                         // Mark this transfer as a WRITE
-   SMB0CN_STA = 1;                            // Start transfer
+	while (SMB_BUSY);                   // Wait for SMBus to be free.
+	SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+	SMB_RW = 0;                         // Mark this transfer as a WRITE
+	SMB0CN_STA = 1;                            // Start transfer
 }
 
 //-----------------------------------------------------------------------------
@@ -322,13 +332,13 @@ void SMB_Write (void)
 //-----------------------------------------------------------------------------
 void SMB_Read (void)
 {
-   while (SMB_BUSY != 0);               // Wait for transfer to complete
-   SMB_BUSY = 1;                       // Claim SMBus (set to busy)
-   SMB_RW = 1;                         // Mark this transfer as a READ
+	while (SMB_BUSY != 0);               // Wait for transfer to complete
+	SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+	SMB_RW = 1;                         // Mark this transfer as a READ
 
-   SMB0CN_STA = 1;                            // Start transfer
+	SMB0CN_STA = 1;                            // Start transfer
 
-   while (SMB_BUSY);                   // Wait for transfer to complete
+	while (SMB_BUSY);                   // Wait for transfer to complete
 }
 
 //-----------------------------------------------------------------------------
@@ -347,17 +357,17 @@ void SMB_Read (void)
 void T0_Wait_ms (U8 ms)
 {
 
-   while (ms) {
-      TCON_TR0 = 0;                         // Stop Timer0
-      TH0 = ((-(SYSCLK/1000)) >> 8);   // Overflow in 1ms
-      TL0 = ((-(SYSCLK/1000)) & 0xFF);
-      TCON_TF0 = 0;                         // Clear overflow indicator
-      TCON_TR0 = 1;                         // Start Timer0
-      while (!TCON_TF0);                    // Wait for overflow
-      ms--;                            // Update ms counter
-   }
+	while (ms) {
+		TCON_TR0 = 0;                         // Stop Timer0
+		TH0 = ((-(SYSCLK/1000)) >> 8);   // Overflow in 1ms
+		TL0 = ((-(SYSCLK/1000)) & 0xFF);
+		TCON_TF0 = 0;                         // Clear overflow indicator
+		TCON_TR0 = 1;                         // Start Timer0
+		while (!TCON_TF0);                    // Wait for overflow
+		ms--;                            // Update ms counter
+	}
 
-   TCON_TR0 = 0;                            // Stop Timer0
+	TCON_TR0 = 0;                            // Stop Timer0
 }
 
 //-----------------------------------------------------------------------------

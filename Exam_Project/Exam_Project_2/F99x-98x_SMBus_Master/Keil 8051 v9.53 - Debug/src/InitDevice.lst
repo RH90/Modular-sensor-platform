@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   49   1              // $[PCA0CPL0 - PCA Channel 0 Capture Module Low Byte]
   50   1              // [PCA0CPL0 - PCA Channel 0 Capture Module Low Byte]$
   51   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 2   
 
   52   1              // $[PCA0CPH0 - PCA Channel 0 Capture Module High Byte]
   53   1              // [PCA0CPH0 - PCA Channel 0 Capture Module High Byte]$
@@ -128,7 +128,7 @@ line level    source
  112          extern void HFOSC_0_enter_DefaultMode_from_RESET(void) {
  113   1              // $[OSCICL - High Frequency Oscillator Calibration]
  114   1              // [OSCICL - High Frequency Oscillator Calibration]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 3   
 
  115   1      
  116   1              // $[OSCICN - High Frequency Oscillator Control]
@@ -186,14 +186,14 @@ line level    source
  168   1              */
  169   1              SFRPAGE = 0x00;
  170   1              P1MDOUT = P1MDOUT_B0__OPEN_DRAIN | P1MDOUT_B1__OPEN_DRAIN | P1MDOUT_B2__OPEN_DRAIN
- 171   1                       | P1MDOUT_B3__PUSH_PULL | P1MDOUT_B4__OPEN_DRAIN | P1MDOUT_B5__OPEN_DRAIN
- 172   1                       | P1MDOUT_B6__OPEN_DRAIN | P1MDOUT_B7__OPEN_DRAIN;
+ 171   1              | P1MDOUT_B3__PUSH_PULL | P1MDOUT_B4__OPEN_DRAIN | P1MDOUT_B5__OPEN_DRAIN
+ 172   1              | P1MDOUT_B6__OPEN_DRAIN | P1MDOUT_B7__OPEN_DRAIN;
  173   1              // [P1MDOUT - Port 1 Output Mode]$
  174   1      
  175   1              // $[P1MDIN - Port 1 Input Mode]
  176   1              // [P1MDIN - Port 1 Input Mode]$
  177   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 4   
 
  178   1              // $[P1SKIP - Port 1 Skip]
  179   1              // [P1SKIP - Port 1 Skip]$
@@ -238,7 +238,7 @@ line level    source
  218   1              //     pin.)
  219   1              */
  220   1              XBR0 = XBR0_URT0E__ENABLED | XBR0_SPI0E__DISABLED | XBR0_SMB0E__ENABLED
- 221   1                       | XBR0_CP0E__DISABLED | XBR0_CP0AE__DISABLED | XBR0_SYSCKE__DISABLED;
+ 221   1              | XBR0_CP0E__DISABLED | XBR0_CP0AE__DISABLED | XBR0_SYSCKE__DISABLED;
  222   1              // [XBR0 - Port I/O Crossbar 0]$
  223   1      
  224   1              // $[XBR1 - Port I/O Crossbar 1]
@@ -258,7 +258,7 @@ line level    source
  238   1              TCON &= TCON_TR0__BMASK & TCON_TR1__BMASK;
  239   1      
  240   1              // [Timer Initialization]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 5   
 
  241   1      
  242   1              // $[TH0 - Timer 0 High Byte]
@@ -323,7 +323,7 @@ line level    source
  301   1      
  302   1              // $[TMR3RLL - Timer 3 Reload Low Byte]
  303   1              /*
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 6   
 
  304   1              // TMR3RLL (Timer 3 Reload Low Byte) = 158
  305   1              */
@@ -367,11 +367,11 @@ line level    source
  343   1              //     irrespective of /INT1 logic level.)
  344   1              */
  345   1              CKCON = CKCON_SCA__SYSCLK_DIV_12 | CKCON_T0M__SYSCLK | CKCON_T2MH__SYSCLK
- 346   1                                       | CKCON_T2ML__SYSCLK | CKCON_T3MH__EXTERNAL_CLOCK | CKCON_T3ML__EXTERNAL_CLOCK
- 347   1                                       | CKCON_T1M__SYSCLK;
+ 346   1              | CKCON_T2ML__SYSCLK | CKCON_T3MH__EXTERNAL_CLOCK | CKCON_T3ML__EXTERNAL_CLOCK
+ 347   1              | CKCON_T1M__SYSCLK;
  348   1      
  349   1              TMOD = TMOD_T0M__MODE0 | TMOD_CT0__TIMER | TMOD_GATE0__DISABLED
- 350   1                       | TMOD_T1M__MODE1 | TMOD_CT1__TIMER | TMOD_GATE1__DISABLED;
+ 350   1              | TMOD_T1M__MODE1 | TMOD_CT1__TIMER | TMOD_GATE1__DISABLED;
  351   1      
  352   1              // [TMOD - Timer 0/1 Mode]$
  353   1      
@@ -388,7 +388,7 @@ line level    source
  364          
  365          //================================================================================
  366          // SMBUS_0_enter_Mode2_from_DefaultMode
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 7   
 
  367          //================================================================================
  368          extern void SMBUS_0_enter_Mode2_from_DefaultMode(void) {
@@ -407,7 +407,7 @@ line level    source
  381   1              //     inhibited.)
  382   1              */
  383   1              SMB0CF = SMB0CF_SMBCS__TIMER0 | SMB0CF_ENSMB__ENABLED | SMB0CF_SMBFTE__FREE_TO_ENABLED
- 384   1                       | SMB0CF_SMBTOE__SCL_TO_ENABLED | SMB0CF_EXTHOLD__ENABLED | SMB0CF_INH__SLAVE_DISABLED;
+ 384   1              | SMB0CF_SMBTOE__SCL_TO_ENABLED | SMB0CF_EXTHOLD__ENABLED | SMB0CF_INH__SLAVE_DISABLED;
  385   1              // [SMB0CF - SMBus 0 Configuration]$
  386   1      
  387   1              // $[SMB0ADR - SMBus 0 Slave Address]
@@ -441,8 +441,8 @@ line level    source
  415   1              //     ADC0 Window Comparison interrupt.)
  416   1              */
  417   1              EIE1 = EIE1_EADC0__DISABLED | EIE1_ECP0__DISABLED | EIE1_EPCA0__DISABLED
- 418   1                       | EIE1_ERTC0A__DISABLED | EIE1_ESMB0__ENABLED | EIE1_ET3__ENABLED
- 419   1                       | EIE1_EWADC0__DISABLED;
+ 418   1              | EIE1_ERTC0A__DISABLED | EIE1_ESMB0__ENABLED | EIE1_ET3__ENABLED
+ 419   1              | EIE1_EWADC0__DISABLED;
  420   1              // [EIE1 - Extended Interrupt Enable 1]$
  421   1      
  422   1              // $[EIP1 - Extended Interrupt Priority 1]
@@ -453,7 +453,7 @@ line level    source
  427   1              // EA (All Interrupts Enable) = ENABLED (Enable each interrupt according
  428   1              //     to its individual mask setting.)
  429   1              // EX0 (External Interrupt 0 Enable) = DISABLED (Disable external
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 8   
 
  430   1              //     interrupt 0.)
  431   1              // EX1 (External Interrupt 1 Enable) = DISABLED (Disable external
@@ -468,7 +468,7 @@ line level    source
  440   1              // ES0 (UART0 Interrupt Enable) = DISABLED (Disable UART0 interrupt.)
  441   1              */
  442   1              IE = IE_EA__ENABLED | IE_EX0__DISABLED | IE_EX1__DISABLED | IE_ESPI0__DISABLED
- 443   1                       | IE_ET0__DISABLED | IE_ET1__DISABLED | IE_ET2__DISABLED | IE_ES0__DISABLED;
+ 443   1              | IE_ET0__DISABLED | IE_ET1__DISABLED | IE_ET2__DISABLED | IE_ES0__DISABLED;
  444   1              // [IE - Interrupt Enable]$
  445   1      
  446   1              // $[IP - Interrupt Priority]
@@ -518,7 +518,7 @@ line level    source
  490   1              /*
  491   1              // TL1 (Timer 1 Low Byte) = 0xCB
  492   1              */
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/08/2018 18:14:15 PAGE 9   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/14/2018 14:55:35 PAGE 9   
 
  493   1              //TL1 = (0x2B << TL1_TL1__SHIFT);
  494   1              // [TL1 - Timer 1 Low Byte]$
