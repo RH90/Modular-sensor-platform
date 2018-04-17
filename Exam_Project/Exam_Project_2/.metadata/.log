@@ -677,3 +677,227 @@ Error code: 131073
 
 !ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 16:58:14.227
 !MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.core 4 0 2018-04-15 17:02:29.972
+!MESSAGE TCF task failed
+!STACK 0
+org.eclipse.tcf.core.ErrorReport: TCF error report:
+Command: DebugAdapter disconnect "root.EC3004BA0D3"
+Error text: Not connected to target.
+Error code: 131073
+	at org.eclipse.tcf.core.Command.toError(Command.java:256)
+	at org.eclipse.tcf.core.Command.toError(Command.java:241)
+	at com.silabs.ss.framework.debugger.internal.api.tcf.services.DebugAdapterProxy$2.done(DebugAdapterProxy.java:57)
+	at org.eclipse.tcf.core.Command.result(Command.java:111)
+	at org.eclipse.tcf.core.AbstractChannel.handleInput(AbstractChannel.java:997)
+	at org.eclipse.tcf.core.AbstractChannel.access$0(AbstractChannel.java:943)
+	at org.eclipse.tcf.core.AbstractChannel$1$1.run(AbstractChannel.java:293)
+	at org.eclipse.tcf.EventQueue.run(EventQueue.java:95)
+	at java.lang.Thread.run(Thread.java:745)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 17:21:22.738
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY org.eclipse.cdt.debug.edc 4 0 2018-04-15 17:21:25.736
+!MESSAGE Unknown context [rc.root.EC3004BA0D3] is reported in suspended event. Make sure TCF agent has reported contextAdded event first.
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.core 4 0 2018-04-15 17:21:35.493
+!MESSAGE TCF task failed
+!STACK 0
+org.eclipse.tcf.core.ErrorReport: TCF error report:
+Command: DebugAdapter disconnect "root.EC3004BA0D3"
+Error text: Not connected to target.
+Error code: 131073
+	at org.eclipse.tcf.core.Command.toError(Command.java:256)
+	at org.eclipse.tcf.core.Command.toError(Command.java:241)
+	at com.silabs.ss.framework.debugger.internal.api.tcf.services.DebugAdapterProxy$2.done(DebugAdapterProxy.java:57)
+	at org.eclipse.tcf.core.Command.result(Command.java:111)
+	at org.eclipse.tcf.core.AbstractChannel.handleInput(AbstractChannel.java:997)
+	at org.eclipse.tcf.core.AbstractChannel.access$0(AbstractChannel.java:943)
+	at org.eclipse.tcf.core.AbstractChannel$1$1.run(AbstractChannel.java:293)
+	at org.eclipse.tcf.EventQueue.run(EventQueue.java:95)
+	at java.lang.Thread.run(Thread.java:745)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 17:34:11.709
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 17:36:08.896
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY com.silabs.ss.framework.debugger.core 4 0 2018-04-15 17:39:59.087
+!MESSAGE Error in disconnecting from Agent on debugger termination.
+!STACK 1
+org.eclipse.core.runtime.CoreException: 
+	at com.silabs.ss.framework.debugger.api.tcf.agent.DeviceAgentSession.disconnect(DeviceAgentSession.java:444)
+	at com.silabs.ss.framework.debugger.api.core.SLSLaunch$1.run(SLSLaunch.java:54)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.run(DebugPlugin.java:1116)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.async(DebugPlugin.java:1097)
+	at org.eclipse.debug.core.DebugPlugin$EventDispatchJob.run(DebugPlugin.java:439)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+!SUBENTRY 1 unknown 8 1 2018-04-15 17:39:59.088
+!MESSAGE 
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.core 4 0 2018-04-15 17:40:01.565
+!MESSAGE TCF task failed
+!STACK 0
+org.eclipse.tcf.core.ErrorReport: TCF error report:
+Command: DebugAdapter disconnect "root.EC3004BA0D3"
+Error text: Not connected to target.
+Error code: 131073
+	at org.eclipse.tcf.core.Command.toError(Command.java:256)
+	at org.eclipse.tcf.core.Command.toError(Command.java:241)
+	at com.silabs.ss.framework.debugger.internal.api.tcf.services.DebugAdapterProxy$2.done(DebugAdapterProxy.java:57)
+	at org.eclipse.tcf.core.Command.result(Command.java:111)
+	at org.eclipse.tcf.core.AbstractChannel.handleInput(AbstractChannel.java:997)
+	at org.eclipse.tcf.core.AbstractChannel.access$0(AbstractChannel.java:943)
+	at org.eclipse.tcf.core.AbstractChannel$1$1.run(AbstractChannel.java:293)
+	at org.eclipse.tcf.EventQueue.run(EventQueue.java:95)
+	at java.lang.Thread.run(Thread.java:745)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 17:50:17.958
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY org.eclipse.cdt.debug.edc 4 0 2018-04-15 17:50:20.786
+!MESSAGE Unknown context [rc.root.EC3004BA0D3] is reported in suspended event. Make sure TCF agent has reported contextAdded event first.
+
+!ENTRY com.silabs.ss.framework.debugger.core 4 0 2018-04-15 17:50:32.440
+!MESSAGE Error in disconnecting from Agent on debugger termination.
+!STACK 1
+org.eclipse.core.runtime.CoreException: 
+	at com.silabs.ss.framework.debugger.api.tcf.agent.DeviceAgentSession.disconnect(DeviceAgentSession.java:444)
+	at com.silabs.ss.framework.debugger.api.core.SLSLaunch$1.run(SLSLaunch.java:54)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.run(DebugPlugin.java:1116)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.async(DebugPlugin.java:1097)
+	at org.eclipse.debug.core.DebugPlugin$EventDispatchJob.run(DebugPlugin.java:439)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+!SUBENTRY 1 unknown 8 1 2018-04-15 17:50:32.440
+!MESSAGE 
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.core 4 0 2018-04-15 17:50:34.936
+!MESSAGE TCF task failed
+!STACK 0
+org.eclipse.tcf.core.ErrorReport: TCF error report:
+Command: DebugAdapter disconnect "root.EC3004BA0D3"
+Error text: Not connected to target.
+Error code: 131073
+	at org.eclipse.tcf.core.Command.toError(Command.java:256)
+	at org.eclipse.tcf.core.Command.toError(Command.java:241)
+	at com.silabs.ss.framework.debugger.internal.api.tcf.services.DebugAdapterProxy$2.done(DebugAdapterProxy.java:57)
+	at org.eclipse.tcf.core.Command.result(Command.java:111)
+	at org.eclipse.tcf.core.AbstractChannel.handleInput(AbstractChannel.java:997)
+	at org.eclipse.tcf.core.AbstractChannel.access$0(AbstractChannel.java:943)
+	at org.eclipse.tcf.core.AbstractChannel$1$1.run(AbstractChannel.java:293)
+	at org.eclipse.tcf.EventQueue.run(EventQueue.java:95)
+	at java.lang.Thread.run(Thread.java:745)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 20:41:20.785
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.agent 1 0 2018-04-15 20:44:53.300
+!MESSAGE Launching SiAgent (Silicon Labs TCF Agent)
+
+!ENTRY com.silabs.ss.framework.debugger.core 4 0 2018-04-15 20:46:22.706
+!MESSAGE Error in disconnecting from Agent on debugger termination.
+!STACK 1
+org.eclipse.core.runtime.CoreException: 
+	at com.silabs.ss.framework.debugger.api.tcf.agent.DeviceAgentSession.disconnect(DeviceAgentSession.java:444)
+	at com.silabs.ss.framework.debugger.api.core.SLSLaunch$1.run(SLSLaunch.java:54)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.run(DebugPlugin.java:1116)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.debug.core.DebugPlugin$AsynchRunner.async(DebugPlugin.java:1097)
+	at org.eclipse.debug.core.DebugPlugin$EventDispatchJob.run(DebugPlugin.java:439)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+!SUBENTRY 1 unknown 8 1 2018-04-15 20:46:22.706
+!MESSAGE 
+
+!ENTRY com.silabs.ss.framework.debugger.tcf.core 4 0 2018-04-15 20:46:23.701
+!MESSAGE TCF task failed
+!STACK 0
+org.eclipse.tcf.core.ErrorReport: TCF error report:
+Command: DebugAdapter disconnect "root.EC3004BA0D3"
+Error text: Not connected to target.
+Error code: 131073
+	at org.eclipse.tcf.core.Command.toError(Command.java:256)
+	at org.eclipse.tcf.core.Command.toError(Command.java:241)
+	at com.silabs.ss.framework.debugger.internal.api.tcf.services.DebugAdapterProxy$2.done(DebugAdapterProxy.java:57)
+	at org.eclipse.tcf.core.Command.result(Command.java:111)
+	at org.eclipse.tcf.core.AbstractChannel.handleInput(AbstractChannel.java:997)
+	at org.eclipse.tcf.core.AbstractChannel.access$0(AbstractChannel.java:943)
+	at org.eclipse.tcf.core.AbstractChannel$1$1.run(AbstractChannel.java:293)
+	at org.eclipse.tcf.EventQueue.run(EventQueue.java:95)
+	at java.lang.Thread.run(Thread.java:745)
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-04-16 01:57:43.558
+!MESSAGE No network interfaces found.
+!SESSION 2018-04-17 09:55:36.087 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_92
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY org.eclipse.equinox.ds 2 0 2018-04-17 09:56:20.688
+!MESSAGE Getting a lock required more than 10000 ms. There might be a synchronization problem in this callstack or just the build/dispose process of some components took too long! 
+!STACK 0
+java.lang.Exception: Debug stacktrace
+	at org.eclipse.equinox.internal.ds.InstanceProcess.getLock(InstanceProcess.java:120)
+	at org.eclipse.equinox.internal.ds.InstanceProcess.buildComponent(InstanceProcess.java:560)
+	at org.eclipse.equinox.internal.ds.ServiceReg.getService(ServiceReg.java:53)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceFactoryUse$1.run(ServiceFactoryUse.java:212)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceFactoryUse.factoryGetService(ServiceFactoryUse.java:210)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceFactoryUse.getService(ServiceFactoryUse.java:111)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceConsumer$2.getService(ServiceConsumer.java:45)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceRegistrationImpl.getService(ServiceRegistrationImpl.java:496)
+	at org.eclipse.osgi.internal.serviceregistry.ServiceRegistry.getService(ServiceRegistry.java:461)
+	at org.eclipse.osgi.internal.framework.BundleContextImpl.getService(BundleContextImpl.java:619)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningAgent.addingService(ProvisioningAgent.java:159)
+	at org.osgi.util.tracker.ServiceTracker$Tracked.customizerAdding(ServiceTracker.java:941)
+	at org.osgi.util.tracker.ServiceTracker$Tracked.customizerAdding(ServiceTracker.java:1)
+	at org.osgi.util.tracker.AbstractTracked.trackAdding(AbstractTracked.java:256)
+	at org.osgi.util.tracker.AbstractTracked.trackInitial(AbstractTracked.java:183)
+	at org.osgi.util.tracker.ServiceTracker.open(ServiceTracker.java:318)
+	at org.osgi.util.tracker.ServiceTracker.open(ServiceTracker.java:261)
+	at org.eclipse.equinox.internal.p2.core.ProvisioningAgent.getService(ProvisioningAgent.java:66)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.getTransport(AbstractRepositoryManager.java:1189)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadIndexFile(AbstractRepositoryManager.java:735)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:657)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.query(AbstractRepositoryManager.java:1167)
+	at com.silabs.ss.platform.internal.api.installer.core.InstallerUtils.findFeaturesForCapabilities(InstallerUtils.java:633)
+	at com.silabs.ss.platform.internal.api.installer.core.InstallerUtils.scanFeaturesProvidingMetadata(InstallerUtils.java:397)
+	at com.silabs.ss.platform.internal.api.installer.core.InstallerUtils.getPackageProvidingMetadata(InstallerUtils.java:418)
+	at com.silabs.ss.platform.internal.installer.core.PackageService.loadRemotePackages(PackageService.java:660)
+	at com.silabs.ss.platform.internal.installer.core.PackageService.getAllAvailablePackages(PackageService.java:118)
+	at com.silabs.ss.platform.internal.installer.core.PackageService.getAvailablePackages(PackageService.java:153)
+	at com.silabs.ss.platform.internal.installer.core.PackageService.requestPackageTypeInstalled(PackageService.java:546)
+	at com.silabs.ss.platform.api.device.core.DeviceManager.triggerInspectors(DeviceManager.java:342)
+	at com.silabs.ss.platform.api.device.core.DeviceManager.addDevice(DeviceManager.java:304)
+	at com.silabs.ss.platform.api.device.core.detection.DeviceDetectionManager.processDetectionInfo(DeviceDetectionManager.java:199)
+	at com.silabs.ss.platform.api.device.core.detection.DeviceDetectionManager.list(DeviceDetectionManager.java:386)
+	at com.silabs.ss.platform.internal.apack.device.UsbDeviceBridgeListener.list(UsbHotplugNotifier.java:130)
+	at com.silabs.ss.platform.api.apack.usb.UsbManager.lambda$7(UsbManager.java:201)
+	at com.silabs.ss.platform.api.rcp.core.ListenerList.fire(ListenerList.java:120)
+	at com.silabs.ss.platform.api.apack.usb.UsbManager.parseAction(UsbManager.java:201)
+	at com.silabs.ss.platform.api.apack.usb.UsbManager.parseAction(UsbManager.java:1)
+	at com.silabs.java.utils.LineParser$InternalActionListener.parseAction(LineParser.java:93)
+	at com.silabs.ss.platform.internal.apack.usb.UsbDetectorLineHandler.handle(UsbDetectorLineHandler.java:65)
+	at com.silabs.ss.platform.internal.apack.usb.UsbDetectorLineHandler.handle(UsbDetectorLineHandler.java:1)
+	at com.silabs.ss.platform.api.apack.core.execution.ErrorLoggerLineHandler.handle(Executioner.java:361)
+	at com.silabs.ss.platform.api.apack.core.execution.ErrorLoggerLineHandler.handle(Executioner.java:1)
+	at com.silabs.java.utils.LineParser.parse(LineParser.java:76)
+	at com.silabs.java.utils.LineParser.parse(LineParser.java:62)
+	at com.silabs.ss.platform.api.apack.core.execution.ParserThread.run(Executioner.java:323)
+
+!ENTRY com.silabs.ss.platform.content.core 4 0 2018-04-17 09:56:22.003
+!MESSAGE Local timestamp file does not exist: C:\SiliconLabs\SimplicityStudio\v4\offline\common\Simplicity_Studio_Terms_of_Use_and_Privacy_Statement.timestamp
+
+!ENTRY com.silabs.ss.platform.content.core 4 0 2018-04-17 09:56:42.894
+!MESSAGE Local timestamp file does not exist: C:\SiliconLabs\SimplicityStudio\v4\offline\common\Simplicity_Studio_Terms_of_Use_and_Privacy_Statement.timestamp
+
+!ENTRY com.silabs.ss.support.mcu.part.core 4 0 2018-04-17 09:57:04.104
+!MESSAGE Fail to find utility (known as adapter pack internally) to download program to device 'CP2103 USB to UART Bridge Controller (ID:0) (0001)(no boards nor parts').
+
+!ENTRY com.silabs.ss.support.mcu.part.core 4 0 2018-04-17 09:58:10.946
+!MESSAGE Fail to find utility (known as adapter pack internally) to download program to device 'USB Debug Adapter (EC3004BA0D3)(no boards nor parts').

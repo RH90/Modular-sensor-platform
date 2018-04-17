@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   49          // VREG_0_enter_DefaultMode_from_RESET
   50          //================================================================================
   51          extern void VREG_0_enter_DefaultMode_from_RESET(void) {
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 2   
 
   52   1              // $[REG0CN - Voltage Regulator Control]
   53   1              /*
@@ -128,7 +128,7 @@ line level    source
  112   1      
  113   1              // $[P1SKIP - Port 1 Skip]
  114   1              // [P1SKIP - Port 1 Skip]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 3   
 
  115   1      
  116   1              // $[P1MASK - Port 1 Mask]
@@ -193,7 +193,7 @@ line level    source
  175   1              // [Timer Initialization]$
  176   1      
  177   1              // $[TH0 - Timer 0 High Byte]
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 4   
 
  178   1              // [TH0 - Timer 0 High Byte]$
  179   1      
@@ -258,7 +258,7 @@ line level    source
  238   1              /*
  239   1              // TMR3RLL (Timer 3 Reload Low Byte) = 158
  240   1              */
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 5   
 
  241   1              TMR3RLL = (158 << TMR3RLL_TMR3RLL__SHIFT);
  242   1              // [TMR3RLL - Timer 3 Reload Low Byte]$
@@ -323,7 +323,7 @@ line level    source
  301          // SMBUS_0_enter_Mode2_from_DefaultMode
  302          //================================================================================
  303          extern void SMBUS_0_enter_Mode2_from_DefaultMode(void) {
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 6   
 
  304   1              // $[SMB0CF - SMBus 0 Configuration]
  305   1              /*
@@ -388,7 +388,7 @@ line level    source
  364   1              // EX0 (External Interrupt 0 Enable) = DISABLED (Disable external
  365   1              //     interrupt 0.)
  366   1              // EX1 (External Interrupt 1 Enable) = DISABLED (Disable external
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 7   
 
  367   1              //     interrupt 1.)
  368   1              // ESPI0 (SPI0 Interrupt Enable) = DISABLED (Disable all SPI0
@@ -453,7 +453,7 @@ line level    source
  427   1              */
  428   1              //TL1 = (0x2B << TL1_TL1__SHIFT);
  429   1              // [TL1 - Timer 1 Low Byte]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/15/2018 16:55:14 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/17/2018 10:07:54 PAGE 8   
 
  430   1      
  431   1              // $[Timer Restoration]

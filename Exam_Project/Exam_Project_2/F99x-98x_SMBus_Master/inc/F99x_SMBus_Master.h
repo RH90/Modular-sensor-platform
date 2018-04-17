@@ -56,8 +56,6 @@ extern volatile bit SMB_BUSY;                 // Software flag to indicate when 
 
 extern volatile bit SMB_RW;                   // Software flag to indicate the
                                        // direction of the current transfer
-
-extern U16 NUM_ERRORS;                        // Counter for the number of errors.
 extern void UART_Send(char c);
 
 #endif /* F99X_SMBUS_MASTER_MAIN_H_ */
