@@ -4,60 +4,26 @@
 #include "InitDevice.h"
 #include "F99x_SMBus_Master.h"
 
-U8 SMB_DATA_IN;                        // Global holder for SMBus data
+U8 					SMB_DATA_IN;                        // Global holder for SMBus data
 // All receive data is written here
 
-U8 SMB_DATA_OUT;
-U8 SMB_REG_OUT;
-U8 START_SMB;
-U8 RW_Reg; // Global holder for SMBus data.
+U8 					SMB_DATA_OUT;
+U8 					SMB_REG_OUT;
+U8 					START_SMB;
+U8 					RW_Reg; // Global holder for SMBus data.
 // All transmit data is read from here
 
-U8 		TARGET;     // Target SMBus slave address
+U8 					TARGET;     // Target SMBus slave address
 
 
-U8  	par_g1;
-U16 	par_g2;
-U8  	par_g3;// Dummy variable counters
+volatile int32_t 	temp_scaled;
+int32_t 			a;
 
-U16 		par_t1=26487;
-int16_t 	par_t2=26223;
-int8_t  	par_t3=3;// Dummy variable counters
-
-uint16_t 	par_h1=10211;
-uint16_t	par_h2=16611;
-int8_t 		par_h3=0;
-int8_t 		par_h4=45;
-int8_t		par_h5=20;
-uint8_t		par_h6=120;
-int8_t		par_h7=156;
-
-
-int32_t calc_hum;
-uint16_t hum_adc;
-
-uint16_t temp_adc;
-int16_t calc_temp;
-int16_t var1;
-int32_t var2;
-int16_t var3;
-
-int32_t hvar1;
-int32_t hvar2;
-int32_t hvar3;
-int16_t hvar4;
-int32_t hvar5;
-int32_t hvar6;
-
-int32_t t_fine;
-volatile int32_t temp_scaled;
-int32_t a;
-
-volatile bit SMB_BUSY;                 // Software flag to indicate when the
+volatile bit 		SMB_BUSY;                 // Software flag to indicate when the
 // SMB_Read() or SMB_Write() functions
 // have claimed the SMBus
-
-volatile bit SMB_RW;                   // Software flag to indicate the
+int32_t gas_range;
+volatile bit 		SMB_RW;                   // Software flag to indicate the
 // direction of the current transfer
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
@@ -79,6 +45,7 @@ void UART_Send(char c);
 void print(char* string,U32 num);
 int8_t getTemp(void);
 int8_t getHum(void);
+int16_t getGas(void);
 
 
 //-----------------------------------------------------------------------------
@@ -165,61 +132,202 @@ void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
 
 	while(SMB_BUSY){
 		;;
+
 	}
 
 }
 int8_t getTemp(void)
 {
-	temp_adc=((uint16_t)(SMB_Read_Reg(0xEE,0x22))<<8)|((SMB_Read_Reg(0xEE,0x23)));
-	var1 = ((int16_t)temp_adc << 1) - ((int16_t)par_t1 << 1);
+	int32_t 			t_fine;
+	int32_t 			calc_result;
+	uint16_t 			adc;
+	int32_t 			var1;
+	int32_t 			var2;
+	int32_t 			var3;
+	const U16 			par_t1=26487;
+	const int16_t 		par_t2=26223;
+	const int8_t  		par_t3=3;// Dummy variable counters
+	adc=((uint16_t)(SMB_Read_Reg(0xEE,0x22))<<8)|((SMB_Read_Reg(0xEE,0x23)));
+	var1 = ((int16_t)adc << 1) - ((int16_t)par_t1 << 1);
 	var2 = (var1 *  (int32_t)par_t2) >> 11;
 	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
 	var3 = ((var3) * ((int16_t)par_t3 << 4)) >> 14;
 	t_fine =(var2 + var3);
 	temp_scaled =(((t_fine * 5) + 128) >> 8);
-	calc_temp=temp_scaled/100;
-	return calc_temp;
+	calc_result=temp_scaled/100;
+	return calc_result;
 }
 int8_t getHum(void)
 {
+	int32_t 			calc_result;
+	uint16_t 			adc;
+	int32_t 			var1;
+	int32_t 			var2;
+	int32_t 			var3;
+	int32_t 			var4;
+	int32_t 			var5;
+	int32_t 			var6;
+	const uint16_t 		par_h1=10211;
+	const uint16_t		par_h2=16611;
+	const int8_t 		par_h3=0;
+	const int8_t 		par_h4=45;
+	const int8_t		par_h5=20;
+	const uint8_t		par_h6=120;
+	const int8_t		par_h7=156;
 
-	hum_adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(SMB_Read_Reg(0xEE,0x26));
+	adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(SMB_Read_Reg(0xEE,0x26));
 
-	hvar1 = (int32_t) (((int32_t)hum_adc) - ((int32_t) ((int32_t) par_h1 << 4)))
-					- (((temp_scaled * (int32_t) par_h3) / ((int32_t) 100)) >> 1);
-	//print("1: ",hvar1);
-	hvar2 = ((int32_t) par_h2
+	var1 =  (int32_t)(((int32_t)adc) - ((int32_t) par_h1*16 ));
+	//print("1: ",test);
+	var2 = ((int32_t) par_h2
 					* (((temp_scaled * (int32_t) par_h4) / ((int32_t) 100))
 						+ (((temp_scaled * ((temp_scaled * (int32_t) par_h5) / ((int32_t) 100))) >> 6)
 							/ ((int32_t) 100)) + (int32_t) (1 << 14))) >> 10;
 	//print("2: ",hvar2);
-	hvar3 = hvar1 * hvar2;
+	var3 = var1 * var2;
 	//print("3: ",hvar3);
-	hvar4 = (int32_t)(par_h6 << 7);
+	var4 = (int32_t)(par_h6 << 7);
 	//print("4: ",hvar4);
-	hvar4 = ((hvar4) + ((temp_scaled * (int32_t) par_h7) / ((int32_t) 100))) >> 4;
+	var4 = ((var4) + ((temp_scaled * (int32_t) par_h7) / ((int32_t) 100))) >> 4;
 	//print("4: ",hvar4);
-	hvar5 = ((hvar3 >> 14) * (hvar3 >> 14)) >> 10;
+	var5 = ((var3 >> 14) * (var3 >> 14)) >> 10;
 	//print("5: ",hvar5);
-	hvar6 = (hvar4 * hvar5) >> 1;
+	var6 = (var4 * var5) >> 1;
 	//print("6: ",hvar6);
-	calc_hum = (((hvar3 + hvar6) >> 10) * ((int32_t) 1000)) >> 12;
+	calc_result = (((var3 + var6) >> 10) * ((int32_t) 1000)) >> 12;
 	//print("c_h: ",calc_hum);
 
-	if (calc_hum > 100000) // Cap at 100%rH
-					calc_hum = 100000;
-	else if (calc_hum < 0)
-					calc_hum = 0;
-	calc_hum/=1000;
+
+	if (calc_result > 100000) // Cap at 100%rH
+		calc_result = 100000;
+	else if (calc_result < 0)
+		calc_result = 0;
+	calc_result/=1000;
 
 	//calc_hum= ((uint32_t)hum_adc*(uint32_t)100)/65535;
-	return calc_hum;
+	return calc_result;
 
 }
 int16_t getGas(void)
 {
 
-	return 0;
+		float 			value1;
+		float 			value2;
+	    float 			var1;
+		float 			var2;
+		float 			var3;
+
+		int32_t range_sw_err=0;
+		int32_t gas_res_adc=0;
+		int32_t calc_gas_res;
+
+
+			/**Look up table 2 for the possible gas range values */
+
+
+		gas_res_adc=((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|(SMB_Read_Reg(0xEE,0x2B)>>6);
+		print("gas_res_adc: ",gas_res_adc);
+		gas_range =(uint16_t)SMB_Read_Reg(0xEE,0x2B)&0x0F;
+		print("gas_range: ",gas_range);
+		/**Look up table 1 for the possible gas range values */
+		/**Look up table 2 for the possible gas range values */
+		switch(gas_range)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 6:
+		case 8:
+		case 9:
+		case 12:
+		case 14:
+		case 15:
+			value1=0.0;
+					break;
+		case 5:
+			value1=-1.0;
+					break;
+		case 7:
+			value1=-0.8;
+					break;
+		case 10:
+			value1=-0.2;
+				    break;
+		case 11:
+			value1=-0.5;
+					break;
+		case 13:
+			value1=-1.0;
+					break;
+		}
+		switch(gas_range)
+				{
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 6:
+				case 9:
+				case 10:
+				case 11:
+				case 13:
+				case 12:
+				case 14:
+				case 15:
+					value2=0.0;
+							break;
+				case 4:
+					value2=0.1;
+					break;
+				case 5:
+					value2=0.7;
+							break;
+				case 7:
+					value2=-0.8;
+							break;
+				case 8:
+					value2=-0.1;
+							break;
+				}
+			var1 = (1340.0f + (5.0f * 123));
+			var2 = (var1) * (1.0f + value1/100.0f);
+			var3 = 1.0f + (value2/100.0f);
+			calc_gas_res = 1.0f / (float)(var3 * (0.000000125f) * (float)(1 << gas_range) * (((((float)gas_res_adc)
+				- 512.0f)/var2) + 1.0f));
+
+
+		return calc_gas_res;
+
+}
+uint8_t get_heat(void)
+{
+	int32_t 			var1;
+	int32_t 			var2;
+	int32_t 			var3;
+	int32_t 			var4;
+	int32_t 			var5;
+	const U8  			par_g1=124;
+	const U16 			par_g2=250855;
+	const U8  			par_g3=318;// Dummy variable counters
+
+	uint8_t heatr_res;
+	int32_t heatr_res_x100;
+	int16_t temp= temp_scaled/100;
+
+	if (temp > 400) /* Cap temperature */
+		temp = 400;
+
+	//var1 = (((int32_t) amb_temp * par_g3) / 1000) * 256;
+	var2 = (par_g1 + 784) * (((((par_g2 + 154009) * temp * 5) / 100) + 3276800) / 10);
+	var3 = var1 + (var2 / 2);
+	//var4 = (var3 / (res_heat_range + 4));
+	//var5 = (131 * res_heat_val) + 65536;
+	heatr_res_x100 = (int32_t) (((var4 / var5) - 250) * 34);
+	heatr_res = (uint8_t) ((heatr_res_x100 + 50) / 100);
+
+	return heatr_res;
 }
 
 int main (void)
@@ -254,9 +362,9 @@ int main (void)
 
 	SMB_Write_Reg(0xEE,0x64,0x59); //100 ms
 
-	par_g1=SMB_Read_Reg(0xEE,0xED);
-	par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
-	par_g3 =SMB_Read_Reg(0xEE,0xEE);
+	//par_g1=SMB_Read_Reg(0xEE,0xED);
+	//par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
+	//par_g3 =SMB_Read_Reg(0xEE,0xEE);
 
 	//par_t1=(SMB_Read_Reg(0xEE,0xEA)<<8)|SMB_Read_Reg(0xEE,0xE9);
 	//par_t2=(SMB_Read_Reg(0xEE,0x8B)<<8)|SMB_Read_Reg(0xEE,0x8A);
@@ -271,19 +379,21 @@ int main (void)
 	//par_h7=SMB_Read_Reg(0xEE,0xe8);
 
 	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
+
 	while (1)
 	{
 		SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
 
 		print("Temp: ",getTemp());
 		print("Hum: ",getHum());
-
+		getGas();
 		print("--------",0);
 
 		YELLOW_LED = !YELLOW_LED;
 
 		for(a=0;a<100000;a++){
 			;;
+
 			// Wait 50 ms until the next cycle
 		}
 

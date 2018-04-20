@@ -17,6 +17,8 @@ volatile uint8_t A3;
 volatile uint8_t A4;
 volatile uint8_t A5;
 volatile uint8_t A6;
+volatile uint8_t TX_LED=0;
+volatile uint8_t RX_LED=0;
 volatile uint8_t pass=0xFF;
 struct I2C_struct{
 	uint8_t volatile addr;
@@ -42,7 +44,7 @@ volatile uint8_t SPI2_reg;
 volatile uint16_t delay=5;
 volatile uint16_t count_delay=1;
 
-// Used for converting a number to a string and send it together with a character that 
+// Used for converting a number to a string and send it together with a character that
 // identifies what sensor the number belongs to.
 void print(int num,char c){
 	char string[16];
@@ -120,7 +122,7 @@ void ReadSPI(uint8_t reg,char c,uint8_t pin) {
 	//return temp; // Return the 8 bit temperature
 	print(temp,c);
 }
-// Reading Analog data from a specific pin and convert it to digital data 
+// Reading Analog data from a specific pin and convert it to digital data
 uint16_t adc_read(uint8_t ch)
 {
 	// select the corresponding channel 0~7
@@ -149,13 +151,13 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 	free(data);
 	
 }
-// Had problems with reading a full byte from the Java program, therefor we read a byte 4 bits a time 
+// Had problems with reading a full byte from the Java program, therefor we read a byte 4 bits a time
 // and then shift it and combine it to a single byte and return it.
 uint8_t read_pair()
 {
 	uint8_t a=serialRead();
 	uint8_t b=serialRead();
-	uint8_t c=a|(b<<4);	
+	uint8_t c=a|(b<<4);
 	return c;
 }
 // This function get what type of sensors are used from user
@@ -228,8 +230,8 @@ void session_init(){
 				PORTB |= (1<<4);
 				PORTB |= (1<<j);
 			}
-		}	
-	}	
+		}
+	}
 	//print(45,'c');
 	//serialWrite(123);
 	//serialWrite(456);
@@ -243,6 +245,7 @@ void session_init(){
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
+	DDRA|=0xC0;
 	spi_init_master();
 	adc_init();
 	serial_init(MYUBRR);
@@ -250,9 +253,9 @@ int main (void)
 	session_init();
 	Timer1init();
 	while(1) // main loop
-	{	
-		;;		
-	} 
+	{
+		;;
+	}
 	
 	return 0;
 }
@@ -288,7 +291,7 @@ void Analog_digital_sensor(uint16_t pin_nmr,uint16_t method,char id)
 	}
 	else if(method==2){
 		print(adc_read(pin_nmr),id);
-	}else{	
+		}else{
 	}
 }
 // reading data from I2C device
@@ -354,7 +357,8 @@ ISR(TIMER1_COMPA_vect)
 		}
 		//this character tells the Java program that all sensors have been read
 		serialWrite('y');
-	} 
+		TX_LED=1;
+	}
 	else
 	{
 		count_delay++;
@@ -362,11 +366,31 @@ ISR(TIMER1_COMPA_vect)
 	// This is used to tell if the micro controller should stop reading the sensors or not
 	// when it sends the character 'x' the Java program will send 1 if the user want to pause the program
 	// or 0 if it should not stop reading from sensors
+	
+	if(TX_LED==1)
+	{
+		PORTA |= 0x80;
+		TX_LED=2;
+	}else if(TX_LED==2)
+	{
+		PORTA &= 0x7F;
+		TX_LED=0;
+	}
+	if(RX_LED==0)
+	{
+		PORTA |= 0x40;
+		RX_LED=1;
+	}else if(RX_LED==1)
+	{
+		PORTA &= 0xBF;
+		RX_LED=0;
+	}
 	serialWrite('x');
 	if(serialRead()){
+		TX_LED=0;
+		RX_LED=0;
+		PORTA &= 0x3F;
 		session_init();
 	}
+	
 }
-
-
-

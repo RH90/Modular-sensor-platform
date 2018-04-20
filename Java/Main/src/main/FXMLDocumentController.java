@@ -324,7 +324,7 @@ public class FXMLDocumentController implements Initializable {
                 //System.out.println("Blue Alive");
             }
             thread = null;
-            thread = null;
+            thread1 = null;
             System.out.println("Blue Dead");
             Light.Distant light = new Light.Distant();
 //        light.setAzimuth(45.0);
@@ -369,7 +369,7 @@ public class FXMLDocumentController implements Initializable {
                 serverSocket = new ServerSocket(8080);
                 //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
             }
-            serverSocket.setSoTimeout(1000);
+            serverSocket.setSoTimeout(10000);
             while (socket == null && socket_OnOff) {
                 try {
                     socket = serverSocket.accept();

@@ -4,8 +4,8 @@
 //const char* password = "C1C50999CA";//type your password
 //const char* ssid = "MAPCI-fast-2.4GHz";//type your ssid
 //const char* password = "mapcibjoern!";
-const char* ssid = "ESP_test";//type your ssid
-const char* password = "@T22413c";//type your password
+const char* ssid = "Connectify-me";//type your ssid
+const char* password = "1234qwer";//type your password
 
 char test=0;
 int ledPin = 2; // GPIO2 of ESP8266
@@ -47,7 +47,7 @@ return;
 int a=0;
 while(true){
 
-if(client.available()>0){
+while(client.available()>0){
   char r1=client.read();
   Serial.write(r1);
   Serial.flush();
@@ -55,17 +55,17 @@ if(client.available()>0){
     return;
   }
 }
-if(Serial.available()>0) {
+while(Serial.available()>0) {
   char r= Serial.read();
   client.write(r);
   if(r=='x'&&a==0){
-    a==1;
+    a=1;
   }
-  if(r=='y'){
+  if(r=='x'){
     client.flush();
   }
 }
-delayMicroseconds(1000);
+//delayMicroseconds(10);
   
 }
 //client.print(test);
