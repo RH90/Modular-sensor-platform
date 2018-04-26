@@ -24,6 +24,7 @@ extern void enter_DefaultMode_from_RESET(void) {
 	HFOSC_0_enter_DefaultMode_from_RESET();
 	CLOCK_0_enter_DefaultMode_from_RESET();
 	TIMER01_0_enter_DefaultMode_from_RESET();
+	TIMER16_2_enter_DefaultMode_from_RESET();
 	UART_0_enter_DefaultMode_from_RESET();
 	// [Config Calls]$
 }
@@ -277,8 +278,8 @@ extern void TIMER_SETUP_0_enter_Mode2_from_DefaultMode(void) {
 	// GATE1 (Timer 1 Gate Control) = DISABLED (Timer 1 enabled when TR1 = 1
 	//     irrespective of /INT1 logic level.)
 	*/
-	CKCON = CKCON_SCA__SYSCLK_DIV_12 | CKCON_T0M__SYSCLK | CKCON_T2MH__SYSCLK
-	| CKCON_T2ML__SYSCLK | CKCON_T3MH__EXTERNAL_CLOCK | CKCON_T3ML__EXTERNAL_CLOCK
+	CKCON = CKCON_SCA__SYSCLK_DIV_12 | CKCON_T0M__SYSCLK
+	 | CKCON_T3MH__EXTERNAL_CLOCK | CKCON_T3ML__EXTERNAL_CLOCK
 	| CKCON_T1M__SYSCLK;
 
 	TMOD = TMOD_T0M__MODE0 | TMOD_CT0__TIMER | TMOD_GATE0__DISABLED
@@ -375,7 +376,7 @@ extern void INTERRUPT_0_enter_Mode2_from_DefaultMode(void) {
 	// ES0 (UART0 Interrupt Enable) = DISABLED (Disable UART0 interrupt.)
 	*/
 	IE = IE_EA__ENABLED | IE_EX0__DISABLED | IE_EX1__DISABLED | IE_ESPI0__DISABLED
-	| IE_ET0__DISABLED | IE_ET1__DISABLED | IE_ET2__DISABLED | IE_ES0__DISABLED;
+	| IE_ET0__DISABLED | IE_ET1__DISABLED | IE_ET2__ENABLED | IE_ES0__DISABLED;
 	// [IE - Interrupt Enable]$
 
 	// $[IP - Interrupt Priority]
@@ -432,6 +433,58 @@ extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
 	//Restore Timer Configuration
 	TCON = TCON_save;
 
+	// [Timer Restoration]$
+
+
+}
+extern void TIMER16_2_enter_DefaultMode_from_RESET(void) {
+	U8 TMR2CN_TR2_save = TMR2CN & TMR2CN_TR2__BMASK;
+	// Stop Timer
+	TMR2CN &= ~(TMR2CN_TR2__BMASK);
+	// [Timer Initialization]$
+
+	// $[TMR2CN - Timer 2 Control]
+	// [TMR2CN - Timer 2 Control]$
+
+	// $[TMR2H - Timer 2 High Byte]
+	/*
+	// TMR2H (Timer 2 High Byte) = 215
+	*/
+	TMR2H = (255 << TMR2H_TMR2H__SHIFT);
+	// [TMR2H - Timer 2 High Byte]$
+
+	// $[TMR2L - Timer 2 Low Byte]
+	/*
+	// TMR2L (Timer 2 Low Byte) = 96
+	*/
+	TMR2L = (255 << TMR2L_TMR2L__SHIFT);
+	// [TMR2L - Timer 2 Low Byte]$
+
+	// $[TMR2RLH - Timer 2 Reload High Byte]
+	/*
+	// TMR2RLH (Timer 2 Reload High Byte) = 215
+	*/
+	TMR2RLH = (0x06 << TMR2RLH_TMR2RLH__SHIFT);
+	// [TMR2RLH - Timer 2 Reload High Byte]$
+
+	// $[TMR2RLL - Timer 2 Reload Low Byte]
+	/*
+	// TMR2RLL (Timer 2 Reload Low Byte) = 79
+	*/
+	TMR2RLL = (0xC5 << TMR2RLL_TMR2RLL__SHIFT);
+	// [TMR2RLL - Timer 2 Reload Low Byte]$
+
+	// $[TMR2CN]
+	/*
+	// TR2 (Timer 2 Run Control) = RUN (Start Timer 2 running.)
+	*/
+	TMR2CN |= TMR2CN_TR2__RUN;
+	// [TMR2CN]$
+
+	// $[Timer Restoration]
+	// Restore Timer Configuration
+	TMR2CN |= (TMR2CN_TR2_save);
+	//TMR2CN &= (0xFD);
 	// [Timer Restoration]$
 
 

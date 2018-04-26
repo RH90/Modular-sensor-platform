@@ -8,6 +8,10 @@ U8 					SMB_DATA_IN;                        // Global holder for SMBus data
 // All receive data is written here
 
 U8 					SMB_DATA_OUT;
+volatile U8 		length;
+U8					DATA_CO2_OUT[]={0x04,0x13,0x8B,0x00,0x01};
+U16					DATA_CO2_IN;
+bit					CO2_MODE;
 U8 					SMB_REG_OUT;
 U8 					START_SMB;
 U8 					RW_Reg; // Global holder for SMBus data.
@@ -19,11 +23,17 @@ U8 					TARGET;     // Target SMBus slave address
 volatile int32_t 	temp_scaled;
 int32_t 			a;
 
-volatile bit 		SMB_BUSY;                 // Software flag to indicate when the
+volatile bit 		SMB_BUSY;
+volatile bit 		ready=0;  // Software flag to indicate when the
 // SMB_Read() or SMB_Write() functions
 // have claimed the SMBus
 int32_t gas_range;
 volatile bit 		SMB_RW;                   // Software flag to indicate the
+volatile uint32_t cc=1;
+	int32_t v1;
+	int32_t v2;
+	int32_t v3;
+	int32_t v4;
 // direction of the current transfer
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
@@ -45,8 +55,11 @@ void UART_Send(char c);
 void print(char* string,U32 num);
 int8_t getTemp(void);
 int8_t getHum(void);
-int16_t getGas(void);
-
+uint32_t getGas(void);
+uint8_t getHeat(void);
+void sleepMode(void);
+void wakeUp(void);
+U16 Read_C02(void);
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -106,9 +119,30 @@ void print(char* string,U32 num)
 	//UART_Send('\n');
 
 }
+U16 Read_CO2()
+{
+	int32_t ss=0;
+	CO2_MODE=1;
+	length=5;
+	TARGET = 0x2A;
+	START_SMB=1;// Define next outgoing byte
+	SMB_Write();                     // Initiate SMBus write
+	for(ss;ss<100000;ss++){
+
+	}
+	CO2_MODE=2;
+	length=4;
+	START_SMB=1;
+	TARGET = 0x2A|0x01;
+	SMB_Read();
+	return DATA_CO2_IN;
+
+}
+
+
 U8 SMB_Read_Reg(U8 Addr, U8 Reg)
 {
-
+	CO2_MODE=0;
 	RW_Reg=0;
 	TARGET = Addr;
 	SMB_REG_OUT = Reg;
@@ -123,6 +157,7 @@ U8 SMB_Read_Reg(U8 Addr, U8 Reg)
 
 void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
 {
+	CO2_MODE=0;
 	RW_Reg=1;
 	TARGET = Addr;             // Target the F3xx/Si8250 Slave for next
 	START_SMB=1;
@@ -159,34 +194,36 @@ int8_t getTemp(void)
 }
 int8_t getHum(void)
 {
-	int32_t 			calc_result;
-	uint16_t 			adc;
-	int32_t 			var1;
-	int32_t 			var2;
-	int32_t 			var3;
-	int32_t 			var4;
-	int32_t 			var5;
-	int32_t 			var6;
-	const uint16_t 		par_h1=10211;
-	const uint16_t		par_h2=16611;
-	const int8_t 		par_h3=0;
-	const int8_t 		par_h4=45;
-	const int8_t		par_h5=20;
-	const uint8_t		par_h6=120;
-	const int8_t		par_h7=156;
 
-	adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(SMB_Read_Reg(0xEE,0x26));
+	volatile uint16_t 			par_h1=10211;
+	volatile uint16_t			par_h2=16611;
+	volatile int8_t 			par_h3=0;
+	volatile int8_t 			par_h4=45;
+	volatile int8_t				par_h5=20;
+	volatile uint8_t			par_h6=120;
+	volatile int8_t				par_h7=156;
+	volatile int32_t 			var1;
+	volatile int32_t 			var2;
+	volatile int32_t 			var3;
+	volatile int32_t 			var4;
+	volatile int32_t 			var5;
+	volatile int32_t 			var6;
+	volatile int32_t 			calc_result;
+	volatile uint16_t 			adc;
+
+	adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26);
 
 	var1 =  (int32_t)(((int32_t)adc) - ((int32_t) par_h1*16 ));
-	//print("1: ",test);
+	//print("tt: ",temp_scaled);
 	var2 = ((int32_t) par_h2
 					* (((temp_scaled * (int32_t) par_h4) / ((int32_t) 100))
 						+ (((temp_scaled * ((temp_scaled * (int32_t) par_h5) / ((int32_t) 100))) >> 6)
 							/ ((int32_t) 100)) + (int32_t) (1 << 14))) >> 10;
+	//print("tt: ",temp_scaled);
 	//print("2: ",hvar2);
 	var3 = var1 * var2;
 	//print("3: ",hvar3);
-	var4 = (int32_t)(par_h6 << 7);
+	var4 = (int32_t)par_h6 << 7;
 	//print("4: ",hvar4);
 	var4 = ((var4) + ((temp_scaled * (int32_t) par_h7) / ((int32_t) 100))) >> 4;
 	//print("4: ",hvar4);
@@ -195,8 +232,6 @@ int8_t getHum(void)
 	var6 = (var4 * var5) >> 1;
 	//print("6: ",hvar6);
 	calc_result = (((var3 + var6) >> 10) * ((int32_t) 1000)) >> 12;
-	//print("c_h: ",calc_hum);
-
 
 	if (calc_result > 100000) // Cap at 100%rH
 		calc_result = 100000;
@@ -208,90 +243,61 @@ int8_t getHum(void)
 	return calc_result;
 
 }
-int16_t getGas(void)
+uint32_t getGas(void)
 {
 
-		float 			value1;
-		float 			value2;
-	    float 			var1;
-		float 			var2;
-		float 			var3;
+	volatile 	float 			value1;
+	volatile 	float 			value2;
+	volatile  	float 			var1;
+	volatile	float 			var2;
+	volatile	float 			var3;
 
-		int32_t range_sw_err=0;
-		int32_t gas_res_adc=0;
-		int32_t calc_gas_res;
+	volatile	uint16_t range_sw_err=((uint16_t)SMB_Read_Reg(0xEE,0x04)&(uint16_t)0xf0)/16;
+	volatile	int32_t gas_res_adc=0;
+	volatile	int32_t calc_gas_res;
 
 
 			/**Look up table 2 for the possible gas range values */
 
 
-		gas_res_adc=((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|(SMB_Read_Reg(0xEE,0x2B)>>6);
-		print("gas_res_adc: ",gas_res_adc);
+		gas_res_adc=((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6);
+		//print("gas_res_adc: ",gas_res_adc);
 		gas_range =(uint16_t)SMB_Read_Reg(0xEE,0x2B)&0x0F;
-		print("gas_range: ",gas_range);
+		//print("gas_range: ",gas_range);
 		/**Look up table 1 for the possible gas range values */
 		/**Look up table 2 for the possible gas range values */
-		switch(gas_range)
+		if(gas_range==5||gas_range==13)
 		{
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 6:
-		case 8:
-		case 9:
-		case 12:
-		case 14:
-		case 15:
-			value1=0.0;
-					break;
-		case 5:
 			value1=-1.0;
-					break;
-		case 7:
+		}else if(gas_range==7)
+		{
 			value1=-0.8;
-					break;
-		case 10:
+		}else if(gas_range==10)
+		{
 			value1=-0.2;
-				    break;
-		case 11:
+		}else if(gas_range==11)
+		{
 			value1=-0.5;
-					break;
-		case 13:
-			value1=-1.0;
-					break;
+		}else{
+			value1=0.0;
 		}
-		switch(gas_range)
-				{
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 6:
-				case 9:
-				case 10:
-				case 11:
-				case 13:
-				case 12:
-				case 14:
-				case 15:
-					value2=0.0;
-							break;
-				case 4:
-					value2=0.1;
-					break;
-				case 5:
-					value2=0.7;
-							break;
-				case 7:
-					value2=-0.8;
-							break;
-				case 8:
-					value2=-0.1;
-							break;
-				}
-			var1 = (1340.0f + (5.0f * 123));
+
+		if(gas_range==4)
+		{
+			value2=0.1;
+		}else if(gas_range==5)
+		{
+			value2=0.7;
+		}else if(gas_range==7)
+		{
+			value2=-0.8;
+		}else if(gas_range==8)
+		{
+			value2=-0.1;
+		}else{
+			value2=0.0;
+		}
+			var1 = (1340.0f + (5.0f * range_sw_err));
 			var2 = (var1) * (1.0f + value1/100.0f);
 			var3 = 1.0f + (value2/100.0f);
 			calc_gas_res = 1.0f / (float)(var3 * (0.000000125f) * (float)(1 << gas_range) * (((((float)gas_res_adc)
@@ -301,38 +307,62 @@ int16_t getGas(void)
 		return calc_gas_res;
 
 }
-uint8_t get_heat(void)
+uint8_t getHeat(void)
 {
-	int32_t 			var1;
-	int32_t 			var2;
-	int32_t 			var3;
-	int32_t 			var4;
-	int32_t 			var5;
-	const U8  			par_g1=124;
-	const U16 			par_g2=250855;
-	const U8  			par_g3=318;// Dummy variable counters
 
-	uint8_t heatr_res;
-	int32_t heatr_res_x100;
-	int16_t temp= temp_scaled/100;
+	volatile int32_t 			var1;
+	volatile int32_t 			var2;
+	volatile int32_t 			var3;
+	volatile int32_t 			var4;
+	volatile int32_t 			var5;
+
+	volatile uint16_t 			res_heat_range=(uint16_t)(SMB_Read_Reg(0xEE,0x02)&0x30)/16;
+	volatile int8_t 			res_heat_val=(int8_t)(SMB_Read_Reg(0xEE,0x00));
+	volatile U8  				par_g1=124;
+	volatile U16 				par_g2=250855;
+	volatile U8  				par_g3=318;// Dummy variable counters
+
+	volatile uint8_t 			heatr_res;
+	volatile int32_t 			heatr_res_x100;
+	//volatile int16_t 			temp=(uint16_t)SMB_Read_Reg(0xEE,0x5A);
+	volatile int16_t 			temp=300;
+
+
 
 	if (temp > 400) /* Cap temperature */
 		temp = 400;
 
-	//var1 = (((int32_t) amb_temp * par_g3) / 1000) * 256;
+	var1 = (int32_t)(((int32_t) temp_scaled * (int32_t)par_g3) / (int32_t)1000) * 256;
 	var2 = (par_g1 + 784) * (((((par_g2 + 154009) * temp * 5) / 100) + 3276800) / 10);
 	var3 = var1 + (var2 / 2);
-	//var4 = (var3 / (res_heat_range + 4));
-	//var5 = (131 * res_heat_val) + 65536;
+	var4 = (var3 / (res_heat_range + 4));
+	var5 = (131 * res_heat_val) + 65536;
 	heatr_res_x100 = (int32_t) (((var4 / var5) - 250) * 34);
 	heatr_res = (uint8_t) ((heatr_res_x100 + 50) / 100);
 
 	return heatr_res;
 }
+void sleepMode(void)
+{
+	CLKSEL = 0x04;
+	OSCICN &= ~0x80;
+	PMU0CF|= (1<<7);
+
+}
+void wakeUp(void)
+{
+	PMU0CF&= ~(1<<7);
+	OSCICN |= 0x80;
+	enter_DefaultMode_from_RESET();
+	enter_Mode2_from_DefaultMode();
+
+
+}
 
 int main (void)
 {
 	U8  i;
+
 	//Enter default mode
 	enter_DefaultMode_from_RESET();
 	//printf("%d",0x22);
@@ -379,23 +409,35 @@ int main (void)
 	//par_h7=SMB_Read_Reg(0xEE,0xe8);
 
 	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
-
 	while (1)
 	{
+
+		if(ready==1)
+		{
+		ready=0;
 		SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
-
-		print("Temp: ",getTemp());
-		print("Hum: ",getHum());
-		getGas();
+		v1=getTemp();
+		v2=getHum();
+		SMB_Write_Reg(0xEE,0x5A,getHeat());
+		v3=getGas();
+		SMB_Write_Reg(0xEE,0x71,0x10);// trigger forced mode
+		v4=Read_CO2();
+		print("Temp: ",v1);
+		print("Hum: ",v2);
+		//print("Heat: ",get_heat());
+		print("Gas: ",v3);
+		print("CO2: ",DATA_CO2_IN);
+		//print("T: ",SMB_Read_Reg(0xEE,0x5A));
+		//getGas();
 		print("--------",0);
-
-		YELLOW_LED = !YELLOW_LED;
-
-		for(a=0;a<100000;a++){
-			;;
-
-			// Wait 50 ms until the next cycle
+		 Read_CO2();
 		}
+		else{
+		//sleepMode();
+		}
+		//
+
+		//for(a=0;a<500000;a++){}
 
 	}
 
@@ -420,20 +462,23 @@ void SMB_Read (void)
 	while (SMB_BUSY);                   // Wait for transfer to complete
 }
 
-void T0_Wait_ms (U8 ms)
+INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
 {
 
-	while (ms) {
-		TCON_TR0 = 0;                         // Stop Timer0
-		TH0 = ((-(SYSCLK/1000)) >> 8);   // Overflow in 1ms
-		TL0 = ((-(SYSCLK/1000)) & 0xFF);
-		TCON_TF0 = 0;                         // Clear overflow indicator
-		TCON_TR0 = 1;                         // Start Timer0
-		while (!TCON_TF0);                    // Wait for overflow
-		ms--;                            // Update ms counter
-	}
+		if(cc>32)
+		{
+			//wakeUp();
+			ready=1;
+			// print("he12j",cc);
+			YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
+				                           // Reset Interrupt
+			cc=1;
+		}else{
+			cc++;
+		}
+		TMR2CN &= ~0x80;
 
-	TCON_TR0 = 0;                            // Stop Timer0
+
 }
 
 //-----------------------------------------------------------------------------

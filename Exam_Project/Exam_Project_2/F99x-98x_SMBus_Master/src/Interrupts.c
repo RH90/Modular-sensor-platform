@@ -59,8 +59,6 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 			// Master Transmitter/Receiver: START condition transmitted.
 		case SMB_MTSTA:
 			//if(START_SMB){
-
-
 			SMB0DAT = TARGET;          // Load address of the target slave
 			SMB0DAT &= 0xFE;           // Clear the LSB of the address for the
 			// R/W bit
@@ -80,6 +78,20 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 					// UART_Send(ADDR_SEND);
 					// UART_Send(ADDR_SEND);
 					// Next byte is not a slave address
+
+					if(CO2_MODE==1)
+					{
+						if (SMB_RW == WRITE) // If this transfer is a WRITE,
+						{
+							if(length>0){
+							SMB0DAT=DATA_CO2_OUT[5-length];
+							length--;
+							}else{
+								ADDR_SEND=0;
+							}
+						}
+					}
+					else if(CO2_MODE==0){
 					if (SMB_RW == WRITE) // If this transfer is a WRITE,
 					{
 						// send data byte
@@ -105,6 +117,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 					}
 
 					else {}              // If this transfer is a READ,
+					}
 					// proceed with transfer without
 					// writing to SMB0DAT (switch
 					// to receive mode)
@@ -126,6 +139,26 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 
 			// Master Receiver: byte received
 		case SMB_MRDB:
+			if(CO2_MODE==2)
+			{
+				if(length>0)
+				{
+					if(length==2){
+						DATA_CO2_IN = ((U16) SMB0DAT<<8);
+					}else if (length==1){
+						DATA_CO2_IN = ((U16) SMB0DAT);
+					}else{
+						//SMB_DATA_IN=SMB0DAT;
+					}
+					SMB0CN_ACK = 1;
+					length--;
+				}else{
+					SMB_BUSY = 0;              // Free SMBus interface
+					SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
+					SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+				}
+
+			}else{
 			SMB_DATA_IN = SMB0DAT;     // Store received byte
 			SMB_BUSY = 0;              // Free SMBus interface
 			SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
@@ -133,6 +166,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 			//UART_Send('a');
 			SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
 			SMB_BUSY = 0;
+			}
 			break;
 
 		default:
@@ -183,5 +217,6 @@ INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 	SMB0CN_STA = 0;
 	SMB_BUSY = 0;                       // Free SMBus
 }
+
 
 

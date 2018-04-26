@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/20/2018 20:43:05 PAGE 1   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/26/2018 14:17:25 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INTERRUPTS
@@ -63,7 +63,7 @@ line level    source
   49   1              bit FAIL = 0;                       // Used by the ISR to flag failed
   50   1              // transfers
   51   1              // ADDR_SEND = 0;           // Used by the ISR to flag byte
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/20/2018 20:43:05 PAGE 2   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/26/2018 14:17:25 PAGE 2   
 
   52   1              // transmissions as slave addresses
   53   1      
@@ -75,140 +75,175 @@ line level    source
   59   3                              // Master Transmitter/Receiver: START condition transmitted.
   60   3                      case SMB_MTSTA:
   61   3                              //if(START_SMB){
-  62   3      
-  63   3      
-  64   3                              SMB0DAT = TARGET;          // Load address of the target slave
-  65   3                              SMB0DAT &= 0xFE;           // Clear the LSB of the address for the
-  66   3                              // R/W bit
-  67   3                              SMB0DAT |= SMB_RW;         // Load R/W bit
-  68   3                              SMB0CN_STA = 0;            // Manually clear START bit
-  69   3                              ADDR_SEND = 1;
-  70   3                              START_SMB=0;
-  71   3                              //}
-  72   3                              break;
-  73   3      
-  74   3                              // Master Transmitter: Data byte transmitted
-  75   3                      case SMB_MTDB:
-  76   3                              if (SMB0CN_ACK)                   // Slave SMB0CN_ACK?
-  77   3                              {
-  78   4                                      if (ADDR_SEND)          // If the previous byte was a slave
-  79   4                                      {
-  80   5                                              // UART_Send(ADDR_SEND);
-  81   5                                              // UART_Send(ADDR_SEND);
-  82   5                                              // Next byte is not a slave address
-  83   5                                              if (SMB_RW == WRITE) // If this transfer is a WRITE,
-  84   5                                              {
-  85   6                                                      // send data byte
-  86   6                                                      if(ADDR_SEND==1){
-  87   7                                                              SMB0DAT = SMB_REG_OUT;
-  88   7                                                      }
-  89   6                                                      if(ADDR_SEND==2){
-  90   7                                                              SMB0DAT = SMB_DATA_OUT;
-  91   7                                                      }
-  92   6      
+  62   3                              SMB0DAT = TARGET;          // Load address of the target slave
+  63   3                              SMB0DAT &= 0xFE;           // Clear the LSB of the address for the
+  64   3                              // R/W bit
+  65   3                              SMB0DAT |= SMB_RW;         // Load R/W bit
+  66   3                              SMB0CN_STA = 0;            // Manually clear START bit
+  67   3                              ADDR_SEND = 1;
+  68   3                              START_SMB=0;
+  69   3                              //}
+  70   3                              break;
+  71   3      
+  72   3                              // Master Transmitter: Data byte transmitted
+  73   3                      case SMB_MTDB:
+  74   3                              if (SMB0CN_ACK)                   // Slave SMB0CN_ACK?
+  75   3                              {
+  76   4                                      if (ADDR_SEND)          // If the previous byte was a slave
+  77   4                                      {
+  78   5                                              // UART_Send(ADDR_SEND);
+  79   5                                              // UART_Send(ADDR_SEND);
+  80   5                                              // Next byte is not a slave address
+  81   5      
+  82   5                                              if(CO2_MODE==1)
+  83   5                                              {
+  84   6                                                      if (SMB_RW == WRITE) // If this transfer is a WRITE,
+  85   6                                                      {
+  86   7                                                              if(length>0){
+  87   8                                                              SMB0DAT=DATA_CO2_OUT[5-length];
+  88   8                                                              length--;
+  89   8                                                              }else{
+  90   8                                                                      ADDR_SEND=0;
+  91   8                                                              }
+  92   7                                                      }
   93   6                                              }
-  94   5                                              if(ADDR_SEND==1){
-  95   6                                                      ADDR_SEND = 2;
-  96   6                                              }
-  97   5                                              else if(ADDR_SEND==2){
-  98   6                                                      ADDR_SEND = 0;
-  99   6                                                      //UART_Send('x');
- 100   6                                                      //      UART_Send('x');
- 101   6                                              }
- 102   5                                              if(RW_Reg==0){
- 103   6                                                      ADDR_SEND=0;
- 104   6                                                      //UART_Send('x');
- 105   6                                              }
- 106   5      
- 107   5                                              else {}              // If this transfer is a READ,
- 108   5                                              // proceed with transfer without
- 109   5                                              // writing to SMB0DAT (switch
- 110   5                                              // to receive mode)
- 111   5                                      }
- 112   4                                      else                    // If previous byte was not a slave
- 113   4                                      {                       // address,
- 114   5                                              //UART_Send('x');
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/20/2018 20:43:05 PAGE 3   
+  94   5                                              else if(CO2_MODE==0){
+  95   6                                              if (SMB_RW == WRITE) // If this transfer is a WRITE,
+  96   6                                              {
+  97   7                                                      // send data byte
+  98   7                                                      if(ADDR_SEND==1){
+  99   8                                                              SMB0DAT = SMB_REG_OUT;
+ 100   8                                                      }
+ 101   7                                                      if(ADDR_SEND==2){
+ 102   8                                                              SMB0DAT = SMB_DATA_OUT;
+ 103   8                                                      }
+ 104   7      
+ 105   7                                              }
+ 106   6                                              if(ADDR_SEND==1){
+ 107   7                                                      ADDR_SEND = 2;
+ 108   7                                              }
+ 109   6                                              else if(ADDR_SEND==2){
+ 110   7                                                      ADDR_SEND = 0;
+ 111   7                                                      //UART_Send('x');
+ 112   7                                                      //      UART_Send('x');
+ 113   7                                              }
+ 114   6                                              if(RW_Reg==0){
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/26/2018 14:17:25 PAGE 3   
 
- 115   5                                              if(RW_Reg==1)
- 116   5                                              SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
- 117   5                                              SMB_BUSY = 0;        // And free SMBus interface
- 118   5                                      }
- 119   4                              }
- 120   3                              else                       // If slave NACK,
- 121   3                              {
- 122   4                                      SMB0CN_STO = 1;                // Send STOP condition, followed
- 123   4                                      SMB0CN_STA = 1;                // By a START
- 124   4                              }
- 125   3                              break;
- 126   3      
- 127   3                              // Master Receiver: byte received
- 128   3                      case SMB_MRDB:
- 129   3                              SMB_DATA_IN = SMB0DAT;     // Store received byte
- 130   3                              SMB_BUSY = 0;              // Free SMBus interface
- 131   3                              SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
- 132   3                              SMB0CN_STO = 1;                   // Send STOP to terminate transfer
- 133   3                              //UART_Send('a');
- 134   3                              SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
- 135   3                              SMB_BUSY = 0;
- 136   3                              break;
- 137   3      
- 138   3                      default:
- 139   3                              FAIL = 1;                  // Indicate failed transfer
- 140   3                              // and handle at end of ISR
- 141   3                              break;
- 142   3      
- 143   3                      } // end switch
- 144   2              }
- 145   1              else
- 146   1              {
- 147   2                      // SMB0CN_ARBLOST = 1, error occurred... abort transmission
- 148   2                      FAIL = 1;
- 149   2              } // end SMB0CN_ARBLOST if
- 150   1      
- 151   1              if (FAIL)                           // If the transfer failed,
- 152   1              {
- 153   2                      SMB0CF &= ~0x80;                 // Reset communication
- 154   2                      SMB0CF |= 0x80;
- 155   2                      SMB0CN_STA = 0;
- 156   2                      SMB0CN_STO = 0;
- 157   2                      SMB0CN_ACK = 0;
- 158   2      
- 159   2                      SMB_BUSY = 0;                    // Free SMBus
- 160   2      
- 161   2                      FAIL = 0;
- 162   2                      // Indicate an error occurred
- 163   2              }
- 164   1      
- 165   1              SMB0CN_SI = 0;                             // Clear interrupt flag
- 166   1      }
- 167          
- 168          
- 169          //-----------------------------------------------------------------------------
- 170          // TIMER3_ISR
- 171          //-----------------------------------------------------------------------------
- 172          //
- 173          // TIMER3 ISR Content goes here. Remember to clear flag bits:
- 174          // TMR3CN::TF3H (Timer # High Byte Overflow Flag)
- 175          // TMR3CN::TF3L (Timer # Low Byte Overflow Flag)
- 176          //
- 177          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/20/2018 20:43:05 PAGE 4   
+ 115   7                                                      ADDR_SEND=0;
+ 116   7                                                      //UART_Send('x');
+ 117   7                                              }
+ 118   6      
+ 119   6                                              else {}              // If this transfer is a READ,
+ 120   6                                              }
+ 121   5                                              // proceed with transfer without
+ 122   5                                              // writing to SMB0DAT (switch
+ 123   5                                              // to receive mode)
+ 124   5                                      }
+ 125   4                                      else                    // If previous byte was not a slave
+ 126   4                                      {                       // address,
+ 127   5                                              //UART_Send('x');
+ 128   5                                              if(RW_Reg==1)
+ 129   5                                              SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
+ 130   5                                              SMB_BUSY = 0;        // And free SMBus interface
+ 131   5                                      }
+ 132   4                              }
+ 133   3                              else                       // If slave NACK,
+ 134   3                              {
+ 135   4                                      SMB0CN_STO = 1;                // Send STOP condition, followed
+ 136   4                                      SMB0CN_STA = 1;                // By a START
+ 137   4                              }
+ 138   3                              break;
+ 139   3      
+ 140   3                              // Master Receiver: byte received
+ 141   3                      case SMB_MRDB:
+ 142   3                              if(CO2_MODE==2)
+ 143   3                              {
+ 144   4                                      if(length>0)
+ 145   4                                      {
+ 146   5                                              if(length==2){
+ 147   6                                                      DATA_CO2_IN = ((U16) SMB0DAT<<8);
+ 148   6                                              }else if (length==1){
+ 149   6                                                      DATA_CO2_IN = ((U16) SMB0DAT);
+ 150   6                                              }else{
+ 151   6                                                      //SMB_DATA_IN=SMB0DAT;
+ 152   6                                              }
+ 153   5                                              SMB0CN_ACK = 1;
+ 154   5                                              length--;
+ 155   5                                      }else{
+ 156   5                                              SMB_BUSY = 0;              // Free SMBus interface
+ 157   5                                              SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
+ 158   5                                              SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+ 159   5                                      }
+ 160   4      
+ 161   4                              }else{
+ 162   4                              SMB_DATA_IN = SMB0DAT;     // Store received byte
+ 163   4                              SMB_BUSY = 0;              // Free SMBus interface
+ 164   4                              SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
+ 165   4                              SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+ 166   4                              //UART_Send('a');
+ 167   4                              SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
+ 168   4                              SMB_BUSY = 0;
+ 169   4                              }
+ 170   3                              break;
+ 171   3      
+ 172   3                      default:
+ 173   3                              FAIL = 1;                  // Indicate failed transfer
+ 174   3                              // and handle at end of ISR
+ 175   3                              break;
+ 176   3      
+ 177   3                      } // end switch
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        04/26/2018 14:17:25 PAGE 4   
 
- 178          INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
- 179          {
- 180   1              SMB0CF &= ~0x80;                    // Disable SMBus
- 181   1              SMB0CF |= 0x80;                     // Re-enable SMBus
- 182   1              TMR3CN &= ~0x80;                    // Clear Timer3 interrupt-pending flag
- 183   1              SMB0CN_STA = 0;
- 184   1              SMB_BUSY = 0;                       // Free SMBus
- 185   1      }
- 186          
- 187          
+ 178   2              }
+ 179   1              else
+ 180   1              {
+ 181   2                      // SMB0CN_ARBLOST = 1, error occurred... abort transmission
+ 182   2                      FAIL = 1;
+ 183   2              } // end SMB0CN_ARBLOST if
+ 184   1      
+ 185   1              if (FAIL)                           // If the transfer failed,
+ 186   1              {
+ 187   2                      SMB0CF &= ~0x80;                 // Reset communication
+ 188   2                      SMB0CF |= 0x80;
+ 189   2                      SMB0CN_STA = 0;
+ 190   2                      SMB0CN_STO = 0;
+ 191   2                      SMB0CN_ACK = 0;
+ 192   2      
+ 193   2                      SMB_BUSY = 0;                    // Free SMBus
+ 194   2      
+ 195   2                      FAIL = 0;
+ 196   2                      // Indicate an error occurred
+ 197   2              }
+ 198   1      
+ 199   1              SMB0CN_SI = 0;                             // Clear interrupt flag
+ 200   1      }
+ 201          
+ 202          
+ 203          //-----------------------------------------------------------------------------
+ 204          // TIMER3_ISR
+ 205          //-----------------------------------------------------------------------------
+ 206          //
+ 207          // TIMER3 ISR Content goes here. Remember to clear flag bits:
+ 208          // TMR3CN::TF3H (Timer # High Byte Overflow Flag)
+ 209          // TMR3CN::TF3L (Timer # Low Byte Overflow Flag)
+ 210          //
+ 211          //-----------------------------------------------------------------------------
+ 212          INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
+ 213          {
+ 214   1              SMB0CF &= ~0x80;                    // Disable SMBus
+ 215   1              SMB0CF |= 0x80;                     // Re-enable SMBus
+ 216   1              TMR3CN &= ~0x80;                    // Clear Timer3 interrupt-pending flag
+ 217   1              SMB0CN_STA = 0;
+ 218   1              SMB_BUSY = 0;                       // Free SMBus
+ 219   1      }
+ 220          
+ 221          
+ 222          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    186    ----
+   CODE SIZE        =    298    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

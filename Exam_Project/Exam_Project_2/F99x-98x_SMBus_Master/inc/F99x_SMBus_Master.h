@@ -46,6 +46,10 @@ extern U8 SMB_DATA_OUT;
 extern U8 SMB_REG_OUT;
 extern U8 START_SMB;
 extern U8 RW_Reg; // Global holder for SMBus data.
+extern volatile U8 		length;
+extern U8					DATA_CO2_OUT[5];
+extern U16					DATA_CO2_IN;
+extern bit					CO2_MODE;
                                        // All transmit data is read from here
 
 extern U8 TARGET;                             // Target SMBus slave address
