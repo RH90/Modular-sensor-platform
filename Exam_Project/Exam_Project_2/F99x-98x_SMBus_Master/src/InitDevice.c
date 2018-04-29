@@ -23,7 +23,7 @@ extern void enter_DefaultMode_from_RESET(void) {
 	VREG_0_enter_DefaultMode_from_RESET();
 	HFOSC_0_enter_DefaultMode_from_RESET();
 	CLOCK_0_enter_DefaultMode_from_RESET();
-	TIMER01_0_enter_DefaultMode_from_RESET();
+	//TIMER01_0_enter_DefaultMode_from_RESET();
 	TIMER16_2_enter_DefaultMode_from_RESET();
 	UART_0_enter_DefaultMode_from_RESET();
 	// [Config Calls]$
@@ -90,7 +90,7 @@ extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
 	// CLKSL (Clock Source Select) = HFOSC (Clock derived from the internal
 	//     precision High-Frequency Oscillator.)
 	*/
-	CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_1 | CLKSEL_CLKSL__HFOSC;
+	CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_32 | CLKSEL_CLKSL__HFOSC;
 	// [CLKSEL - Clock Select]$
 
 
@@ -188,7 +188,8 @@ extern void TIMER00_0_enter_Mode2_from_DefaultMode(void) {
 	/*
 	// TL1 (Timer 1 Low Byte) = 52
 	*/
-	TL0 = (52 << TL0_TL0__SHIFT);
+	TH0=0;
+	TL0 = 1;
 	// [TL1 - Timer 1 Low Byte]$
 
 	// $[Timer Restoration]
@@ -278,12 +279,10 @@ extern void TIMER_SETUP_0_enter_Mode2_from_DefaultMode(void) {
 	// GATE1 (Timer 1 Gate Control) = DISABLED (Timer 1 enabled when TR1 = 1
 	//     irrespective of /INT1 logic level.)
 	*/
-	CKCON = CKCON_SCA__SYSCLK_DIV_12 | CKCON_T0M__SYSCLK
-	 | CKCON_T3MH__EXTERNAL_CLOCK | CKCON_T3ML__EXTERNAL_CLOCK
-	| CKCON_T1M__SYSCLK;
+	CKCON = CKCON_SCA__SYSCLK_DIV_4  | CKCON_T1M__SYSCLK|CKCON_T0M__SYSCLK;
 
-	TMOD = TMOD_T0M__MODE0 | TMOD_CT0__TIMER | TMOD_GATE0__DISABLED
-	| TMOD_T1M__MODE1 | TMOD_CT1__TIMER | TMOD_GATE1__DISABLED;
+	TMOD = TMOD_T0M__MODE2 | TMOD_CT0__TIMER | TMOD_GATE0__DISABLED
+	| TMOD_T1M__MODE2 | TMOD_CT1__TIMER | TMOD_GATE1__DISABLED;
 
 	// [TMOD - Timer 0/1 Mode]$
 
@@ -351,7 +350,7 @@ extern void INTERRUPT_0_enter_Mode2_from_DefaultMode(void) {
 	//     ADC0 Window Comparison interrupt.)
 	*/
 	EIE1 = EIE1_EADC0__DISABLED | EIE1_ECP0__DISABLED | EIE1_EPCA0__DISABLED
-	| EIE1_ERTC0A__DISABLED | EIE1_ESMB0__ENABLED | EIE1_ET3__ENABLED
+	| EIE1_ERTC0A__DISABLED | EIE1_ESMB0__ENABLED | EIE1_ET3__DISABLED
 	| EIE1_EWADC0__DISABLED;
 	// [EIE1 - Extended Interrupt Enable 1]$
 
@@ -498,10 +497,11 @@ extern void enter_Mode2_from_DefaultMode(void) {
 	// $[Config Calls]
 	PORTS_1_enter_Mode2_from_DefaultMode();
 	PBCFG_0_enter_Mode2_from_DefaultMode();
-	TIMER00_0_enter_Mode2_from_DefaultMode();
-	TIMER16_3_enter_Mode2_from_DefaultMode();
-	TIMER_SETUP_0_enter_Mode2_from_DefaultMode();
 	SMBUS_0_enter_Mode2_from_DefaultMode();
+	TIMER00_0_enter_Mode2_from_DefaultMode();
+	//TIMER16_3_enter_Mode2_from_DefaultMode();
+	TIMER_SETUP_0_enter_Mode2_from_DefaultMode();
+
 	INTERRUPT_0_enter_Mode2_from_DefaultMode();
 	// [Config Calls]$
 }

@@ -47,19 +47,18 @@ LOCATED_VARIABLE_NO_INIT (reserved, U8, SEG_XDATA, 0x0000);
 
 void SMB_Write (void);
 void SMB_Read (void);
-void T0_Wait_ms (U8 ms);
 void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat);
 U8 SMB_Read_Reg(U8 Addr, U8 Reg);
 void UART_Init(void);
 void UART_Send(char c);
-void print(char* string,U32 num);
+void print(char* string,U32 num,char* string1);
 int8_t getTemp(void);
 int8_t getHum(void);
 uint32_t getGas(void);
 uint8_t getHeat(void);
 void sleepMode(void);
 void wakeUp(void);
-U16 Read_C02(void);
+U16 Read_CO2(void);
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -81,9 +80,9 @@ void UART_Init(void)
 {
 	//baud rate=57600
 	SCON0 = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
-	TMOD = 0x20;  //Timer1 in Mode2.
-	// TH1 = 256 - (24500000UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
-	TH1 = (0x2B << TH1_TH1__SHIFT);
+	TMOD |= 0x20;  //Timer1 in Mode2.
+	 TH1 = 256 - (24500000UL/(long)32)/(long)9600/(long)2; // Load timer value for baudrate generation
+	//TH1 = ((0x2B) << TH1_TH1__SHIFT);
 	TCON |= (1<<6);      //Turn ON the timer for Baud rate generation
 }
 
@@ -93,7 +92,7 @@ void UART_Send(char c)
 	while(SCON0_TI==0);   // Wait till the data is trasmitted
 	SCON0_TI = 0;
 }
-void print(char* string,U32 num)
+void print(char* string,U32 num,char* string1)
 {
 	char c=0;
 	char s[10];
@@ -115,20 +114,24 @@ void print(char* string,U32 num)
 	{
 		UART_Send(s[i]);
 	}
+	while ((c=(*(string1++))) != '\0') {
+			UART_Send(c);
+			len++;
+		}
 	UART_Send('\r');
 	//UART_Send('\n');
 
 }
-U16 Read_CO2()
+U16 Read_CO2(void)
 {
-	int32_t ss=0;
+	uint32_t ss=0;
 	CO2_MODE=1;
 	length=5;
 	TARGET = 0x2A;
 	START_SMB=1;// Define next outgoing byte
 	SMB_Write();                     // Initiate SMBus write
-	for(ss;ss<100000;ss++){
-
+	for(;ss<800;ss++){
+		;;
 	}
 	CO2_MODE=2;
 	length=4;
@@ -212,7 +215,6 @@ int8_t getHum(void)
 	volatile uint16_t 			adc;
 
 	adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26);
-
 	var1 =  (int32_t)(((int32_t)adc) - ((int32_t) par_h1*16 ));
 	//print("tt: ",temp_scaled);
 	var2 = ((int32_t) par_h2
@@ -344,17 +346,18 @@ uint8_t getHeat(void)
 }
 void sleepMode(void)
 {
-	CLKSEL = 0x04;
-	OSCICN &= ~0x80;
-	PMU0CF|= (1<<7);
+	//CLKSEL = 0x04;
+	//OSCICN &= ~0x80;
+	PMU0CF|= (1<<0);
 
 }
 void wakeUp(void)
 {
-	PMU0CF&= ~(1<<7);
-	OSCICN |= 0x80;
-	enter_DefaultMode_from_RESET();
-	enter_Mode2_from_DefaultMode();
+	PMU0CF&= ~(1<<0);
+	//CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_32 | CLKSEL_CLKSL__HFOSC;
+	//OSCICN |= 0x80;
+	//enter_DefaultMode_from_RESET();
+	//enter_Mode2_from_DefaultMode();
 
 
 }
@@ -387,8 +390,8 @@ int main (void)
 	//SMB_Write_Reg(0x30,0x20,0x37);
 
 	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
-	SMB_Write_Reg(0xEE,0x72,0x01);// hum:1x
-	SMB_Write_Reg(0xEE,0x74,0x25);// temp:1x, pressure:1x
+	SMB_Write_Reg(0xEE,0x72,0x04);// hum:1x
+	SMB_Write_Reg(0xEE,0x74,0x21);// temp:1x, pressure:1x
 
 	SMB_Write_Reg(0xEE,0x64,0x59); //100 ms
 
@@ -412,29 +415,31 @@ int main (void)
 	while (1)
 	{
 
-		if(ready==1)
-		{
+
+		while(ready==0){
+			sleepMode();
+		}
 		ready=0;
-		SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
+
+		SMB_Write_Reg(0xEE,0x5A,getHeat());
+		SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
+
+		SMB_Write_Reg(0xEE,0x74,0x21);// trigger forced mode
 		v1=getTemp();
 		v2=getHum();
-		SMB_Write_Reg(0xEE,0x5A,getHeat());
 		v3=getGas();
-		SMB_Write_Reg(0xEE,0x71,0x10);// trigger forced mode
 		v4=Read_CO2();
-		print("Temp: ",v1);
-		print("Hum: ",v2);
+
+		print("Temp: ",v1," C*");
+		print("Hum: ",v2," %");
 		//print("Heat: ",get_heat());
-		print("Gas: ",v3);
-		print("CO2: ",DATA_CO2_IN);
+		print("Gas: ",v3," Ohm");
+		print("CO2: ",v4," ppm");
 		//print("T: ",SMB_Read_Reg(0xEE,0x5A));
 		//getGas();
-		print("--------",0);
-		 Read_CO2();
-		}
-		else{
-		//sleepMode();
-		}
+		print("--------",0,"--------");
+
+
 		//
 
 		//for(a=0;a<500000;a++){}
@@ -464,20 +469,16 @@ void SMB_Read (void)
 
 INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
 {
-
-		if(cc>32)
-		{
 			//wakeUp();
-			ready=1;
-			// print("he12j",cc);
-			YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
-				                           // Reset Interrupt
-			cc=1;
-		}else{
-			cc++;
-		}
-		TMR2CN &= ~0x80;
+		//wakeUp();
+		cc=0;
 
+		ready=1;
+			// print("he12j",cc);
+		//YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
+		//YELLOW_LED=!YELLOW_LED;
+		YELLOW_LED=!YELLOW_LED;
+		TMR2CN &= ~0x80;
 
 }
 

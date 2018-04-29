@@ -146,7 +146,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 					if(length==2){
 						DATA_CO2_IN = ((U16) SMB0DAT<<8);
 					}else if (length==1){
-						DATA_CO2_IN = ((U16) SMB0DAT);
+						DATA_CO2_IN |= ((U16) SMB0DAT);
 					}else{
 						//SMB_DATA_IN=SMB0DAT;
 					}
@@ -209,6 +209,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 // TMR3CN::TF3L (Timer # Low Byte Overflow Flag)
 //
 //-----------------------------------------------------------------------------
+/*
 INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 {
 	SMB0CF &= ~0x80;                    // Disable SMBus
@@ -217,6 +218,7 @@ INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 	SMB0CN_STA = 0;
 	SMB_BUSY = 0;                       // Free SMBus
 }
+*/
 
 
 
