@@ -38,6 +38,7 @@ volatile uint32_t cc=1;
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
 SBIT (SCL, SFR_P0, 1);                 // and P0.1
+SBIT (R15_ENABLE, SFR_P1, 4);
 
 LOCATED_VARIABLE_NO_INIT (reserved, U8, SEG_XDATA, 0x0000);
 
@@ -52,14 +53,15 @@ U8 SMB_Read_Reg(U8 Addr, U8 Reg);
 void UART_Init(void);
 void UART_Send(char c);
 void print(char* string,U32 num,char* string1);
-int8_t getTemp(void);
-int8_t getHum(void);
-uint32_t getGas(void);
+int8_t getTemp(U16 adc);
+int8_t getHum(U16 adc);
+uint32_t getGas(U16 gas_res_adc);
 uint8_t getHeat(void);
 void sleepMode(void);
 void wakeUp(void);
 U16 Read_CO2(void);
-
+void BME680Init(void);
+void ADC(void);
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
 // ----------------------------------------------------------------------------
@@ -124,21 +126,36 @@ void print(char* string,U32 num,char* string1)
 }
 U16 Read_CO2(void)
 {
-	uint32_t ss=0;
+	uint8_t i=0;
+	CO2_ON=LED_ON;
+
+			// CO2 sensor needs to be on for 8 seconds to get good readings
+	while(i<2)
+	{
+		while(ready==0){sleepMode();}
+		ready=0;
+		i++;
+	}
+	//TH0=255;
 	CO2_MODE=1;
 	length=5;
 	TARGET = 0x2A;
 	START_SMB=1;// Define next outgoing byte
 	SMB_Write();                     // Initiate SMBus write
-	for(;ss<800;ss++){
-		;;
-	}
+	//for(;ss<800;ss++){	;;}
 	CO2_MODE=2;
 	length=4;
 	START_SMB=1;
 	TARGET = 0x2A|0x01;
 	SMB_Read();
-	return DATA_CO2_IN;
+	CO2_ON=LED_OFF;
+	while(i<10)
+		{
+			while(ready==0){sleepMode();}
+			ready=0;
+			i++;
+		}
+	return DATA_CO2_IN/2;
 
 }
 
@@ -168,24 +185,17 @@ void SMB_Write_Reg(U8 Addr,U8 Reg, U8 Dat)
 	SMB_REG_OUT = Reg;// SMBus transfer
 	SMB_Write();
 
-	while(SMB_BUSY){
-		;;
-
-	}
-
 }
-int8_t getTemp(void)
+int8_t getTemp(U16 adc)
 {
 	int32_t 			t_fine;
 	int32_t 			calc_result;
-	uint16_t 			adc;
 	int32_t 			var1;
 	int32_t 			var2;
 	int32_t 			var3;
 	const U16 			par_t1=26487;
 	const int16_t 		par_t2=26223;
 	const int8_t  		par_t3=3;// Dummy variable counters
-	adc=((uint16_t)(SMB_Read_Reg(0xEE,0x22))<<8)|((SMB_Read_Reg(0xEE,0x23)));
 	var1 = ((int16_t)adc << 1) - ((int16_t)par_t1 << 1);
 	var2 = (var1 *  (int32_t)par_t2) >> 11;
 	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
@@ -195,7 +205,7 @@ int8_t getTemp(void)
 	calc_result=temp_scaled/100;
 	return calc_result;
 }
-int8_t getHum(void)
+int8_t getHum(U16 adc)
 {
 
 	volatile uint16_t 			par_h1=10211;
@@ -212,9 +222,6 @@ int8_t getHum(void)
 	volatile int32_t 			var5;
 	volatile int32_t 			var6;
 	volatile int32_t 			calc_result;
-	volatile uint16_t 			adc;
-
-	adc=((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26);
 	var1 =  (int32_t)(((int32_t)adc) - ((int32_t) par_h1*16 ));
 	//print("tt: ",temp_scaled);
 	var2 = ((int32_t) par_h2
@@ -245,7 +252,7 @@ int8_t getHum(void)
 	return calc_result;
 
 }
-uint32_t getGas(void)
+uint32_t getGas(U16 gas_res_adc)
 {
 
 	volatile 	float 			value1;
@@ -255,14 +262,12 @@ uint32_t getGas(void)
 	volatile	float 			var3;
 
 	volatile	uint16_t range_sw_err=((uint16_t)SMB_Read_Reg(0xEE,0x04)&(uint16_t)0xf0)/16;
-	volatile	int32_t gas_res_adc=0;
 	volatile	int32_t calc_gas_res;
 
 
 			/**Look up table 2 for the possible gas range values */
 
 
-		gas_res_adc=((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6);
 		//print("gas_res_adc: ",gas_res_adc);
 		gas_range =(uint16_t)SMB_Read_Reg(0xEE,0x2B)&0x0F;
 		//print("gas_range: ",gas_range);
@@ -333,7 +338,8 @@ uint8_t getHeat(void)
 
 	if (temp > 400) /* Cap temperature */
 		temp = 400;
-
+	if(!temp_scaled)
+		temp_scaled=2400;
 	var1 = (int32_t)(((int32_t) temp_scaled * (int32_t)par_g3) / (int32_t)1000) * 256;
 	var2 = (par_g1 + 784) * (((((par_g2 + 154009) * temp * 5) / 100) + 3276800) / 10);
 	var3 = var1 + (var2 / 2);
@@ -361,12 +367,97 @@ void wakeUp(void)
 
 
 }
+void ADC(void)
+{
+	ADC0CN = ADC0CN_ADEN__DISABLED | ADC0CN_ADBMEN__BURST_ENABLED
+			 | ADC0CN_ADCM__TIMER2;
+		// [ADC0CN - ADC0 Control]$
+
+		// $[ADC0MX - ADC0 Multiplexer Selection]
+		/*
+		// ADC0MX (AMUX0 Positive Input Selection) = ADC0P6 (Select channel
+		//     ADC0.6.)
+		*/
+		ADC0MX = ADC0MX_ADC0MX__ADC0P7;
+		// [ADC0MX - ADC0 Multiplexer Selection]$
+
+		// $[ADC0CF - ADC0 Configuration]
+		/*
+		// AD8BE (8-Bit Mode Enable) = NORMAL (ADC0 operates in 10-bit or 12-bit
+		//     mode (normal operation).)
+		// ADGN (Gain Control) = GAIN_0P5 (The on-chip PGA gain is 0.5.)
+		// ADSC (SAR Clock Divider) = 2
+		// ADTM (Track Mode) = TRACK_NORMAL (Normal Track Mode. When ADC0 is
+		//     enabled, conversion begins immediately following the start-of-
+		//     conversion signal.)
+		*/
+		ADC0CF = ADC0CF_AD8BE__NORMAL | ADC0CF_ADGN__GAIN_0P5 | (2 << ADC0CF_ADSC__SHIFT)
+			 | ADC0CF_ADTM__TRACK_NORMAL;
+		// [ADC0CF - ADC0 Configuration]$
+
+		// $[ADC0TK - ADC0 Burst Mode Track Time]
+		// [ADC0TK - ADC0 Burst Mode Track Time]$
+
+		// $[ADC0PWR - ADC0 Power Control]
+		// [ADC0PWR - ADC0 Power Control]$
+
+		// $[ADC0AC - ADC0 Accumulator Configuration]
+		/*
+		// ADRPT (Repeat Count) = ACC_4 (Perform and Accumulate 4 conversions (1
+		//     conversion in 12-bit mode).)
+		// AD12BE (12-Bit Mode Enable) = 12_BIT_ENABLED (Enable 12-bit mode.)
+		// ADAE (Accumulate Enable) = ACC_DISABLED (ADC0H:ADC0L contain the
+		//     result of the latest conversion when Burst Mode is disabled.)
+		// ADSJST (Accumulator Shift and Justify) = RIGHT_NO_SHIFT (Right
+		//     justified. No shifting applied.)
+		*/
+		ADC0AC = ADC0AC_ADRPT__ACC_4 | ADC0AC_AD12BE__12_BIT_ENABLED | ADC0AC_ADAE__ACC_ENABLED
+			 | ADC0AC_ADSJST__RIGHT_NO_SHIFT;
+		// [ADC0AC - ADC0 Accumulator Configuration]$
+
+		// $[ADC0GTH - ADC0 Greater-Than High Byte]
+		/*
+		// ADC0GTH (Greater-Than High Byte) = 0
+		*/
+		ADC0GTH = (0 << ADC0GTH_ADC0GTH__SHIFT);
+		// [ADC0GTH - ADC0 Greater-Than High Byte]$
+
+		// $[ADC0GTL - ADC0 Greater-Than Low Byte]
+		/*
+		// ADC0GTL (Greater-Than Low Byte) = 0
+		*/
+		ADC0GTL = (0 << ADC0GTL_ADC0GTL__SHIFT);
+		// [ADC0GTL - ADC0 Greater-Than Low Byte]$
+
+		// $[ADC0LTH - ADC0 Less-Than High Byte]
+		// [ADC0LTH - ADC0 Less-Than High Byte]$
+
+		// $[ADC0LTL - ADC0 Less-Than Low Byte]
+		// [ADC0LTL - ADC0 Less-Than Low Byte]$
+
+}
+void BME680Init(void)
+{
+
+	//uint32_t y;
+	//for(y=0;y<255;y++){;;}
+	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
+	SMB_Write_Reg(0xEE,0x72,0x04);// hum:1x
+	SMB_Write_Reg(0xEE,0x74,0x20);// temp:1x, pressure:1x
+	SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
+	SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
+	SMB_Write_Reg(0xEE,0x5A,getHeat()); // set heater temp
+	SMB_Write_Reg(0xEE,0x74,0x21);// trigger forced mode
+	//for(y=0;y<255;y++){;;}
+	//print("2: ",SMB_Read_Reg(0xEE,0x74)," ");
+
+}
 
 int main (void)
 {
-	U8  i;
-
+	U16  i;
 	//Enter default mode
+
 	enter_DefaultMode_from_RESET();
 	//printf("%d",0x22);
 	// If slave is holding SDA low because of an improper SMBus reset or error
@@ -385,15 +476,12 @@ int main (void)
 	}
 
 	enter_Mode2_from_DefaultMode();
-	UART_Init();
 
+	UART_Init();
+	//BME680Init();
 	//SMB_Write_Reg(0x30,0x20,0x37);
 
-	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
-	SMB_Write_Reg(0xEE,0x72,0x04);// hum:1x
-	SMB_Write_Reg(0xEE,0x74,0x21);// temp:1x, pressure:1x
 
-	SMB_Write_Reg(0xEE,0x64,0x59); //100 ms
 
 	//par_g1=SMB_Read_Reg(0xEE,0xED);
 	//par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
@@ -410,32 +498,44 @@ int main (void)
 	//par_h5=SMB_Read_Reg(0xEE,0xe6);
 	//par_h6=SMB_Read_Reg(0xEE,0xe7);
 	//par_h7=SMB_Read_Reg(0xEE,0xe8);
-
+	CO2_ON=LED_OFF;
 	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
-	while (1)
+	YELLOW_LED=LED_OFF;
+	ADC();
+	R15_ENABLE=0;
+
+	//while (1)
 	{
 
 
-		while(ready==0){
-			sleepMode();
-		}
+		while(ready==0){sleepMode();}
+
+		YELLOW_LED=LED_ON;
+
+
 		ready=0;
 
-		SMB_Write_Reg(0xEE,0x5A,getHeat());
-		SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
+		BME680Init();
 
-		SMB_Write_Reg(0xEE,0x74,0x21);// trigger forced mode
-		v1=getTemp();
-		v2=getHum();
-		v3=getGas();
+		//print("status1: ",SMB_Read_Reg(0xEE,0x1D)," ");
+
+		while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+		//print("status2: ",SMB_Read_Reg(0xEE,0x1D)," ");
+
+		v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
+		v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
+		v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+		YELLOW_LED=LED_OFF;
 		v4=Read_CO2();
+		//while(v4==0){v4=Read_CO2();}
 
+		//SCL=0;
+		//SDA=0;
 		print("Temp: ",v1," C*");
 		print("Hum: ",v2," %");
-		//print("Heat: ",get_heat());
 		print("Gas: ",v3," Ohm");
 		print("CO2: ",v4," ppm");
-		//print("T: ",SMB_Read_Reg(0xEE,0x5A));
+		print("ADC: ",ADC0," 0");
 		//getGas();
 		print("--------",0,"--------");
 
@@ -455,15 +555,15 @@ void SMB_Write (void)
 	SMB_BUSY = 1;                       // Claim SMBus (set to busy)
 	SMB_RW = 0;                         // Mark this transfer as a WRITE
 	SMB0CN_STA = 1;                            // Start transfer
+	while (SMB_BUSY);
+
 }
 void SMB_Read (void)
 {
-	while (SMB_BUSY != 0);               // Wait for transfer to complete
+	while (SMB_BUSY);               // Wait for transfer to complete
 	SMB_BUSY = 1;                       // Claim SMBus (set to busy)
 	SMB_RW = 1;                         // Mark this transfer as a READ
-
 	SMB0CN_STA = 1;                            // Start transfer
-
 	while (SMB_BUSY);                   // Wait for transfer to complete
 }
 
@@ -472,12 +572,14 @@ INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
 			//wakeUp();
 		//wakeUp();
 		cc=0;
-
+		//print("ADC: ",ADC0," ");
+		//ADC0;
+		//ADC0CN_ADINT = 0;
 		ready=1;
 			// print("he12j",cc);
 		//YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
 		//YELLOW_LED=!YELLOW_LED;
-		YELLOW_LED=!YELLOW_LED;
+		//YELLOW_LED=!YELLOW_LED;
 		TMR2CN &= ~0x80;
 
 }

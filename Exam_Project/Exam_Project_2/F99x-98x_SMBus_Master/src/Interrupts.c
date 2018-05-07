@@ -126,8 +126,12 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 				{                       // address,
 					//UART_Send('x');
 					if(RW_Reg==1)
-					SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
-					SMB_BUSY = 0;        // And free SMBus interface
+					{
+						SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+						SMB_BUSY = 0;              // Free SMBus interface
+					}
+
+
 				}
 			}
 			else                       // If slave NACK,
@@ -153,19 +157,20 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 					SMB0CN_ACK = 1;
 					length--;
 				}else{
-					SMB_BUSY = 0;              // Free SMBus interface
+					            // Free SMBus interface
 					SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
 					SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+					SMB_BUSY = 0;
 				}
 
 			}else{
 			SMB_DATA_IN = SMB0DAT;     // Store received byte
-			SMB_BUSY = 0;              // Free SMBus interface
 			SMB0CN_ACK = 0;                   // Send NACK to indicate last byte
 			SMB0CN_STO = 1;                   // Send STOP to terminate transfer
+			SMB_BUSY = 0;              // Free SMBus interface
 			//UART_Send('a');
-			SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
-			SMB_BUSY = 0;
+			//SMB0CN_STO = 1;             // Set SMB0CN_STO to terminate transfer
+			//SMB_BUSY = 0;
 			}
 			break;
 

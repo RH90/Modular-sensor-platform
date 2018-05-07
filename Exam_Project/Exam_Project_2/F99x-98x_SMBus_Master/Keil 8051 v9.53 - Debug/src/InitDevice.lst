@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   49          //================================================================================
   50          // VREG_0_enter_DefaultMode_from_RESET
   51          //================================================================================
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 2   
 
   52          extern void VREG_0_enter_DefaultMode_from_RESET(void) {
   53   1              // $[REG0CN - Voltage Regulator Control]
@@ -128,7 +128,7 @@ line level    source
  112   1              // [P1MDIN - Port 1 Input Mode]$
  113   1      
  114   1              // $[P1SKIP - Port 1 Skip]
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 3   
 
  115   1              // [P1SKIP - Port 1 Skip]$
  116   1      
@@ -193,7 +193,7 @@ line level    source
  175   1      
  176   1              // [Timer Initialization]$
  177   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 4   
 
  178   1              // $[TH0 - Timer 0 High Byte]
  179   1              // [TH0 - Timer 0 High Byte]$
@@ -208,8 +208,8 @@ line level    source
  188   1              /*
  189   1              // TL1 (Timer 1 Low Byte) = 52
  190   1              */
- 191   1              TH0=0;
- 192   1              TL0 = 1;
+ 191   1              TH0 =254;
+ 192   1      
  193   1              // [TL1 - Timer 1 Low Byte]$
  194   1      
  195   1              // $[Timer Restoration]
@@ -258,7 +258,7 @@ line level    source
  238   1      
  239   1              // $[TMR3RLL - Timer 3 Reload Low Byte]
  240   1              /*
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 5   
 
  241   1              // TMR3RLL (Timer 3 Reload Low Byte) = 158
  242   1              */
@@ -323,7 +323,7 @@ line level    source
  301          // SMBUS_0_enter_Mode2_from_DefaultMode
  302          //================================================================================
  303          extern void SMBUS_0_enter_Mode2_from_DefaultMode(void) {
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 6   
 
  304   1              // $[SMB0CF - SMBus 0 Configuration]
  305   1              /*
@@ -388,7 +388,7 @@ line level    source
  364   1              // EX0 (External Interrupt 0 Enable) = DISABLED (Disable external
  365   1              //     interrupt 0.)
  366   1              // EX1 (External Interrupt 1 Enable) = DISABLED (Disable external
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 7   
 
  367   1              //     interrupt 1.)
  368   1              // ESPI0 (SPI0 Interrupt Enable) = DISABLED (Disable all SPI0
@@ -453,7 +453,7 @@ line level    source
  427   1              */
  428   1              //TL1 = (0x2B << TL1_TL1__SHIFT);
  429   1              // [TL1 - Timer 1 Low Byte]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 8   
 
  430   1      
  431   1              // $[Timer Restoration]
@@ -477,14 +477,14 @@ line level    source
  449   1              /*
  450   1              // TMR2H (Timer 2 High Byte) = 215
  451   1              */
- 452   1              TMR2H = (255 << TMR2H_TMR2H__SHIFT);
+ 452   1              TMR2H = (0x06 << TMR2H_TMR2H__SHIFT);
  453   1              // [TMR2H - Timer 2 High Byte]$
  454   1      
  455   1              // $[TMR2L - Timer 2 Low Byte]
  456   1              /*
  457   1              // TMR2L (Timer 2 Low Byte) = 96
  458   1              */
- 459   1              TMR2L = (255 << TMR2L_TMR2L__SHIFT);
+ 459   1              TMR2L = (0xC5 << TMR2L_TMR2L__SHIFT);
  460   1              // [TMR2L - Timer 2 Low Byte]$
  461   1      
  462   1              // $[TMR2RLH - Timer 2 Reload High Byte]
@@ -518,7 +518,7 @@ line level    source
  490   1      }
  491          
  492          
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:11:24 PAGE 9   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/07/2018 14:30:23 PAGE 9   
 
  493          //==============================================================================
  494          // enter_Mode2_from_DefaultMode
@@ -541,7 +541,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    172    ----
+   CODE SIZE        =    169    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

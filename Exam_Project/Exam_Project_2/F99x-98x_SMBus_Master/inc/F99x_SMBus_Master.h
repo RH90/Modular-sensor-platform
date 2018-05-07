@@ -35,6 +35,7 @@
 // End status vector definition
 
 SBIT (YELLOW_LED, SFR_P1, 3);          // YELLOW_LED==LED_ON means ON
+SBIT (CO2_ON, SFR_P1, 5);
 
 //-----------------------------------------------------------------------------
 // Global VARIABLES

@@ -188,8 +188,8 @@ extern void TIMER00_0_enter_Mode2_from_DefaultMode(void) {
 	/*
 	// TL1 (Timer 1 Low Byte) = 52
 	*/
-	TH0=0;
-	TL0 = 1;
+	TH0 =254;
+
 	// [TL1 - Timer 1 Low Byte]$
 
 	// $[Timer Restoration]
@@ -449,14 +449,14 @@ extern void TIMER16_2_enter_DefaultMode_from_RESET(void) {
 	/*
 	// TMR2H (Timer 2 High Byte) = 215
 	*/
-	TMR2H = (255 << TMR2H_TMR2H__SHIFT);
+	TMR2H = (0x06 << TMR2H_TMR2H__SHIFT);
 	// [TMR2H - Timer 2 High Byte]$
 
 	// $[TMR2L - Timer 2 Low Byte]
 	/*
 	// TMR2L (Timer 2 Low Byte) = 96
 	*/
-	TMR2L = (255 << TMR2L_TMR2L__SHIFT);
+	TMR2L = (0xC5 << TMR2L_TMR2L__SHIFT);
 	// [TMR2L - Timer 2 Low Byte]$
 
 	// $[TMR2RLH - Timer 2 Reload High Byte]
