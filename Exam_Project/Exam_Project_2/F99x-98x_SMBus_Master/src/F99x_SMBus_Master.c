@@ -4,13 +4,29 @@
 #include "InitDevice.h"
 #include "F99x_SMBus_Master.h"
 
+
+#define SLEEP        0x80              // Sleep Mode Select
+#define SUSPEND      0x40              // Suspend Mode Select
+#define CLEAR        0x20              // Wake-Up Flag Clear
+#define RSTWK        0x10              // Reset Pin Falling Edge Wake-Up
+#define RTCFWK       0x08              // SmaRTClock Failure Wake-Up
+#define RTCAWK       0x04              // SmaRTClock Alarm Wake-Up
+#define PMATWK       0x02              // Port Match Wake-Up
+#define CPT0WK       0x01              // Comparator0 Wake-Up
+
+// Friendly names for the LPM function arguments
+#define PORT_MATCH   PMATWK
+#define RTC          RTCFWK + RTCAWK
+#define COMPARATOR   CPT0WK
+
+
 U8 					SMB_DATA_IN;                        // Global holder for SMBus data
 // All receive data is written here
 
 U8 					SMB_DATA_OUT;
 volatile U8 		length;
 U8					DATA_CO2_OUT[]={0x04,0x13,0x8B,0x00,0x01};
-U16					DATA_CO2_IN;
+volatile U16					DATA_CO2_IN;
 bit					CO2_MODE;
 U8 					SMB_REG_OUT;
 U8 					START_SMB;
@@ -19,8 +35,10 @@ U8 					RW_Reg; // Global holder for SMBus data.
 
 U8 					TARGET;     // Target SMBus slave address
 
-
+volatile int32_t 			calc_hum;
 volatile int32_t 	temp_scaled;
+volatile uint16_t 			count=0;
+volatile uint16_t 	count_max=7200;
 int32_t 			a;
 
 volatile bit 		SMB_BUSY;
@@ -54,7 +72,7 @@ void UART_Init(void);
 void UART_Send(char c);
 void print(char* string,U32 num,char* string1);
 int8_t getTemp(U16 adc);
-int8_t getHum(U16 adc);
+uint8_t getHum(U16 adc);
 uint32_t getGas(U16 gas_res_adc);
 uint8_t getHeat(void);
 void sleepMode(void);
@@ -83,7 +101,7 @@ void UART_Init(void)
 	//baud rate=57600
 	SCON0 = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
 	TMOD |= 0x20;  //Timer1 in Mode2.
-	 TH1 = 256 - (24500000UL/(long)32)/(long)9600/(long)2; // Load timer value for baudrate generation
+	 TH1 = 256 - (20000000UL/(long)32)/(long)9600/(long)2; // Load timer value for baudrate generation
 	//TH1 = ((0x2B) << TH1_TH1__SHIFT);
 	TCON |= (1<<6);      //Turn ON the timer for Baud rate generation
 }
@@ -126,7 +144,7 @@ void print(char* string,U32 num,char* string1)
 }
 U16 Read_CO2(void)
 {
-	uint8_t i=0;
+	uint16_t i=0;
 	CO2_ON=LED_ON;
 
 			// CO2 sensor needs to be on for 8 seconds to get good readings
@@ -142,19 +160,19 @@ U16 Read_CO2(void)
 	TARGET = 0x2A;
 	START_SMB=1;// Define next outgoing byte
 	SMB_Write();                     // Initiate SMBus write
-	//for(;ss<800;ss++){	;;}
 	CO2_MODE=2;
 	length=4;
 	START_SMB=1;
 	TARGET = 0x2A|0x01;
 	SMB_Read();
 	CO2_ON=LED_OFF;
-	while(i<10)
+	while(i<12)
 		{
 			while(ready==0){sleepMode();}
 			ready=0;
 			i++;
 		}
+
 	return DATA_CO2_IN/2;
 
 }
@@ -205,32 +223,31 @@ int8_t getTemp(U16 adc)
 	calc_result=temp_scaled/100;
 	return calc_result;
 }
-int8_t getHum(U16 adc)
+uint8_t getHum(U16 adc)
 {
-
-	volatile uint16_t 			par_h1=10211;
-	volatile uint16_t			par_h2=16611;
-	volatile int8_t 			par_h3=0;
-	volatile int8_t 			par_h4=45;
-	volatile int8_t				par_h5=20;
-	volatile uint8_t			par_h6=120;
-	volatile int8_t				par_h7=156;
-	volatile int32_t 			var1;
-	volatile int32_t 			var2;
 	volatile int32_t 			var3;
 	volatile int32_t 			var4;
 	volatile int32_t 			var5;
 	volatile int32_t 			var6;
-	volatile int32_t 			calc_result;
-	var1 =  (int32_t)(((int32_t)adc) - ((int32_t) par_h1*16 ));
-	//print("tt: ",temp_scaled);
-	var2 = ((int32_t) par_h2
-					* (((temp_scaled * (int32_t) par_h4) / ((int32_t) 100))
-						+ (((temp_scaled * ((temp_scaled * (int32_t) par_h5) / ((int32_t) 100))) >> 6)
-							/ ((int32_t) 100)) + (int32_t) (1 << 14))) >> 10;
+
+	const uint16_t par_h1=((uint16_t)SMB_Read_Reg(0xEE,0xe3)<<4)|(uint16_t)(SMB_Read_Reg(0xEE,0xe2)&0x0F);
+	const uint16_t par_h2=((uint16_t)SMB_Read_Reg(0xEE,0xe1)<<4)|(uint16_t)SMB_Read_Reg(0xEE,0xe2)>>4;
+	const int8_t par_h3=SMB_Read_Reg(0xEE,0xe4);
+	const int8_t par_h4=SMB_Read_Reg(0xEE,0xe5);
+	const int8_t par_h5=SMB_Read_Reg(0xEE,0xe6);
+	const uint8_t par_h6=SMB_Read_Reg(0xEE,0xe7);
+	const int8_t par_h7=SMB_Read_Reg(0xEE,0xe8);
+	//print("",par_h3,"");
+
+		//temp_scaled=2350;
+	var4 = (((int32_t)adc) - ((int32_t) par_h1<<4 ))- (((temp_scaled * (int32_t) par_h3) / ((int32_t) 100)) >> 1);
+	//print("",par_h3,"");
+	var5 = ((int32_t) par_h2 * ((((int32_t)temp_scaled * (int32_t) par_h4) / ((int32_t) 100))
+						+ ((((int32_t)temp_scaled * (((int32_t)temp_scaled * (int32_t) par_h5) / ((int32_t) 100))) >> 6)
+							/ ((int32_t) 100)) + (int32_t) (1 << 14))) >> 10;//
 	//print("tt: ",temp_scaled);
 	//print("2: ",hvar2);
-	var3 = var1 * var2;
+	var3 = var4 * var5;
 	//print("3: ",hvar3);
 	var4 = (int32_t)par_h6 << 7;
 	//print("4: ",hvar4);
@@ -240,16 +257,16 @@ int8_t getHum(U16 adc)
 	//print("5: ",hvar5);
 	var6 = (var4 * var5) >> 1;
 	//print("6: ",hvar6);
-	calc_result = (((var3 + var6) >> 10) * ((int32_t) 1000)) >> 12;
-
-	if (calc_result > 100000) // Cap at 100%rH
-		calc_result = 100000;
-	else if (calc_result < 0)
-		calc_result = 0;
-	calc_result/=1000;
+	calc_hum = (((var3 + var6) >> 10) * ((int32_t) 1000)) >> 12;
+	temp_scaled=calc_hum;
+	if (calc_hum > 100000) // Cap at 100%rH
+		calc_hum = 100000;
+	else if (calc_hum < 0)
+		calc_hum = 0;
+	calc_hum/=1000;
 
 	//calc_hum= ((uint32_t)hum_adc*(uint32_t)100)/65535;
-	return calc_result;
+	return calc_hum;
 
 }
 uint32_t getGas(U16 gas_res_adc)
@@ -332,7 +349,7 @@ uint8_t getHeat(void)
 	volatile uint8_t 			heatr_res;
 	volatile int32_t 			heatr_res_x100;
 	//volatile int16_t 			temp=(uint16_t)SMB_Read_Reg(0xEE,0x5A);
-	volatile int16_t 			temp=300;
+	volatile int16_t 			temp=350;
 
 
 
@@ -439,15 +456,19 @@ void ADC(void)
 void BME680Init(void)
 {
 
-	//uint32_t y;
+	uint32_t i=0;;
 	//for(y=0;y<255;y++){;;}
 	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
-	SMB_Write_Reg(0xEE,0x72,0x04);// hum:1x
-	SMB_Write_Reg(0xEE,0x74,0x20);// temp:1x, pressure:1x
+
+
+	SMB_Write_Reg(0xEE,0x74,0x24);// temp:1x, pressure:1x
+	SMB_Write_Reg(0xEE,0x72,0x01);// hum
 	SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
-	SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
 	SMB_Write_Reg(0xEE,0x5A,getHeat()); // set heater temp
-	SMB_Write_Reg(0xEE,0x74,0x21);// trigger forced mode
+	SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
+
+	SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
+	//while(i<10){while(ready==0){sleepMode();}ready=0;i++;}
 	//for(y=0;y<255;y++){;;}
 	//print("2: ",SMB_Read_Reg(0xEE,0x74)," ");
 
@@ -498,10 +519,11 @@ int main (void)
 	//par_h5=SMB_Read_Reg(0xEE,0xe6);
 	//par_h6=SMB_Read_Reg(0xEE,0xe7);
 	//par_h7=SMB_Read_Reg(0xEE,0xe8);
+	ADC();
 	CO2_ON=LED_OFF;
 	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
 	YELLOW_LED=LED_OFF;
-	ADC();
+
 	R15_ENABLE=0;
 
 	//while (1)
@@ -509,36 +531,61 @@ int main (void)
 
 
 		while(ready==0){sleepMode();}
+		if(ADC0>600)
+		{
 
-		YELLOW_LED=LED_ON;
+			if(count%5==0)
+			{
+				YELLOW_LED=LED_ON;
+				BME680Init();
+				v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
+				v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
+				YELLOW_LED=LED_OFF;
+			}
+			if(count>=count_max)
+			{
+				YELLOW_LED=LED_ON;
+				BME680Init();
+				while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+				v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+				YELLOW_LED=LED_OFF;
+				v4=Read_CO2();
+			}
+
+		}
+		//YELLOW_LED=LED_ON;
 
 
 		ready=0;
 
-		BME680Init();
+		//BME680Init();
 
 		//print("status1: ",SMB_Read_Reg(0xEE,0x1D)," ");
 
-		while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+		//while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
 		//print("status2: ",SMB_Read_Reg(0xEE,0x1D)," ");
 
-		v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
-		v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
-		v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
-		YELLOW_LED=LED_OFF;
-		v4=Read_CO2();
+		//v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
+		//v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
+		//v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+		//YELLOW_LED=LED_OFF;
+		//v4=Read_CO2();
 		//while(v4==0){v4=Read_CO2();}
 
 		//SCL=0;
 		//SDA=0;
-		print("Temp: ",v1," C*");
-		print("Hum: ",v2," %");
-		print("Gas: ",v3," Ohm");
-		print("CO2: ",v4," ppm");
-		print("ADC: ",ADC0," 0");
+		//print("Temp: ",v1," C*");
+		//print("Hum: ",v2," %");
+		//print("Gas: ",v3," Ohm");
+	    //print("CO2: ",v4," ppm");
+		//print("ADC: ",ADC0," 0");
 		//getGas();
-		print("--------",0,"--------");
+		//print("--------",0,"--------");
 
+		if(count>=count_max*2)
+		{
+			count=0;
+		}
 
 		//
 
@@ -570,8 +617,9 @@ void SMB_Read (void)
 INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
 {
 			//wakeUp();
-		//wakeUp();
+		wakeUp();
 		cc=0;
+		count++;
 		//print("ADC: ",ADC0," ");
 		//ADC0;
 		//ADC0CN_ADINT = 0;

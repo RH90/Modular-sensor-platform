@@ -55,7 +55,8 @@
 #include <SI_C8051F990_Register_Enums.h>                  // SFR declarations
 #include "InitDevice.h"
 #include "C8051F990_lib.h"             // library declarations
-
+#include "power.h"
+#include "SmarRTClock.h"
 //-----------------------------------------------------------------------------
 // Pin Declarations
 //-----------------------------------------------------------------------------

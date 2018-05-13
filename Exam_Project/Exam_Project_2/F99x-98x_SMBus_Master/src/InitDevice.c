@@ -9,7 +9,6 @@
 // USER INCLUDES
 #include <SI_C8051F990_Register_Enums.h>
 #include "InitDevice.h"
-
 // USER PROTOTYPES
 // USER FUNCTIONS
 
@@ -22,10 +21,13 @@ extern void enter_DefaultMode_from_RESET(void) {
 	PCA_0_enter_DefaultMode_from_RESET();
 	VREG_0_enter_DefaultMode_from_RESET();
 	HFOSC_0_enter_DefaultMode_from_RESET();
+	//RTC_0_enter_DefaultMode_from_RESET();
+
 	CLOCK_0_enter_DefaultMode_from_RESET();
 	//TIMER01_0_enter_DefaultMode_from_RESET();
 	TIMER16_2_enter_DefaultMode_from_RESET();
 	UART_0_enter_DefaultMode_from_RESET();
+
 	// [Config Calls]$
 }
 
@@ -90,7 +92,7 @@ extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
 	// CLKSL (Clock Source Select) = HFOSC (Clock derived from the internal
 	//     precision High-Frequency Oscillator.)
 	*/
-	CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_32 | CLKSEL_CLKSL__HFOSC;
+	CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_32 | CLKSEL_CLKSL__LPOSC;
 	// [CLKSEL - Clock Select]$
 
 
@@ -188,7 +190,7 @@ extern void TIMER00_0_enter_Mode2_from_DefaultMode(void) {
 	/*
 	// TL1 (Timer 1 Low Byte) = 52
 	*/
-	TH0 =254;
+	TH0 =255;
 
 	// [TL1 - Timer 1 Low Byte]$
 
@@ -254,6 +256,180 @@ extern void TIMER16_3_enter_Mode2_from_DefaultMode(void) {
 	// Restore Timer Configuration
 	TMR3CN |= TMR3CN_TR3_save;
 	// [Timer Restoration]$
+
+
+}
+//================================================================================
+// RTC_0_enter_DefaultMode_from_RESET
+//================================================================================
+extern void RTC_0_enter_DefaultMode_from_RESET(void) {
+	// $[RTC Initialization]
+	// A variable for providing a delay for external oscillator startup
+	U16 delayCounter;
+
+	// Save the system clock (the system clock will be slowed during the startup delay)
+	U8 CLKSEL_save = CLKSEL;
+
+	// Enable power to the SmaRTClock oscillator circuit (RTC0EN = 1)
+	// [RTC Initialization]$
+
+	// $[RTC0XCN - RTC Oscillator Control: Initial start-up setting]
+	// Set SmaRTClock to Crystal Mode (XMODE = 1).
+	// Disable Automatic Gain Control (AGCEN) and enable Bias Doubling (BIASX2) for fast crystal startup.
+	RTC0ADR = RTC0XCN;
+	RTC0DAT = RTC0XCN_XMODE__CRYSTAL | RTC0XCN_BIASX2__ENABLED;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+	// [RTC0XCN - RTC Oscillator Control: Initial start-up setting]$
+
+	// $[RTC0XCF - RTC Oscillator Configuration]
+	/*
+	// AUTOSTP (Automatic Load Capacitance Stepping Enable) = ENABLED (Enable
+	//     load capacitance stepping.)
+	// LOADCAP (Load Capacitance Programmed Value) = 3
+	*/
+
+	RTC0ADR = RTC0XCF;
+	RTC0DAT = RTC0XCF_AUTOSTP__ENABLED | (3 << RTC0XCF_LOADCAP__SHIFT);
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+	// [RTC0XCF - RTC Oscillator Configuration]$
+
+	// $[CAPTURE0 - RTC Timer Capture 0]
+	// [CAPTURE0 - RTC Timer Capture 0]$
+
+	// $[CAPTURE1 - RTC Timer Capture 1]
+	// [CAPTURE1 - RTC Timer Capture 1]$
+
+	// $[CAPTURE2 - RTC Timer Capture 2]
+	// [CAPTURE2 - RTC Timer Capture 2]$
+
+	// $[CAPTURE3 - RTC Timer Capture 3]
+	// [CAPTURE3 - RTC Timer Capture 3]$
+
+	// $[ALARM0 - RTC Alarm Programmed Value 0]
+	// [ALARM0 - RTC Alarm Programmed Value 0]$
+
+	// $[ALARM1 - RTC Alarm Programmed Value 1]
+	// [ALARM1 - RTC Alarm Programmed Value 1]$
+
+	// $[ALARM2 - RTC Alarm Programmed Value 2]
+	/*
+	// ALARM2 (RTC Alarm Programmed Value 2) = 1
+	*/
+	RTC0ADR = ALARM2;
+	RTC0DAT = (1 << ALARM2_ALARM2__SHIFT);
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+	// [ALARM2 - RTC Alarm Programmed Value 2]$
+
+	// $[ALARM3 - RTC Alarm Programmed Value 3]
+	// [ALARM3 - RTC Alarm Programmed Value 3]$
+
+	// $[RTC0CN - RTC Control]
+	/*
+	// RTC0EN (RTC Enable) = ENABLED (Enable RTC oscillator.)
+	*/
+	RTC0ADR = RTC0CN;
+	RTC0DAT = 0;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+
+	RTC0ADR = RTC0CN;
+	RTC0DAT |= RTC0CN_RTC0EN__ENABLED;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+
+	// [RTC0CN - RTC Control]$
+
+	// $[External Oscillator Setup]
+	// Set the clock to a known value for the delay
+	CLKSEL = CLKSEL_CLKSL__LPOSC | CLKSEL_CLKDIV__SYSCLK_DIV_32;
+
+	// Delay for > 20 ms
+	for (delayCounter=0x150;delayCounter!=0;delayCounter--);
+
+	// Poll the SmaRTClock Clock Valid Bit (CLKVLD) until the crystal oscillator stabilizes
+	do {
+	RTC0ADR = RTC0ADR_BUSY__SET | RTC0ADR_ADDR__RTC0XCN;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+	} while ((RTC0DAT & RTC0XCN_CLKVLD__BMASK)== RTC0XCN_CLKVLD__NOT_SET);
+
+	// Poll the SmaRTClock Load Capacitance Ready Bit (LOADRDY) until the load capacitance reaches its programmed value
+	do {
+	RTC0ADR = RTC0ADR_BUSY__SET | RTC0ADR_ADDR__RTC0XCF;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+	} while ((RTC0DAT & RTC0XCF_LOADRDY__BMASK)== RTC0XCF_LOADRDY__NOT_SET);
+
+	// Enable Automatic Gain Control (AGCEN) and disable Bias Doubling (BIASX2) for maximum power savings
+	/*
+	// XMODE (RTC Oscillator Mode) = CRYSTAL (Crystal Mode selected.)
+	// AGCEN (RTC Oscillator Automatic Gain Control (AGC) Enable) = ENABLED
+	//     (Enable AGC.)
+	// BIASX2 (RTC Oscillator Bias Double Enable) = DISABLED (Disable the
+	//     Bias Double feature.)
+	// LFOEN (Low Frequency Oscillator Enable and Select) = DISABLED (XMODE
+	//     determines RTC oscillator source.)
+	*/
+	RTC0ADR = RTC0XCN;
+	RTC0DAT = RTC0XCN_XMODE__CRYSTAL | RTC0XCN_AGCEN__ENABLED | RTC0XCN_BIASX2__DISABLED
+		 | RTC0XCN_LFOEN__DISABLED;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+
+	// Enable the SmaRTClock missing clock detector.
+	/*
+	// MCLKEN (Missing RTC Detector Enable) = ENABLED (Enable missing RTC
+	//     detector.)
+	*/
+	RTC0ADR = RTC0CN;
+	RTC0DAT |= RTC0CN_MCLKEN__ENABLED;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+
+	// Delay for > 2 ms
+	for (delayCounter=0x100;delayCounter!=0;delayCounter--);
+
+	// Clear PMU wake-up source flags
+	PMU0CF = PMU0CF_CLEAR__ALL_FLAGS;
+
+	// Restore system clock
+	CLKSEL = CLKSEL_save;
+	// Poll CLKRDY to wait for the clock to stabilize
+	while(!((CLKSEL & CLKSEL_CLKRDY__BMASK) == CLKSEL_CLKRDY__SET));
+
+	/*
+	// RTC0EN (RTC Enable) = ENABLED (Enable RTC oscillator.)
+	// RTC0TR (RTC Timer Run Control) = STOP (RTC timer is stopped.)
+	// MCLKEN (Missing RTC Detector Enable) = ENABLED (Enable missing RTC
+	//     detector.)
+	// RTC0AEN (RTC Alarm Enable) = DISABLED (Disable RTC alarm.)
+	// ALRM (RTC Alarm Event Flag and Auto Reset Enable) = NOT_SET (Alarm
+	//     event flag is not set or disable the auto reset function.)
+	// RTC0CAP (RTC Timer Capture) = NOT_SET (Do not start a capture
+	//     operation.)
+	// RTC0SET (RTC Timer Set) = NOT_SET (Do not start a set operation.)
+	*/
+	RTC0ADR = RTC0CN;
+	RTC0DAT = RTC0CN_RTC0EN__ENABLED | RTC0CN_RTC0TR__STOP | RTC0CN_MCLKEN__ENABLED
+		 | RTC0CN_RTC0AEN__DISABLED | RTC0CN_ALRM__NOT_SET | RTC0CN_RTC0CAP__NOT_SET
+		 | RTC0CN_RTC0SET__NOT_SET;
+	while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
+
+	// [External Oscillator Setup]$
+
+
+}
+extern void RSTSRC_0_enter_DefaultMode_from_RESET(void) {
+	// $[RSTSRC - Reset Source]
+	/*
+	// C0RSEF (Comparator0 Reset Enable and Flag) = NOT_SET (A Comparator 0
+	//     reset did not occur.)
+	// MCDRSF (Missing Clock Detector Enable and Flag) = SET (A missing clock
+	//     detector reset occurred.)
+	// PORSF (Power-On / Supply Monitor Reset Flag, and Supply Monitor Reset
+	//     Enable) = SET (A power-on or supply monitor reset occurred.)
+	// RTC0RE (RTC Reset Enable and Flag) = NOT_SET (A RTC alarm or
+	//     oscillator fail reset did not occur.)
+	// SWRSF (Software Reset Force and Flag) = NOT_SET (A software reset did
+	//     not occur.)
+	*/
+	RSTSRC = RSTSRC_C0RSEF__NOT_SET | RSTSRC_MCDRSF__SET | RSTSRC_PORSF__SET
+		 | RSTSRC_RTC0RE__NOT_SET | RSTSRC_SWRSF__NOT_SET;
+	// [RSTSRC - Reset Source]$
 
 
 }
@@ -449,28 +625,30 @@ extern void TIMER16_2_enter_DefaultMode_from_RESET(void) {
 	/*
 	// TMR2H (Timer 2 High Byte) = 215
 	*/
-	TMR2H = (0x06 << TMR2H_TMR2H__SHIFT);
+	TMR2H = (0x34 << TMR2H_TMR2H__SHIFT);
 	// [TMR2H - Timer 2 High Byte]$
 
 	// $[TMR2L - Timer 2 Low Byte]
 	/*
 	// TMR2L (Timer 2 Low Byte) = 96
 	*/
-	TMR2L = (0xC5 << TMR2L_TMR2L__SHIFT);
+	TMR2L = (0x8C << TMR2L_TMR2L__SHIFT);
 	// [TMR2L - Timer 2 Low Byte]$
 
 	// $[TMR2RLH - Timer 2 Reload High Byte]
 	/*
 	// TMR2RLH (Timer 2 Reload High Byte) = 215
 	*/
-	TMR2RLH = (0x06 << TMR2RLH_TMR2RLH__SHIFT);
+	TMR2RLH = (0x34 << TMR2RLH_TMR2RLH__SHIFT);
 	// [TMR2RLH - Timer 2 Reload High Byte]$
 
 	// $[TMR2RLL - Timer 2 Reload Low Byte]
 	/*
 	// TMR2RLL (Timer 2 Reload Low Byte) = 79
 	*/
-	TMR2RLL = (0xC5 << TMR2RLL_TMR2RLL__SHIFT);
+	TMR2RLL = (0x8C << TMR2RLL_TMR2RLL__SHIFT);
+	// L:C5
+	// H:06
 	// [TMR2RLL - Timer 2 Reload Low Byte]$
 
 	// $[TMR2CN]
@@ -501,7 +679,6 @@ extern void enter_Mode2_from_DefaultMode(void) {
 	TIMER00_0_enter_Mode2_from_DefaultMode();
 	//TIMER16_3_enter_Mode2_from_DefaultMode();
 	TIMER_SETUP_0_enter_Mode2_from_DefaultMode();
-
 	INTERRUPT_0_enter_Mode2_from_DefaultMode();
 	// [Config Calls]$
 }

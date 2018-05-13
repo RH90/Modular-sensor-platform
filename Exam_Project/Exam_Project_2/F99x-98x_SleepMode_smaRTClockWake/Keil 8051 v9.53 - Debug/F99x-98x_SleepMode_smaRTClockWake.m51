@@ -1,4 +1,4 @@
-LX51 LINKER/LOCATER V4.66.30.0                                                          04/29/2018  23:54:57  PAGE 1
+LX51 LINKER/LOCATER V4.66.30.0                                                          05/11/2018  21:29:54  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.66.30.0, INVOKED BY:
@@ -64,7 +64,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 000000H   000002H   000003H   ---    OFFS..   CODE           ?CO?SILABS_STARTUP?3
 000003H   000068H   000066H   BYTE   UNIT     CODE           ?PR?MAIN?F99X_SLEEPMODE_SMARTCLOCKWAKE
 000069H   000072H   00000AH   BYTE   UNIT     CODE           ?PR?PORTS_1_ENTER_DEFAULTMODE_FROM_RESET?INITDEVICE
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 2
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 2
 
 
 000073H   000075H   000003H   BYTE   OFFS..   CODE           ?INTERRUPTS?00073
@@ -129,7 +129,7 @@ MAIN/F99X_SLEEPMODE_SMARTCLOCKWAKE            ----- -----  ----- -----
   +--> _RTC0CN_SETBITS/SMARTCLOCK
   +--> LPM_INIT/POWER
   +--> _LPM_ENABLE_WAKEUP/POWER
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 3
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 3
 
 
   +--> _LPM/POWER
@@ -194,7 +194,7 @@ _RTC_READ/SMARTCLOCK                          ----- -----  ----- -----
 
 
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 4
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 4
 
 
 PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLEEPMODE_SMARTCLOCKWAKE)
@@ -259,7 +259,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_S
 *SFR* 000000F0H.7 DATA     BIT       B_B7
       00000020H.0 BIT      BIT       Blink_LED
 *SFR* 0000008EH   DATA     BYTE      CKCON
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 5
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 5
 
 
 *SFR* 000000A9H   DATA     BYTE      CLKSEL
@@ -324,7 +324,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_S
 *SFR* 000000B8H.6 DATA     BIT       IP_PSPI0
 *SFR* 000000B8H.1 DATA     BIT       IP_PT0
 *SFR* 000000B8H.3 DATA     BIT       IP_PT1
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 6
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 6
 
 
 *SFR* 000000B8H.5 DATA     BIT       IP_PT2
@@ -389,7 +389,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_S
 *SFR* 000000FBH   DATA     BYTE      PCA0CPL0
 *SFR* 000000E9H   DATA     BYTE      PCA0CPL1
 *SFR* 000000EBH   DATA     BYTE      PCA0CPL2
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 7
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 7
 
 
 *SFR* 000000DAH   DATA     BYTE      PCA0CPM0
@@ -454,7 +454,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_S
 *SFR* 000000C0H.7 DATA     BIT       SMB0CN_MASTER
 *SFR* 000000C0H   DATA     BIT       SMB0CN_SI
 *SFR* 000000C0H.5 DATA     BIT       SMB0CN_STA
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 8
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 8
 
 
 *SFR* 000000C0H.4 DATA     BIT       SMB0CN_STO
@@ -519,7 +519,7 @@ PUBLIC SYMBOLS OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_S
 *SFR* 000000FFH   DATA     BYTE      VDM0CN
 *SFR* 000000E1H   DATA     BYTE      XBR0
 *SFR* 000000E2H   DATA     BYTE      XBR1
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 9
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 9
 
 
 *SFR* 000000E3H   DATA     BYTE      XBR2
@@ -584,7 +584,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000F0H.1 SFRSYM    DATA     BIT       B_B1
       000000E8H.6 SFRSYM    DATA     BIT       ADC0CN_ADBMEN
       000000C3H   SFRSYM    DATA     WORD      ADC0GT
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 10
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 10
 
 
       000000F0H.2 SFRSYM    DATA     BIT       B_B2
@@ -649,7 +649,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000087H   SFRSYM    DATA     BYTE      PCON
       000000C8H.6 SFRSYM    DATA     BIT       TMR2CN_TF2L
       000000D0H.4 SFRSYM    DATA     BIT       PSW_RS1
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 11
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 11
 
 
       000000E8H   SFRSYM    DATA     BIT       ADC0CN_ADCM0
@@ -714,7 +714,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000A8H.6 SFRSYM    DATA     BIT       IE_ESPI0
       0000008BH   SFRSYM    DATA     BYTE      TL1
       000000F9H   SFRSYM    DATA     BYTE      PCA0L
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 12
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 12
 
 
       000000D0H.1 SFRSYM    DATA     BIT       PSW_F1
@@ -779,7 +779,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000ABH   SFRSYM    DATA     BYTE      CS0MX
       00000088H.6 SFRSYM    DATA     BIT       TCON_TR1
       000000C2H   SFRSYM    DATA     BYTE      SMB0DAT
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 13
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 13
 
 
       00000099H   SFRSYM    DATA     BYTE      P0DRV
@@ -818,60 +818,60 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000BAH   SFRSYM    DATA     BYTE      ADC0AC
 
       010002B1H   BLOCK     CODE     ---       LVL=0
-      010002B1H   LINE      CODE     ---       #93
       010002B1H   LINE      CODE     ---       #94
-      010002B1H   LINE      CODE     ---       #96
+      010002B1H   LINE      CODE     ---       #95
+      010002B1H   LINE      CODE     ---       #97
       ---         BLOCKEND  ---      ---       LVL=0
 
       01000003H   BLOCK     CODE     ---       LVL=0
-      01000003H   LINE      CODE     ---       #101
       01000003H   LINE      CODE     ---       #102
-      01000003H   LINE      CODE     ---       #105
-      01000006H   LINE      CODE     ---       #109
-      01000009H   LINE      CODE     ---       #111
-      0100000BH   LINE      CODE     ---       #112
-      0100000DH   LINE      CODE     ---       #113
-      01000010H   LINE      CODE     ---       #115
-      01000015H   LINE      CODE     ---       #117
-      01000018H   LINE      CODE     ---       #118
-      0100001DH   LINE      CODE     ---       #120
-      01000020H   LINE      CODE     ---       #125
+      01000003H   LINE      CODE     ---       #103
+      01000003H   LINE      CODE     ---       #106
+      01000006H   LINE      CODE     ---       #110
+      01000009H   LINE      CODE     ---       #112
+      0100000BH   LINE      CODE     ---       #113
+      0100000DH   LINE      CODE     ---       #114
+      01000010H   LINE      CODE     ---       #116
+      01000015H   LINE      CODE     ---       #118
+      01000018H   LINE      CODE     ---       #119
+      0100001DH   LINE      CODE     ---       #121
       01000020H   LINE      CODE     ---       #126
-      01000020H   LINE      CODE     ---       #131
-      01000024H   LINE      CODE     ---       #132
+      01000020H   LINE      CODE     ---       #127
+      01000020H   LINE      CODE     ---       #132
       01000024H   LINE      CODE     ---       #133
-      01000027H   LINE      CODE     ---       #138
-      01000029H   LINE      CODE     ---       #139
-      01000029H   LINE      CODE     ---       #144
-      0100002DH   LINE      CODE     ---       #145
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 14
+      01000024H   LINE      CODE     ---       #134
+      01000027H   LINE      CODE     ---       #139
+      01000029H   LINE      CODE     ---       #140
+      01000029H   LINE      CODE     ---       #145
+      0100002DH   LINE      CODE     ---       #146
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 14
 
 
-      0100002DH   LINE      CODE     ---       #147
-      01000030H   LINE      CODE     ---       #151
-      01000032H   LINE      CODE     ---       #153
-      01000035H   LINE      CODE     ---       #154
-      01000035H   LINE      CODE     ---       #156
-      01000037H   LINE      CODE     ---       #157
-      01000039H   LINE      CODE     ---       #159
-      0100003BH   LINE      CODE     ---       #161
-      0100003BH   LINE      CODE     ---       #163
-      0100003DH   LINE      CODE     ---       #164
-      0100003FH   LINE      CODE     ---       #165
-      0100003FH   LINE      CODE     ---       #167
-      0100003FH   LINE      CODE     ---       #174
-      01000042H   LINE      CODE     ---       #175
-      01000042H   LINE      CODE     ---       #177
-      01000047H   LINE      CODE     ---       #178
-      0100004FH   LINE      CODE     ---       #179
-      01000057H   LINE      CODE     ---       #180
-      0100005AH   LINE      CODE     ---       #182
-      0100005CH   LINE      CODE     ---       #184
-      0100005CH   LINE      CODE     ---       #186
-      0100005FH   LINE      CODE     ---       #187
-      01000064H   LINE      CODE     ---       #188
-      01000067H   LINE      CODE     ---       #190
-      01000067H   LINE      CODE     ---       #192
+      0100002DH   LINE      CODE     ---       #148
+      01000030H   LINE      CODE     ---       #152
+      01000032H   LINE      CODE     ---       #154
+      01000035H   LINE      CODE     ---       #155
+      01000035H   LINE      CODE     ---       #157
+      01000037H   LINE      CODE     ---       #158
+      01000039H   LINE      CODE     ---       #160
+      0100003BH   LINE      CODE     ---       #162
+      0100003BH   LINE      CODE     ---       #164
+      0100003DH   LINE      CODE     ---       #165
+      0100003FH   LINE      CODE     ---       #166
+      0100003FH   LINE      CODE     ---       #168
+      0100003FH   LINE      CODE     ---       #175
+      01000042H   LINE      CODE     ---       #176
+      01000042H   LINE      CODE     ---       #178
+      01000047H   LINE      CODE     ---       #179
+      0100004FH   LINE      CODE     ---       #180
+      01000057H   LINE      CODE     ---       #181
+      0100005AH   LINE      CODE     ---       #183
+      0100005CH   LINE      CODE     ---       #185
+      0100005CH   LINE      CODE     ---       #187
+      0100005FH   LINE      CODE     ---       #188
+      01000064H   LINE      CODE     ---       #189
+      01000067H   LINE      CODE     ---       #191
+      01000067H   LINE      CODE     ---       #193
       ---         BLOCKEND  ---      ---       LVL=0
 
       ---         MODULE    ---      ---       INITDEVICE
@@ -909,7 +909,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000F3H   SFRSYM    DATA     BYTE      CS0MD2
       000000E8H   SFRSYM    DATA     BYTE      ADC0CN
       000000A4H   SFRSYM    DATA     BYTE      P0MDOUT
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 15
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 15
 
 
       000000F3H   SFRSYM    DATA     BYTE      CS0MD3
@@ -974,7 +974,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000081H   SFRSYM    DATA     BYTE      SP
       000000E0H.4 SFRSYM    DATA     BIT       ACC_ACC4
       000000E0H.5 SFRSYM    DATA     BIT       ACC_ACC5
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 16
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 16
 
 
       000000C0H   SFRSYM    DATA     BYTE      SMB0CN
@@ -1039,7 +1039,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000B0H.3 SFRSYM    DATA     BIT       CS0CN_CSCMPEN
       000000CAH   SFRSYM    DATA     WORD      TMR2RL
       000000BDH   SFRSYM    DATA     BYTE      ADC0L
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 17
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 17
 
 
       000000C8H.5 SFRSYM    DATA     BIT       TMR2CN_TF2LEN
@@ -1104,7 +1104,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000088H.7 SFRSYM    DATA     BIT       TCON_TF1
       00000099H   SFRSYM    DATA     BYTE      SBUF0
       000000B9H   SFRSYM    DATA     BYTE      IREF0CF
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 18
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 18
 
 
       000000C3H   SFRSYM    DATA     BYTE      ADC0GTL
@@ -1169,7 +1169,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0100021DH   LINE      CODE     ---       #23
       01000220H   LINE      CODE     ---       #24
       01000223H   LINE      CODE     ---       #25
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 19
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 19
 
 
       01000226H   LINE      CODE     ---       #26
@@ -1234,7 +1234,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       010000CFH   LINE      CODE     ---       #302
       010000D4H   LINE      CODE     ---       #303
       010000D9H   LINE      CODE     ---       #315
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 20
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 20
 
 
       010000DCH   LINE      CODE     ---       #316
@@ -1299,7 +1299,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       01000291H   LINE      CODE     ---       #558
       ---         BLOCKEND  ---      ---       LVL=0
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 21
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 21
 
 
       ---         MODULE    ---      ---       INTERRUPTS
@@ -1364,7 +1364,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000F0H.5 SFRSYM    DATA     BIT       B_B5
       000000DCH   SFRSYM    DATA     BYTE      PCA0CPM2
       000000B8H   SFRSYM    DATA     BYTE      IP
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 22
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 22
 
 
       000000BCH   SFRSYM    DATA     BYTE      ADC0TK
@@ -1429,7 +1429,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0000009CH   SFRSYM    DATA     BYTE      CRC0FLIP
       000000F8H.5 SFRSYM    DATA     BIT       SPI0CN_MODF
       000000D0H   SFRSYM    DATA     BIT       PSW_PARITY
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 23
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 23
 
 
       000000A8H.4 SFRSYM    DATA     BIT       IE_ES0
@@ -1494,7 +1494,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000080H.2 SFRSYM    DATA     BIT       P0_B2
       00000088H.3 SFRSYM    DATA     BIT       TCON_IE1
       000000C0H.1 SFRSYM    DATA     BIT       SMB0CN_ACK
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 24
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 24
 
 
       00000090H.2 SFRSYM    DATA     BIT       P1_B2
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000ACH   SFRSYM    DATA     BYTE      RTC0ADR
       00000094H   SFRSYM    DATA     BYTE      TMR3L
       000000BBH   SFRSYM    DATA     BYTE      ADC0PWR
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 25
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 25
 
 
       000000D8H   SFRSYM    DATA     BIT       PCA0CN_CCF0
@@ -1624,7 +1624,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0100011CH   LINE      CODE     ---       #140
       0100011DH   LINE      CODE     ---       #141
       0100011FH   LINE      CODE     ---       #190
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 26
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 26
 
 
       01000122H   LINE      CODE     ---       #201
@@ -1689,7 +1689,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000E9H   SFRSYM    DATA     BYTE      PCA0CPL1
       000000D8H   SFRSYM    DATA     BYTE      PCA0CN
       000000F0H.4 SFRSYM    DATA     BIT       B_B4
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 27
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 27
 
 
       000000DBH   SFRSYM    DATA     BYTE      PCA0CPM1
@@ -1754,7 +1754,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000089H   SFRSYM    DATA     BYTE      TMOD
       00000088H   SFRSYM    DATA     BYTE      TCON
       000000B5H   SFRSYM    DATA     BYTE      PMU0MD
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 28
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 28
 
 
       000000E8H.4 SFRSYM    DATA     BIT       ADC0CN_ADBUSY
@@ -1819,7 +1819,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000B8H.2 SFRSYM    DATA     BIT       IP_PX1
       000000EEH   SFRSYM    DATA     BYTE      CS0DH
       00000088H.1 SFRSYM    DATA     BIT       TCON_IE0
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 29
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 29
 
 
       000000C0H.7 SFRSYM    DATA     BIT       SMB0CN_MASTER
@@ -1884,7 +1884,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0000009DH   SFRSYM    DATA     BYTE      P2DRV
       0000009AH   SFRSYM    DATA     BYTE      CRC0CNT
       0000008EH   SFRSYM    DATA     BYTE      CKCON
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 30
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 30
 
 
       000000C8H.2 SFRSYM    DATA     BIT       TMR2CN_TR2
@@ -1949,7 +1949,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0000000AH   PUBLIC    DATA     BYTE      Port_Match_Wakeup
       00000009H   PUBLIC    DATA     BYTE      RTC_Alarm
       00000008H   PUBLIC    DATA     BYTE      RTC_Failure
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 31
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 31
 
 
       010001A5H   PUBLIC    CODE     ---       _LPM
@@ -2014,7 +2014,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000F0H.5 SFRSYM    DATA     BIT       B_B5
       000000DCH   SFRSYM    DATA     BYTE      PCA0CPM2
       000000B8H   SFRSYM    DATA     BYTE      IP
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 32
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 32
 
 
       000000BCH   SFRSYM    DATA     BYTE      ADC0TK
@@ -2079,7 +2079,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       0000009CH   SFRSYM    DATA     BYTE      CRC0FLIP
       000000F8H.5 SFRSYM    DATA     BIT       SPI0CN_MODF
       000000D0H   SFRSYM    DATA     BIT       PSW_PARITY
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 33
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 33
 
 
       000000A8H.4 SFRSYM    DATA     BIT       IE_ES0
@@ -2144,7 +2144,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       00000080H.2 SFRSYM    DATA     BIT       P0_B2
       00000088H.3 SFRSYM    DATA     BIT       TCON_IE1
       000000C0H.1 SFRSYM    DATA     BIT       SMB0CN_ACK
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 34
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 34
 
 
       00000090H.2 SFRSYM    DATA     BIT       P1_B2
@@ -2209,7 +2209,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       000000ACH   SFRSYM    DATA     BYTE      RTC0ADR
       00000094H   SFRSYM    DATA     BYTE      TMR3L
       000000BBH   SFRSYM    DATA     BYTE      ADC0PWR
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 35
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 35
 
 
       000000D8H   SFRSYM    DATA     BIT       PCA0CN_CCF0
@@ -2274,7 +2274,7 @@ SYMBOL TABLE OF MODULE:  F99X-98X_SLEEPMODE_SMARTCLOCKWAKE.OMF.CRBUILD (F99X_SLE
       010001BDH   LINE      CODE     ---       #134
       010001C2H   LINE      CODE     ---       #140
       010001C4H   LINE      CODE     ---       #144
-LX51 LINKER/LOCATER V4.66.30.0                                                        04/29/2018  23:54:57  PAGE 36
+LX51 LINKER/LOCATER V4.66.30.0                                                        05/11/2018  21:29:54  PAGE 36
 
 
       010001C4H   LINE      CODE     ---       #145

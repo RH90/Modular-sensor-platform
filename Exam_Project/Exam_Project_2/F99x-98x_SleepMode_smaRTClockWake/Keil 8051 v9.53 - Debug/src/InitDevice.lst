@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   48   1              // [Watchdog Disable]$
   49   1      
   50   1              // $[PCA0CPM0 - PCA Channel 0 Capture/Compare Mode 0]
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 2   
 
   51   1              // [PCA0CPM0 - PCA Channel 0 Capture/Compare Mode 0]$
   52   1      
@@ -128,7 +128,7 @@ line level    source
  111   1              // B2 (Port 1 Bit 2 Output Mode) = OPEN_DRAIN (P1.2 output is open-
  112   1              //     drain.)
  113   1              // B3 (Port 1 Bit 3 Output Mode) = PUSH_PULL (P1.3 output is push-pull.)
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 3   
 
  114   1              // B4 (Port 1 Bit 4 Output Mode) = OPEN_DRAIN (P1.4 output is open-
  115   1              //     drain.)
@@ -193,7 +193,7 @@ line level    source
  174   1      
  175   1              // $[P1MASK - Port 1 Mask]
  176   1              // [P1MASK - Port 1 Mask]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 4   
 
  177   1      
  178   1              // $[P1MAT - Port 1 Match]
@@ -258,7 +258,7 @@ line level    source
  237   1              RTC0ADR = RTC0XCF;
  238   1              RTC0DAT = RTC0XCF_AUTOSTP__ENABLED | (3 << RTC0XCF_LOADCAP__SHIFT);
  239   1              while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 5   
 
  240   1              // [RTC0XCF - RTC Oscillator Configuration]$
  241   1      
@@ -323,7 +323,7 @@ line level    source
              -mmed value
  300   1              do {
  301   2              RTC0ADR = RTC0ADR_BUSY__SET | RTC0ADR_ADDR__RTC0XCF;
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 6   
 
  302   2              while((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET);    //Poll Busy Bit
  303   2              } while ((RTC0DAT & RTC0XCF_LOADRDY__BMASK)== RTC0XCF_LOADRDY__NOT_SET);
@@ -388,7 +388,7 @@ line level    source
  362          
  363          //================================================================================
  364          // CLOCK_0_enter_DefaultMode_from_RESET
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 7   
 
  365          //================================================================================
  366          extern void CLOCK_0_enter_DefaultMode_from_RESET(void) {
@@ -453,7 +453,7 @@ line level    source
  425   1              */
  426   1              TMR3L = (154 << TMR3L_TMR3L__SHIFT);
  427   1              // [TMR3L - Timer 3 Low Byte]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 8   
 
  428   1      
  429   1              // $[TMR3RLH - Timer 3 Reload High Byte]
@@ -518,7 +518,7 @@ line level    source
  488   1              // SWRSF (Software Reset Force and Flag) = NOT_SET (A software reset did
  489   1              //     not occur.)
  490   1              */
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 9   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 9   
 
  491   1              RSTSRC = RSTSRC_C0RSEF__NOT_SET | RSTSRC_MCDRSF__SET | RSTSRC_PORSF__SET
  492   1                       | RSTSRC_RTC0RE__NOT_SET | RSTSRC_SWRSF__NOT_SET;
@@ -583,7 +583,7 @@ line level    source
  551   1              // $[EIE2 - Extended Interrupt Enable 2]
  552   1              // [EIE2 - Extended Interrupt Enable 2]$
  553   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/29/2018 23:54:56 PAGE 10  
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        05/11/2018 21:29:54 PAGE 10  
 
  554   1              // $[EIP2 - Extended Interrupt Priority 2]
  555   1              // [EIP2 - Extended Interrupt Priority 2]$
