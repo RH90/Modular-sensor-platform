@@ -121,7 +121,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 	  SMB_BUSY = 0;                    // Free SMBus
 
 	  FAIL = 0;
-	  YELLOW_LED = 0;
+	  BME680_ON = 0;
 
 	  NUM_ERRORS++;                    // Indicate an error occurred
 	}

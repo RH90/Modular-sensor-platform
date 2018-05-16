@@ -25,8 +25,8 @@
 #define  WRITE          0x00           // SMBus WRITE command
 #define  READ           0x01           // SMBus READ command
 
-#define LED_ON           0             // Turns the LED on
-#define LED_OFF          1             // Turns the LED off
+#define ON           0             // Turns the LED on
+#define OFF          1             // Turns the LED off
 
 // Device addresses (7 bits, LSB is a don't care)
 #define  SLAVE_ADDR     0xF0           // Device address for slave target
@@ -132,7 +132,7 @@ INTERRUPT (SMBUS0_ISR, SMBUS0_IRQn)
 	  SMB_BUSY = 0;                    // Free SMBus
 
 	  FAIL = 0;
-	  YELLOW_LED = LED_OFF;
+	  BME680_ON = OFF;
 
 	  NUM_ERRORS++;                    // Indicate an error occurred
 	}

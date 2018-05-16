@@ -3568,3 +3568,36 @@ Caused by: java.lang.NullPointerException
 
 !ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-13 00:45:44.366
 !MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-13 19:50:49.042
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 12:20:36.381
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 12:59:55.090
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 13:42:52.875
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 17:47:09.682
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 20:35:28.381
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-05-14 21:15:54.536
+!MESSAGE No network interfaces found.
+!SESSION 2018-05-16 14:11:56.296 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_92
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY com.silabs.ss.platform.content.core 4 0 2018-05-16 14:12:34.952
+!MESSAGE Local timestamp file does not exist: C:\SiliconLabs\SimplicityStudio\v4\offline\common\Simplicity_Studio_Terms_of_Use_and_Privacy_Statement.timestamp
+
+!ENTRY com.silabs.ss.platform.content.core 4 0 2018-05-16 14:12:55.102
+!MESSAGE Local timestamp file does not exist: C:\SiliconLabs\SimplicityStudio\v4\offline\common\Simplicity_Studio_Terms_of_Use_and_Privacy_Statement.timestamp

@@ -144,7 +144,7 @@ int main (void)
 
 	enter_Mode2_from_DefaultMode();
 
-	YELLOW_LED = LED_OFF;
+	BME680_ON = OFF;
 
 	dat = 0;                            // Output data counter
 	NUM_ERRORS = 0;                     // Error counter
@@ -170,11 +170,11 @@ int main (void)
 	  // Indicate that an error has occurred (YELLOW_LED no longer lit)
 	  if (NUM_ERRORS > 0)
 	  {
-		 YELLOW_LED = LED_OFF;
+		 BME680_ON = OFF;
 	  }
 	  else
 	  {
-		 YELLOW_LED = !YELLOW_LED;
+		 BME680_ON = !BME680_ON;
 	  }
 
 	  // Run to here to view the SMB_DATA_IN and SMB_DATA_OUT variables

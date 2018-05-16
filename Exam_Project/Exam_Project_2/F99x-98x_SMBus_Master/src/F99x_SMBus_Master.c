@@ -38,7 +38,7 @@ U8 					TARGET;     // Target SMBus slave address
 volatile int32_t 			calc_hum;
 volatile int32_t 	temp_scaled;
 volatile uint16_t 			count=0;
-volatile uint16_t 	count_max=7200;
+volatile uint32_t 	count_max=7200;
 int32_t 			a;
 
 volatile bit 		SMB_BUSY;
@@ -56,7 +56,7 @@ volatile uint32_t cc=1;
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
 SBIT (SCL, SFR_P0, 1);                 // and P0.1
-SBIT (R15_ENABLE, SFR_P1, 4);
+SBIT (ADC_PIN, SFR_P1, 4);
 
 LOCATED_VARIABLE_NO_INIT (reserved, U8, SEG_XDATA, 0x0000);
 
@@ -145,7 +145,7 @@ void print(char* string,U32 num,char* string1)
 U16 Read_CO2(void)
 {
 	uint16_t i=0;
-	CO2_ON=LED_ON;
+	CO2_ON=ON;
 
 			// CO2 sensor needs to be on for 8 seconds to get good readings
 	while(i<2)
@@ -165,7 +165,7 @@ U16 Read_CO2(void)
 	START_SMB=1;
 	TARGET = 0x2A|0x01;
 	SMB_Read();
-	CO2_ON=LED_OFF;
+	CO2_ON=OFF;
 	while(i<12)
 		{
 			while(ready==0){sleepMode();}
@@ -269,6 +269,7 @@ uint8_t getHum(U16 adc)
 	return calc_hum;
 
 }
+// calculate VOC value value
 uint32_t getGas(U16 gas_res_adc)
 {
 
@@ -331,6 +332,7 @@ uint32_t getGas(U16 gas_res_adc)
 		return calc_gas_res;
 
 }
+// get Tempeture data for gas measurement
 uint8_t getHeat(void)
 {
 
@@ -367,120 +369,51 @@ uint8_t getHeat(void)
 
 	return heatr_res;
 }
+// put MC to sleep
 void sleepMode(void)
 {
-	//CLKSEL = 0x04;
-	//OSCICN &= ~0x80;
 	PMU0CF|= (1<<0);
 
 }
+// wake up MC
 void wakeUp(void)
 {
 	PMU0CF&= ~(1<<0);
-	//CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_32 | CLKSEL_CLKSL__HFOSC;
-	//OSCICN |= 0x80;
-	//enter_DefaultMode_from_RESET();
-	//enter_Mode2_from_DefaultMode();
-
 
 }
+// Initilize The ADC
 void ADC(void)
 {
 	ADC0CN = ADC0CN_ADEN__DISABLED | ADC0CN_ADBMEN__BURST_ENABLED
 			 | ADC0CN_ADCM__TIMER2;
-		// [ADC0CN - ADC0 Control]$
-
-		// $[ADC0MX - ADC0 Multiplexer Selection]
-		/*
-		// ADC0MX (AMUX0 Positive Input Selection) = ADC0P6 (Select channel
-		//     ADC0.6.)
-		*/
 		ADC0MX = ADC0MX_ADC0MX__ADC0P7;
-		// [ADC0MX - ADC0 Multiplexer Selection]$
-
-		// $[ADC0CF - ADC0 Configuration]
-		/*
-		// AD8BE (8-Bit Mode Enable) = NORMAL (ADC0 operates in 10-bit or 12-bit
-		//     mode (normal operation).)
-		// ADGN (Gain Control) = GAIN_0P5 (The on-chip PGA gain is 0.5.)
-		// ADSC (SAR Clock Divider) = 2
-		// ADTM (Track Mode) = TRACK_NORMAL (Normal Track Mode. When ADC0 is
-		//     enabled, conversion begins immediately following the start-of-
-		//     conversion signal.)
-		*/
 		ADC0CF = ADC0CF_AD8BE__NORMAL | ADC0CF_ADGN__GAIN_0P5 | (2 << ADC0CF_ADSC__SHIFT)
 			 | ADC0CF_ADTM__TRACK_NORMAL;
-		// [ADC0CF - ADC0 Configuration]$
-
-		// $[ADC0TK - ADC0 Burst Mode Track Time]
-		// [ADC0TK - ADC0 Burst Mode Track Time]$
-
-		// $[ADC0PWR - ADC0 Power Control]
-		// [ADC0PWR - ADC0 Power Control]$
-
-		// $[ADC0AC - ADC0 Accumulator Configuration]
-		/*
-		// ADRPT (Repeat Count) = ACC_4 (Perform and Accumulate 4 conversions (1
-		//     conversion in 12-bit mode).)
-		// AD12BE (12-Bit Mode Enable) = 12_BIT_ENABLED (Enable 12-bit mode.)
-		// ADAE (Accumulate Enable) = ACC_DISABLED (ADC0H:ADC0L contain the
-		//     result of the latest conversion when Burst Mode is disabled.)
-		// ADSJST (Accumulator Shift and Justify) = RIGHT_NO_SHIFT (Right
-		//     justified. No shifting applied.)
-		*/
 		ADC0AC = ADC0AC_ADRPT__ACC_4 | ADC0AC_AD12BE__12_BIT_ENABLED | ADC0AC_ADAE__ACC_ENABLED
 			 | ADC0AC_ADSJST__RIGHT_NO_SHIFT;
-		// [ADC0AC - ADC0 Accumulator Configuration]$
-
-		// $[ADC0GTH - ADC0 Greater-Than High Byte]
-		/*
-		// ADC0GTH (Greater-Than High Byte) = 0
-		*/
 		ADC0GTH = (0 << ADC0GTH_ADC0GTH__SHIFT);
-		// [ADC0GTH - ADC0 Greater-Than High Byte]$
-
-		// $[ADC0GTL - ADC0 Greater-Than Low Byte]
-		/*
-		// ADC0GTL (Greater-Than Low Byte) = 0
-		*/
 		ADC0GTL = (0 << ADC0GTL_ADC0GTL__SHIFT);
-		// [ADC0GTL - ADC0 Greater-Than Low Byte]$
-
-		// $[ADC0LTH - ADC0 Less-Than High Byte]
-		// [ADC0LTH - ADC0 Less-Than High Byte]$
-
-		// $[ADC0LTL - ADC0 Less-Than Low Byte]
-		// [ADC0LTL - ADC0 Less-Than Low Byte]$
-
 }
+
+// Initilaize the BME680 Sensor
 void BME680Init(void)
 {
 
 	uint32_t i=0;;
-	//for(y=0;y<255;y++){;;}
 	SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
-
-
 	SMB_Write_Reg(0xEE,0x74,0x24);// temp:1x, pressure:1x
 	SMB_Write_Reg(0xEE,0x72,0x01);// hum
 	SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
 	SMB_Write_Reg(0xEE,0x5A,getHeat()); // set heater temp
 	SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
-
 	SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
-	//while(i<10){while(ready==0){sleepMode();}ready=0;i++;}
-	//for(y=0;y<255;y++){;;}
-	//print("2: ",SMB_Read_Reg(0xEE,0x74)," ");
 
 }
 
 int main (void)
 {
 	U16  i;
-	//Enter default mode
-
 	enter_DefaultMode_from_RESET();
-	//printf("%d",0x22);
 	// If slave is holding SDA low because of an improper SMBus reset or error
 	while(!SDA)
 	{
@@ -495,101 +428,50 @@ int main (void)
 		for(i = 0; i < 10; i++);         // Hold the clock high
 		XBR2 = 0x00;                     // Disable Crossbar
 	}
-
 	enter_Mode2_from_DefaultMode();
-
-	UART_Init();
-	//BME680Init();
-	//SMB_Write_Reg(0x30,0x20,0x37);
-
-
-
-	//par_g1=SMB_Read_Reg(0xEE,0xED);
-	//par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
-	//par_g3 =SMB_Read_Reg(0xEE,0xEE);
-
-	//par_t1=(SMB_Read_Reg(0xEE,0xEA)<<8)|SMB_Read_Reg(0xEE,0xE9);
-	//par_t2=(SMB_Read_Reg(0xEE,0x8B)<<8)|SMB_Read_Reg(0xEE,0x8A);
-	//par_t3 =SMB_Read_Reg(0xEE,0x8C);
-
-	//par_h1=(SMB_Read_Reg(0xEE,0xe3)<<8)|SMB_Read_Reg(0xEE,0xe2);
-	//par_h2=(SMB_Read_Reg(0xEE,0xe1)<<8)|SMB_Read_Reg(0xEE,0xe2);
-	//par_h3=SMB_Read_Reg(0xEE,0xe4);
-	//par_h4=SMB_Read_Reg(0xEE,0xe5);
-	//par_h5=SMB_Read_Reg(0xEE,0xe6);
-	//par_h6=SMB_Read_Reg(0xEE,0xe7);
-	//par_h7=SMB_Read_Reg(0xEE,0xe8);
+	//UART_Init();
 	ADC();
-	CO2_ON=LED_OFF;
-	//SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
-	YELLOW_LED=LED_OFF;
-
-	R15_ENABLE=0;
-
-	//while (1)
+	CO2_ON=OFF;
+	BME680_ON=OFF;
+	ADC_PIN=0;
+	while(1)
 	{
-
-
 		while(ready==0){sleepMode();}
+		if(count%2==0)
+		{
+	    LUX_ON=ON;
 		if(ADC0>600)
 		{
-
-			if(count%5==0)
-			{
-				YELLOW_LED=LED_ON;
+			LUX_ON=OFF;
+				BME680_ON=ON;
 				BME680Init();
 				v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
 				v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
-				YELLOW_LED=LED_OFF;
-			}
-			if(count>=count_max)
-			{
-				YELLOW_LED=LED_ON;
-				BME680Init();
-				while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
-				v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
-				YELLOW_LED=LED_OFF;
-				v4=Read_CO2();
-			}
+				BME680_ON=OFF;
+				if(count>=(count_max/2))
+				{
+					BME680_ON=ON;
+					BME680Init();
+					while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+					v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+					BME680_ON=OFF;
+				}
+
+				if(count>=count_max)
+				{
+					v4=Read_CO2();
+				}
+		}
+
 
 		}
-		//YELLOW_LED=LED_ON;
-
-
 		ready=0;
-
-		//BME680Init();
-
-		//print("status1: ",SMB_Read_Reg(0xEE,0x1D)," ");
-
-		//while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
-		//print("status2: ",SMB_Read_Reg(0xEE,0x1D)," ");
-
-		//v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
-		//v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
-		//v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
-		//YELLOW_LED=LED_OFF;
-		//v4=Read_CO2();
-		//while(v4==0){v4=Read_CO2();}
-
-		//SCL=0;
-		//SDA=0;
-		//print("Temp: ",v1," C*");
-		//print("Hum: ",v2," %");
-		//print("Gas: ",v3," Ohm");
-	    //print("CO2: ",v4," ppm");
-		//print("ADC: ",ADC0," 0");
-		//getGas();
-		//print("--------",0,"--------");
-
-		if(count>=count_max*2)
+		LUX_ON=OFF;
+		count++;
+		if(count>=count_max*10)
 		{
 			count=0;
 		}
-
-		//
-
-		//for(a=0;a<500000;a++){}
 
 	}
 
@@ -616,18 +498,10 @@ void SMB_Read (void)
 
 INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
 {
-			//wakeUp();
 		wakeUp();
 		cc=0;
 		count++;
-		//print("ADC: ",ADC0," ");
-		//ADC0;
-		//ADC0CN_ADINT = 0;
 		ready=1;
-			// print("he12j",cc);
-		//YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
-		//YELLOW_LED=!YELLOW_LED;
-		//YELLOW_LED=!YELLOW_LED;
 		TMR2CN &= ~0x80;
 
 }

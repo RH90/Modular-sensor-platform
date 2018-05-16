@@ -46,6 +46,7 @@ import javax.microedition.io.StreamConnection;
 /**
  *
  * @author Rilind
+ * This is the main GUI were the user can observe the sensor data from the microcontoroller.
  */
 public class FXMLDocumentController implements Initializable {
 //<?import java.util.ArrayList?>
@@ -130,6 +131,8 @@ public class FXMLDocumentController implements Initializable {
         for (int i = 0; i < i2c_size.length; i++) {
             i2c_size[i] = 1;
         }
+        // this task will countinious update the text on the screen with a intervall of 10 ms
+        // the array sensor_value[][] contains the sensor values and sensor_on[] tells what sensor nodes are on or off.
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -172,6 +175,7 @@ public class FXMLDocumentController implements Initializable {
         // L1.setText("hej");
     }
 
+    // This method controlls what wireless communication is currently being used (Bluetooth or Wifi) 
     @FXML
     private void chooseModule(MouseEvent event) {
         if (on_off) {
@@ -228,14 +232,16 @@ public class FXMLDocumentController implements Initializable {
         stage_add.show();
 
     }
-
+    // This method retrives specifications for a sensor and connects it to specific Node.
     @FXML
     private void search_sensor(MouseEvent event) {
+        // You can only set Sensor nodes if the program is stopped.
         if (on_off) {
             Rectangle r = (Rectangle) event.getSource();
             System.out.println(r.getId());
             try {
                 Get_sensorController.s = Integer.parseInt(r.getId().substring(1));
+                // Open the Get_sensor class
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
 
                 Parent root1 = (Parent) fxmlLoader.load();

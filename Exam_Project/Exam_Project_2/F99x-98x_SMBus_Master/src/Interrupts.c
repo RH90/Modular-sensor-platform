@@ -25,8 +25,8 @@
 #define  WRITE          0x00           // SMBus WRITE command
 #define  READ           0x01           // SMBus READ command
 
-#define LED_ON           0             // Turns the LED on
-#define LED_OFF          1             // Turns the LED off
+#define ON           0             // Turns the LED on
+#define OFF          1             // Turns the LED off
 
 
 // Status vector - top 4 bits only

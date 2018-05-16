@@ -55,14 +55,13 @@
 #include <SI_C8051F990_Register_Enums.h>                  // SFR declarations
 #include "InitDevice.h"
 #include "C8051F990_lib.h"             // library declarations
-#include "power.h"
-#include "SmarRTClock.h"
+
 //-----------------------------------------------------------------------------
 // Pin Declarations
 //-----------------------------------------------------------------------------
 
 SBIT (RED_LED,     SFR_P1, 5);         // Generates a 1ms trigger pulse
-SBIT (YELLOW_LED,  SFR_P1, 3);         // Used to show analog acquisition time
+SBIT (BME680_ON,  SFR_P1, 3);         // Used to show analog acquisition time
 SBIT (SW2,        SFR_P0, 2);          // SW2 == 0 means switch pressed
 SBIT (SW3,        SFR_P0, 3);          // SW3 == 0 means switch pressed
 
@@ -109,7 +108,7 @@ int main (void)
 	//Enter default mode
 	enter_DefaultMode_from_RESET();
 
-	YELLOW_LED = LED_OFF;               // Initilize the state of the signals
+	BME680_ON = OFF;               // Initilize the state of the signals
 	RED_LED = LED_OFF;
 	RTC0CN_Local = 0xC0;                // Initialize Local Copy of RTC0CN
 
@@ -154,7 +153,7 @@ int main (void)
 		 if(Blink_LED)
 		 {
 			// Adjust LED state for active mode
-			YELLOW_LED = LED_OFF;
+			BME680_ON = LED_OFF;
 			RED_LED = LED_ON;
 
 		 }

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/11/2018 23:42:17 PAGE 1   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/13/2018 23:59:53 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INTERRUPTS
@@ -39,8 +39,8 @@ line level    source
   25          #define  WRITE          0x00           // SMBus WRITE command
   26          #define  READ           0x01           // SMBus READ command
   27          
-  28          #define LED_ON           0             // Turns the LED on
-  29          #define LED_OFF          1             // Turns the LED off
+  28          #define ON           0             // Turns the LED on
+  29          #define OFF          1             // Turns the LED off
   30          
   31          
   32          // Status vector - top 4 bits only
@@ -63,7 +63,7 @@ line level    source
   49   1              bit FAIL = 0;                       // Used by the ISR to flag failed
   50   1              // transfers
   51   1              // ADDR_SEND = 0;           // Used by the ISR to flag byte
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/11/2018 23:42:17 PAGE 2   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/13/2018 23:59:53 PAGE 2   
 
   52   1              // transmissions as slave addresses
   53   1      
@@ -128,7 +128,7 @@ line level    source
  112   7                                                      //      UART_Send('x');
  113   7                                              }
  114   6                                              if(RW_Reg==0){
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/11/2018 23:42:17 PAGE 3   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/13/2018 23:59:53 PAGE 3   
 
  115   7                                                      ADDR_SEND=0;
  116   7                                                      //UART_Send('x');
@@ -193,7 +193,7 @@ line level    source
  175   3                              break;
  176   3      
  177   3                      default:
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/11/2018 23:42:17 PAGE 4   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/13/2018 23:59:53 PAGE 4   
 
  178   3                              FAIL = 1;                  // Indicate failed transfer
  179   3                              // and handle at end of ISR
@@ -258,7 +258,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----       1
    EDATA SIZE       =   ----    ----
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/11/2018 23:42:17 PAGE 5   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        05/13/2018 23:59:53 PAGE 5   
 
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----

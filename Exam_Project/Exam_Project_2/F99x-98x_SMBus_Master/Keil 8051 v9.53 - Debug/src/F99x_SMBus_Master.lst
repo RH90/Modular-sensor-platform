@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 1   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE F99X_SMBUS_MASTER
@@ -53,7 +53,7 @@ line level    source
   38          volatile int32_t                        calc_hum;
   39          volatile int32_t        temp_scaled;
   40          volatile uint16_t                       count=0;
-  41          volatile uint16_t       count_max=7200;
+  41          volatile uint32_t       count_max=7200;
   42          int32_t                         a;
   43          
   44          volatile bit            SMB_BUSY;
@@ -63,7 +63,7 @@ line level    source
   48          int32_t gas_range;
   49          volatile bit            SMB_RW;                   // Software flag to indicate the
   50          volatile uint32_t cc=1;
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 2   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 2   
 
   51                  int32_t v1;
   52                  int32_t v2;
@@ -73,7 +73,7 @@ line level    source
   56          
   57          SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
   58          SBIT (SCL, SFR_P0, 1);                 // and P0.1
-  59          SBIT (R15_ENABLE, SFR_P1, 4);
+  59          SBIT (ADC_PIN, SFR_P1, 4);
   60          
   61          LOCATED_VARIABLE_NO_INIT (reserved, U8, SEG_XDATA, 0x0000);
   62          
@@ -128,7 +128,7 @@ line level    source
  111   1              SBUF0 = c;      // Load the data to be transmitted
  112   1              while(SCON0_TI==0);   // Wait till the data is trasmitted
  113   1              SCON0_TI = 0;
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 3   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 3   
 
  114   1      }
  115          void print(char* string,U32 num,char* string1)
@@ -164,7 +164,7 @@ line level    source
  145          U16 Read_CO2(void)
  146          {
  147   1              uint16_t i=0;
- 148   1              CO2_ON=LED_ON;
+ 148   1              CO2_ON=ON;
  149   1      
  150   1                              // CO2 sensor needs to be on for 8 seconds to get good readings
  151   1              while(i<2)
@@ -184,7 +184,7 @@ line level    source
  165   1              START_SMB=1;
  166   1              TARGET = 0x2A|0x01;
  167   1              SMB_Read();
- 168   1              CO2_ON=LED_OFF;
+ 168   1              CO2_ON=OFF;
  169   1              while(i<12)
  170   1                      {
  171   2                              while(ready==0){sleepMode();}
@@ -193,7 +193,7 @@ line level    source
  174   2                      }
  175   1      
  176   1              return DATA_CO2_IN/2;
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 4   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 4   
 
  177   1      
  178   1      }
@@ -258,7 +258,7 @@ line level    source
  237   1              const int8_t par_h5=SMB_Read_Reg(0xEE,0xe6);
  238   1              const uint8_t par_h6=SMB_Read_Reg(0xEE,0xe7);
  239   1              const int8_t par_h7=SMB_Read_Reg(0xEE,0xe8);
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 5   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 5   
 
  240   1              //print("",par_h3,"");
  241   1      
@@ -323,7 +323,7 @@ line level    source
  299   2                      }else if(gas_range==10)
  300   1                      {
  301   2                              value1=-0.2;
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 6   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 6   
 
  302   2                      }else if(gas_range==11)
  303   1                      {
@@ -388,7 +388,7 @@ line level    source
  362   1              var3 = var1 + (var2 / 2);
  363   1              var4 = (var3 / (res_heat_range + 4));
  364   1              var5 = (131 * res_heat_val) + 65536;
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 7   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 7   
 
  365   1              heatr_res_x100 = (int32_t) (((var4 / var5) - 250) * 34);
  366   1              heatr_res = (uint8_t) ((heatr_res_x100 + 50) / 100);
@@ -453,7 +453,7 @@ line level    source
  425   1                      // AD12BE (12-Bit Mode Enable) = 12_BIT_ENABLED (Enable 12-bit mode.)
  426   1                      // ADAE (Accumulate Enable) = ACC_DISABLED (ADC0H:ADC0L contain the
  427   1                      //     result of the latest conversion when Burst Mode is disabled.)
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 8   
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 8   
 
  428   1                      // ADSJST (Accumulator Shift and Justify) = RIGHT_NO_SHIFT (Right
  429   1                      //     justified. No shifting applied.)
@@ -487,198 +487,131 @@ line level    source
  457          {
  458   1      
  459   1              uint32_t i=0;;
- 460   1              //for(y=0;y<255;y++){;;}
- 461   1              SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
- 462   1      
- 463   1      
- 464   1              SMB_Write_Reg(0xEE,0x74,0x24);// temp:1x, pressure:1x
- 465   1              SMB_Write_Reg(0xEE,0x72,0x01);// hum
- 466   1              SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
- 467   1              SMB_Write_Reg(0xEE,0x5A,getHeat()); // set heater temp
- 468   1              SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
- 469   1      
- 470   1              SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
- 471   1              //while(i<10){while(ready==0){sleepMode();}ready=0;i++;}
- 472   1              //for(y=0;y<255;y++){;;}
- 473   1              //print("2: ",SMB_Read_Reg(0xEE,0x74)," ");
- 474   1      
- 475   1      }
- 476          
- 477          int main (void)
- 478          {
- 479   1              U16  i;
- 480   1              //Enter default mode
- 481   1      
- 482   1              enter_DefaultMode_from_RESET();
- 483   1              //printf("%d",0x22);
- 484   1              // If slave is holding SDA low because of an improper SMBus reset or error
- 485   1              while(!SDA)
- 486   1              {
- 487   2                      // Provide clock pulses to allow the slave to advance out
- 488   2                      // of its current state. This will allow it to release SDA.
- 489   2                      XBR2 = 0x40;                     // Enable Crossbar
- 490   2                      SCL = 0;                         // Drive the clock low
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 9   
+ 460   1              SMB_Write_Reg(0xEE,0xE0,0xB6);// reset
+ 461   1              SMB_Write_Reg(0xEE,0x74,0x24);// temp:1x, pressure:1x
+ 462   1              SMB_Write_Reg(0xEE,0x72,0x01);// hum
+ 463   1              SMB_Write_Reg(0xEE,0x71,0x10);// run_gas
+ 464   1              SMB_Write_Reg(0xEE,0x5A,getHeat()); // set heater temp
+ 465   1              SMB_Write_Reg(0xEE,0x64,0x06); //100 ms heater on time 66=150 ms
+ 466   1              SMB_Write_Reg(0xEE,0x74,0x25);// trigger forced mode
+ 467   1      
+ 468   1      }
+ 469          
+ 470          int main (void)
+ 471          {
+ 472   1              U16  i;
+ 473   1              enter_DefaultMode_from_RESET();
+ 474   1              // If slave is holding SDA low because of an improper SMBus reset or error
+ 475   1              while(!SDA)
+ 476   1              {
+ 477   2                      // Provide clock pulses to allow the slave to advance out
+ 478   2                      // of its current state. This will allow it to release SDA.
+ 479   2                      XBR2 = 0x40;                     // Enable Crossbar
+ 480   2                      SCL = 0;                         // Drive the clock low
+ 481   2                      for(i = 0; i < 255; i++);        // Hold the clock low
+ 482   2                      SCL = 1;                         // Release the clock
+ 483   2                      while(!SCL);                     // Wait for open-drain
+ 484   2                      // clock output to rise
+ 485   2                      for(i = 0; i < 10; i++);         // Hold the clock high
+ 486   2                      XBR2 = 0x00;                     // Disable Crossbar
+ 487   2              }
+ 488   1              enter_Mode2_from_DefaultMode();
+ 489   1              //UART_Init();
+ 490   1              ADC();
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 9   
 
- 491   2                      for(i = 0; i < 255; i++);        // Hold the clock low
- 492   2                      SCL = 1;                         // Release the clock
- 493   2                      while(!SCL);                     // Wait for open-drain
- 494   2                      // clock output to rise
- 495   2                      for(i = 0; i < 10; i++);         // Hold the clock high
- 496   2                      XBR2 = 0x00;                     // Disable Crossbar
- 497   2              }
- 498   1      
- 499   1              enter_Mode2_from_DefaultMode();
- 500   1      
- 501   1              UART_Init();
- 502   1              //BME680Init();
- 503   1              //SMB_Write_Reg(0x30,0x20,0x37);
- 504   1      
- 505   1      
- 506   1      
- 507   1              //par_g1=SMB_Read_Reg(0xEE,0xED);
- 508   1              //par_g2=(SMB_Read_Reg(0xEE,0xEC)<<8)|SMB_Read_Reg(0xEE,0xEB);
- 509   1              //par_g3 =SMB_Read_Reg(0xEE,0xEE);
- 510   1      
- 511   1              //par_t1=(SMB_Read_Reg(0xEE,0xEA)<<8)|SMB_Read_Reg(0xEE,0xE9);
- 512   1              //par_t2=(SMB_Read_Reg(0xEE,0x8B)<<8)|SMB_Read_Reg(0xEE,0x8A);
- 513   1              //par_t3 =SMB_Read_Reg(0xEE,0x8C);
- 514   1      
- 515   1              //par_h1=(SMB_Read_Reg(0xEE,0xe3)<<8)|SMB_Read_Reg(0xEE,0xe2);
- 516   1              //par_h2=(SMB_Read_Reg(0xEE,0xe1)<<8)|SMB_Read_Reg(0xEE,0xe2);
- 517   1              //par_h3=SMB_Read_Reg(0xEE,0xe4);
- 518   1              //par_h4=SMB_Read_Reg(0xEE,0xe5);
- 519   1              //par_h5=SMB_Read_Reg(0xEE,0xe6);
- 520   1              //par_h6=SMB_Read_Reg(0xEE,0xe7);
- 521   1              //par_h7=SMB_Read_Reg(0xEE,0xe8);
- 522   1              ADC();
- 523   1              CO2_ON=LED_OFF;
- 524   1              //SMB_Write_Reg(0xEE,0x64,0x59);// 100ms heatup
- 525   1              YELLOW_LED=LED_OFF;
- 526   1      
- 527   1              R15_ENABLE=0;
- 528   1      
- 529   1              //while (1)
- 530   1              {
- 531   2      
- 532   2      
- 533   2                      while(ready==0){sleepMode();}
- 534   2                      if(ADC0>600)
- 535   2                      {
- 536   3      
- 537   3                              if(count%5==0)
- 538   3                              {
- 539   4                                      YELLOW_LED=LED_ON;
- 540   4                                      BME680Init();
- 541   4                                      v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
- 542   4                                      v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
- 543   4                                      YELLOW_LED=LED_OFF;
- 544   4                              }
- 545   3                              if(count>=count_max)
- 546   3                              {
- 547   4                                      YELLOW_LED=LED_ON;
- 548   4                                      BME680Init();
- 549   4                                      while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
- 550   4                                      v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
- 551   4                                      YELLOW_LED=LED_OFF;
- 552   4                                      v4=Read_CO2();
- 553   4                              }
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 10  
+ 491   1              CO2_ON=OFF;
+ 492   1              BME680_ON=OFF;
+ 493   1              ADC_PIN=0;
+ 494   1              {
+ 495   2      
+ 496   2      
+ 497   2                      while(ready==0){sleepMode();}
+ 498   2                      if(count%2==0)
+ 499   2                      {
+ 500   3                  LUX_ON=ON;
+ 501   3                      if(ADC0>600)
+ 502   3                      {
+ 503   4                              LUX_ON=OFF;
+ 504   4                                      BME680_ON=ON;
+ 505   4                                      BME680Init();
+ 506   4                                      v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
+ 507   4                                      v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
+ 508   4                                      BME680_ON=OFF;
+ 509   4                                      if(count>=(count_max/2))
+ 510   4                                      {
+ 511   5                                              BME680_ON=ON;
+ 512   5                                              BME680Init();
+ 513   5                                              while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+ 514   5                                              v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+ 515   5                                              BME680_ON=OFF;
+ 516   5                                      }
+ 517   4      
+ 518   4                                      if(count>=count_max)
+ 519   4                                      {
+ 520   5                                              while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
+ 521   5                                              v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
+ 522   5                                              BME680_ON=OFF;
+ 523   5                                              v4=Read_CO2();
+ 524   5                                      }
+ 525   4                      }
+ 526   3      
+ 527   3      
+ 528   3                      }
+ 529   2                      ready=0;
+ 530   2                      LUX_ON=OFF;
+ 531   2                      count++;
+ 532   2                      if(count>=count_max*10)
+ 533   2                      {
+ 534   3                              count=0;
+ 535   3                      }
+ 536   2      
+ 537   2              }
+ 538   1      
+ 539   1              return 0;
+ 540   1      }
+ 541          
+ 542          void SMB_Write (void)
+ 543          {
+ 544   1              while (SMB_BUSY);                   // Wait for SMBus to be free.
+ 545   1              SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+ 546   1              SMB_RW = 0;                         // Mark this transfer as a WRITE
+ 547   1              SMB0CN_STA = 1;                            // Start transfer
+ 548   1              while (SMB_BUSY);
+ 549   1      
+ 550   1      }
+ 551          void SMB_Read (void)
+ 552          {
+ 553   1              while (SMB_BUSY);               // Wait for transfer to complete
+C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/13/2018 23:59:53 PAGE 10  
 
- 554   3      
- 555   3                      }
- 556   2                      //YELLOW_LED=LED_ON;
- 557   2      
- 558   2      
- 559   2                      ready=0;
- 560   2      
- 561   2                      //BME680Init();
- 562   2      
- 563   2                      //print("status1: ",SMB_Read_Reg(0xEE,0x1D)," ");
- 564   2      
- 565   2                      //while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
- 566   2                      //print("status2: ",SMB_Read_Reg(0xEE,0x1D)," ");
- 567   2      
- 568   2                      //v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
- 569   2                      //v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
- 570   2                      //v3=getGas(((uint16_t)SMB_Read_Reg(0xEE,0x2A)<<2)|((uint16_t)SMB_Read_Reg(0xEE,0x2B)>>6));
- 571   2                      //YELLOW_LED=LED_OFF;
- 572   2                      //v4=Read_CO2();
- 573   2                      //while(v4==0){v4=Read_CO2();}
- 574   2      
- 575   2                      //SCL=0;
- 576   2                      //SDA=0;
- 577   2                      //print("Temp: ",v1," C*");
- 578   2                      //print("Hum: ",v2," %");
- 579   2                      //print("Gas: ",v3," Ohm");
- 580   2                  //print("CO2: ",v4," ppm");
- 581   2                      //print("ADC: ",ADC0," 0");
- 582   2                      //getGas();
- 583   2                      //print("--------",0,"--------");
- 584   2      
- 585   2                      if(count>=count_max*2)
- 586   2                      {
- 587   3                              count=0;
- 588   3                      }
- 589   2      
- 590   2                      //
- 591   2      
- 592   2                      //for(a=0;a<500000;a++){}
- 593   2      
- 594   2              }
- 595   1      
- 596   1              return 0;
- 597   1      }
- 598          
- 599          void SMB_Write (void)
- 600          {
- 601   1              while (SMB_BUSY);                   // Wait for SMBus to be free.
- 602   1              SMB_BUSY = 1;                       // Claim SMBus (set to busy)
- 603   1              SMB_RW = 0;                         // Mark this transfer as a WRITE
- 604   1              SMB0CN_STA = 1;                            // Start transfer
- 605   1              while (SMB_BUSY);
- 606   1      
- 607   1      }
- 608          void SMB_Read (void)
- 609          {
- 610   1              while (SMB_BUSY);               // Wait for transfer to complete
- 611   1              SMB_BUSY = 1;                       // Claim SMBus (set to busy)
- 612   1              SMB_RW = 1;                         // Mark this transfer as a READ
- 613   1              SMB0CN_STA = 1;                            // Start transfer
- 614   1              while (SMB_BUSY);                   // Wait for transfer to complete
- 615   1      }
- 616          
-C51 COMPILER V9.53.0.0   F99X_SMBUS_MASTER                                                 05/12/2018 01:06:07 PAGE 11  
-
- 617          INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
- 618          {
- 619   1                              //wakeUp();
- 620   1                      wakeUp();
- 621   1                      cc=0;
- 622   1                      count++;
- 623   1                      //print("ADC: ",ADC0," ");
- 624   1                      //ADC0;
- 625   1                      //ADC0CN_ADINT = 0;
- 626   1                      ready=1;
- 627   1                              // print("he12j",cc);
- 628   1                      //YELLOW_LED = !YELLOW_LED;                         // Toggle the LED
- 629   1                      //YELLOW_LED=!YELLOW_LED;
- 630   1                      //YELLOW_LED=!YELLOW_LED;
- 631   1                      TMR2CN &= ~0x80;
- 632   1      
- 633   1      }
- 634          
- 635          //-----------------------------------------------------------------------------
- 636          // End Of File
- 637          //-----------------------------------------------------------------------------
+ 554   1              SMB_BUSY = 1;                       // Claim SMBus (set to busy)
+ 555   1              SMB_RW = 1;                         // Mark this transfer as a READ
+ 556   1              SMB0CN_STA = 1;                            // Start transfer
+ 557   1              while (SMB_BUSY);                   // Wait for transfer to complete
+ 558   1      }
+ 559          
+ 560          INTERRUPT (TIMER2_ISR, TIMER2_IRQn)
+ 561          {
+ 562   1                      wakeUp();
+ 563   1                      cc=0;
+ 564   1                      count++;
+ 565   1                      ready=1;
+ 566   1                      TMR2CN &= ~0x80;
+ 567   1      
+ 568   1      }
+ 569          
+ 570          //-----------------------------------------------------------------------------
+ 571          // End Of File
+ 572          //-----------------------------------------------------------------------------
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2969    ----
+   CODE SIZE        =   3103    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     54     143
+   DATA SIZE        =     56     143
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      4    ----
    EDATA SIZE       =   ----    ----

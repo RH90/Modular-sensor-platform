@@ -82,8 +82,8 @@
 #define  WRITE          0x00           // SMBus WRITE command
 #define  READ           0x01           // SMBus READ command
 
-#define LED_ON           0             // Turns the LED on
-#define LED_OFF          1             // Turns the LED off
+#define ON           0             // Turns the LED on
+#define OFF          1             // Turns the LED off
 
 // Device addresses (7 bits, lsb is a don't care)
 #define  SLAVE_ADDR     0xF0           // Device address for slave target
@@ -123,7 +123,7 @@ volatile bit SMB_RW;                            // Software flag to indicate the
 
 U16 NUM_ERRORS;                        // Counter for the number of errors.
 
-SBIT (YELLOW_LED, SFR_P1, 3);          // YELLOW_LED==LED_ON means ON
+SBIT (BME680_ON, SFR_P1, 3);          // YELLOW_LED==LED_ON means ON
 
 SBIT (SDA, SFR_P0, 0);                 // SMBus on P0.0
 SBIT (SCL, SFR_P0, 1);                 // and P0.1
@@ -182,7 +182,7 @@ int main (void)
 	//Enter default mode
 	enter_Mode2_from_DefaultMode();
 
-	YELLOW_LED = LED_OFF;
+	BME680_ON = OFF;
 
 	// TEST CODE-------------------------------------------------------------------
 
@@ -218,10 +218,10 @@ int main (void)
 
 	  // Indicate that an error has occurred (LED no longer lit)
 	  if (NUM_ERRORS > 0) {
-		 YELLOW_LED = LED_OFF;
+		 BME680_ON = OFF;
 	  }
 	  else {
-		 YELLOW_LED = !YELLOW_LED;
+		 BME680_ON = !BME680_ON;
 	  }
 
 	  // Run to here to view the SMB_DATA_IN and SMB_DATA_OUT variable arrays
