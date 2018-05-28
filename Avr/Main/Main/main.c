@@ -130,18 +130,58 @@ void session_init(){
 
 }
 
+uint8_t spi_tranceiver (uint8_t data)
+{
+	// Load data into the buffer
+	//PORTB&= (1<<pinnmr);
+	SPDR = data;
+	//Wait until transmission complete
+	while(!(SPSR & (1<<SPIF) ));
+	//data = SPDR;
+	//PORTB|= (1<<pinnmr);
+	// Return received data
+	return(SPDR);
+}
+// Initilize SPI
+void spi_init_master (void)
+{
+	// Set MOSI, SCK as Output
+		DDRB = (1<<5)|(1<<3)|(1<<2);              //Set MOSI, SCK as Output
+		PORTB |= (1<<2);
+		SPCR = (1<<SPE)|(1<<MSTR); //Enable SPI, Set as Master
+		//Prescaler: Fosc/16, Enable Interrupts
+	
+}
+void ReadSPI(uint8_t reg,char c) {
+	int temp;
+	PORTB &= ~(1<<2);
+	spi_tranceiver(reg); // Call on register address for MSB temperature byte
+	temp = spi_tranceiver(0xFF); // Exchange a garbage byte for the temperature byte
+	PORTB |= (1<<2);
+	//return temp; // Return the 8 bit temperature
+	print(temp,c);
+	serialWrite('\r');
+}
+
 
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
-	adc_init();
+	//adc_init();
+	spi_init_master ();
 	serial_init(MYUBRR);
-	i2c_init();
-	session_init();
-	Timer1init();
+	//i2c_init();
+	//Timer1init();
+	PORTB &= ~(1<<2);
+	spi_tranceiver(0x74); //7a Call on register address for MSB temperature byte
+	spi_tranceiver(0x4b); // Exchange a garbage byte for the temperature byte
+	PORTB |= (1<<2);
 	while(1) // main loop
 	{	// Send 'Hello' to the LCD
-
+	 ReadSPI(0xfa,'a');
+	 _delay_ms(10);
+	 ReadSPI(0xfb,'b');
+	 _delay_ms(1000);
 		;;		
 	} //End main loop.
 	

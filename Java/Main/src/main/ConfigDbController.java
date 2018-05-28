@@ -37,16 +37,16 @@ public class ConfigDbController implements Initializable {
 
     @FXML
     private void Configure_Button(ActionEvent event) throws ClassNotFoundException, SQLException {
-        FXMLDocumentController.UserName = UserName.getText();
-        FXMLDocumentController.UserPass = UserPass.getText();
+        MainController.UserName = UserName.getText();
+        MainController.UserPass = UserPass.getText();
         try {
-            FXMLDocumentController.PortNr = Integer.parseInt(PortNr.getText());
+            MainController.PortNr = Integer.parseInt(PortNr.getText());
         } catch (Exception ex) {
-            FXMLDocumentController.PortNr = 0;
+            MainController.PortNr = 0;
         }
 
-        FXMLDocumentController.IP_address = IP_address.getText();
-        FXMLDocumentController.Schema = Schema.getText();
+        MainController.IP_address = IP_address.getText();
+        MainController.Schema = Schema.getText();
     }
 
 }

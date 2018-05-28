@@ -166,12 +166,7 @@ U16 Read_CO2(void)
 	TARGET = 0x2A|0x01;
 	SMB_Read();
 	CO2_ON=OFF;
-	while(i<12)
-		{
-			while(ready==0){sleepMode();}
-			ready=0;
-			i++;
-		}
+	//while(i<12){while(ready==0){sleepMode();}ready=0;i++;}
 
 	return DATA_CO2_IN/2;
 
@@ -433,6 +428,7 @@ int main (void)
 	ADC();
 	CO2_ON=OFF;
 	BME680_ON=OFF;
+	LUX_ON=OFF;
 	ADC_PIN=0;
 	while(1)
 	{
@@ -445,6 +441,7 @@ int main (void)
 			LUX_ON=OFF;
 				BME680_ON=ON;
 				BME680Init();
+				while(SMB_Read_Reg(0xEE,0x1D)&(1<<5)){;;}
 				v1=getTemp(((uint16_t)SMB_Read_Reg(0xEE,0x22)<<8)|((uint16_t)(SMB_Read_Reg(0xEE,0x23))));
 				v2=getHum(((uint16_t)SMB_Read_Reg(0xEE,0x25)<<8)|(uint16_t)SMB_Read_Reg(0xEE,0x26));
 				BME680_ON=OFF;
@@ -466,7 +463,6 @@ int main (void)
 
 		}
 		ready=0;
-		LUX_ON=OFF;
 		count++;
 		if(count>=count_max*10)
 		{

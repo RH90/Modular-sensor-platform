@@ -35,15 +35,3 @@ void spi_init_master (void)
 	//Prescaler: Fosc/16, Enable Interrupts (1<<SPR0)
 	SPCR |= (1<<SPE)|(1<<MSTR);
 }
-// Used for reading and writing to SPI device
-void ReadSPI(uint8_t reg,char c,uint8_t pin) {
-	int temp;
-	PORTB &= ~(1<<4);
-	PORTB &= ~(1<<pin);
-	spi_tranceiver(reg); // Call on register address for MSB temperature byte
-	temp = spi_tranceiver(0xFF); // Exchange a garbage byte for the temperature byte
-	PORTB |= (1<<4);
-	PORTB |= (1<<pin);
-	//return temp; // Return the 8 bit temperature
-	print(temp,c);
-}

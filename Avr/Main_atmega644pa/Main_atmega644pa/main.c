@@ -51,8 +51,9 @@ struct SPI_struct SPI[2];
 volatile uint8_t SPI1_reg;
 volatile uint8_t SPI2_reg;
 
-volatile uint16_t delay=5;
-volatile uint16_t count_delay=1;
+volatile uint32_t delay=5;
+volatile uint32_t delay_max=5;
+volatile uint32_t count_delay=1;
 
 // Used for converting a number to a string and send it together with a character that
 // identifies what sensor the number belongs to.
@@ -90,7 +91,7 @@ void Timer1init() {
 	//  TCCR1A = _BV(WGM11);  // Mode = CTC
 	//TCCR1B = _BV(CS12) | _BV(CS10)|_BV(WGM12);   // Clock/1024, 0.001024 seconds per tick
 	TCCR1B = _BV(CS12)|_BV(WGM12); //OC: 256
-	OCR1A = 6250;
+	OCR1A = 625;
 	// 6250
 	// 3125=0.2 s
 	sei();
@@ -124,6 +125,18 @@ void I2CW(uint8_t dev,uint8_t reg, uint8_t dat)
 	free(data);
 	
 }
+// Used for reading and writing to SPI device
+void ReadSPI(uint8_t reg,char c,uint8_t pin) {
+	int temp;
+	PORTB &= ~(1<<4);
+	PORTB &= ~(1<<pin);
+	spi_tranceiver(reg); // Call on register address for MSB temperature byte
+	temp = spi_tranceiver(0xFF); // Exchange a garbage byte for the temperature byte
+	PORTB |= (1<<4);
+	PORTB |= (1<<pin);
+	//return temp; // Return the 8 bit temperature
+	print(temp,c);
+}
 // Had problems with reading a full byte from the Java program, therefor we read a byte 4 bits a time
 // and then shift it and combine it to a single byte and return it.
 uint8_t read_pair()
@@ -135,17 +148,22 @@ uint8_t read_pair()
 }
 // This function get what type of sensors are used from user
 void session_init(){
+	PORTA=0x40;
+	
 	
 	uint8_t junk =serialRead();
 	while(junk!=0x01){
 		junk=serialRead();
 	}
+	PORTA=0x80;
 	// get the delay from user
 	delay=serialRead();
 	//delay cannot be 0
 	if(delay<=0){
 		delay=10;
 	}
+	delay*=10;
+	delay_max=delay*100;
 	
 	A1=read_pair();
 	A2=read_pair();
@@ -153,9 +171,6 @@ void session_init(){
 	A4=read_pair();
 	A5=read_pair();
 	A6=read_pair();
-	//print(A6,'c');
-	//serialWrite('x');
-	//_delay_ms(10000);
 	
 	
 	int i=0;
@@ -205,12 +220,11 @@ void session_init(){
 			}
 		}
 	}
-	//print(45,'c');
-	//serialWrite(123);
-	//serialWrite(456);
-	//serialWrite('x');
-	//read =serialRead();
-	//read =serialRead();
+	/*
+	print(read_pair(),'j');
+	serialWrite('x');
+	_delay_ms(10000);
+	*/
 	
 }
 
@@ -218,16 +232,17 @@ void session_init(){
 int main (void)
 {
 	//asm("cli");  // DISABLE global interrupts.
+	
 	DDRA|=0xC0;
 	spi_init_master();
 	adc_init();
-	serial_init(MYUBRR);
 	i2c_init();
+	serial_init(MYUBRR);
 	session_init();
 	Timer1init();
 	while(1) // main loop
 	{
-		;;
+		;;	
 	}
 	
 	return 0;
@@ -279,25 +294,24 @@ void I2C_sensor(uint8_t addr,uint8_t read_reg,char id)
 	
 }
 
-void SPI_sensor()
-{
 
-}
 // the Timmer interrupt
 ISR(TIMER1_COMPA_vect)
 {
-	if (count_delay>=delay)
+	
+	//serialWrite('g');
+	
+	if (count_delay%delay==0)
 	{
-		count_delay=1;
-		
+		//count_delay=1;
+	
 
 		Analog_digital_sensor(0,A1,'a');
 		Analog_digital_sensor(1,A2,'b');
 		Analog_digital_sensor(2,A3,'c');
 		Analog_digital_sensor(3,A4,'d');
-		
-		//Analog_digital_sensor(4,A5,'e');
-		//Analog_digital_sensor(1,A6,'f');
+		Analog_digital_sensor(4,A5,'e');
+		Analog_digital_sensor(5,A6,'f');
 		int l=0;
 		for (l;l<2;l++)
 		{
@@ -332,10 +346,7 @@ ISR(TIMER1_COMPA_vect)
 		serialWrite('y');
 		TX_LED=1;
 	}
-	else
-	{
-		count_delay++;
-	}
+	
 	// This is used to tell if the micro controller should stop reading the sensors or not
 	// when it sends the character 'x' the Java program will send 1 if the user want to pause the program
 	// or 0 if it should not stop reading from sensors
@@ -349,21 +360,34 @@ ISR(TIMER1_COMPA_vect)
 		PORTA &= 0x7F;
 		TX_LED=0;
 	}
-	if(RX_LED==0)
-	{
-		PORTA |= 0x40;
-		RX_LED=1;
-	}else if(RX_LED==1)
+	if(RX_LED==1)
 	{
 		PORTA &= 0xBF;
 		RX_LED=0;
 	}
-	serialWrite('x');
-	if(serialRead()){
-		TX_LED=0;
-		RX_LED=0;
-		PORTA &= 0x3F;
-		session_init();
+	if(count_delay%100==0)
+	{
+		PORTA |= 0x40;
+		RX_LED=1;
+		
+		serialWrite('x');
+		if(serialRead()==0x01){
+			count_delay=1;
+			TX_LED=0;
+			RX_LED=0;
+			PORTA &= 0x3F;
+			session_init();
+		}
+		
 	}
+	count_delay++;
+	if (count_delay>delay_max)
+	{
+		count_delay=1;
+	}
+	
+	
+	
+	
 	
 }

@@ -3,16 +3,19 @@
  *
  * Created: 2018-03-08 21:32:57
  *  Author: Rilind
+ * This code is for using UART to send and recive data
  */ 
 #include <avr/io.h>
 #include <avr/sfr_defs.h>
 #include "i2cmaster.h"
+
+// Check if TC is ready to use
 unsigned char serialCheckTxReady(void)
 {
 	return( UCSR1A & _BV(UDRE1) ) ;  // nonzero if transmit register is ready to receive new data.
 }
 
-
+// Send data through the TX pin
 void serialWrite(int DataOut)
 {
 	while (serialCheckTxReady() == 0)  // while NOT ready to transmit
@@ -21,7 +24,7 @@ void serialWrite(int DataOut)
 	UDR1 = DataOut;
 }
 
-
+// Check if RX
 unsigned char serialCheckRxComplete(void)
 {
 	return( UCSR1A & _BV(RXC1)) ;  // _BV(x) macro set bit x in a byte which is equivalent to 1<<x. nonzero if serial data is available to read.
