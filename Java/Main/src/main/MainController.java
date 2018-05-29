@@ -639,7 +639,7 @@ public class MainController implements Initializable {
                     sc = null;
                     WirelessModule();
                 }
-               //System.out.println((int)c);
+                //System.out.println(c);
                 switch (c) {
                     case 'a':
                         sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
@@ -650,7 +650,6 @@ public class MainController implements Initializable {
                         line = "";
                         break;
                     case 'c':
-                        System.out.println("Hej");
                         sensor_value[2][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         line = "";
                         break;

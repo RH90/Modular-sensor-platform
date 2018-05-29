@@ -27,11 +27,11 @@ uint8_t spi_tranceiver (uint8_t data)
 void spi_init_master (void)
 {
 	// Set MOSI, SCK as Output
-	DDRB |= (1<<7)|(1<<5)|(1<<4)|(1<<0)|(1<<1);
-	DDRB &= ~(1<<6);
-	PORTB|=(1<<4)|(1<<0)|(1<<1);
+	DDRB = (1<<7)|(1<<5)|(1<<4)|(1<<0)|(1<<1);
+	//DDRB &= ~(1<<6);
+	//PORTB|=(1<<4)|(1<<0)|(1<<1);
 	
 	// Enable SPI, Set as Master
 	//Prescaler: Fosc/16, Enable Interrupts (1<<SPR0)
-	SPCR |= (1<<SPE)|(1<<MSTR);
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 }

@@ -45,26 +45,22 @@ if (!client) {
 return;
 }
 int a=0;
+
 while(true){
+while(client.available()<=0&&Serial.available()<=0)
+{
+  delay(1);
+}
 
 while(client.available()>0){
-  char r1=client.read();
-  Serial.write(r1);
-  Serial.flush();
-  if(r1==1&&a==1){
-    return;
-  }
+  Serial.write(client.read());
 }
+Serial.flush();
 while(Serial.available()>0) {
-  char r= Serial.read();
-  client.write(r);
-  if(r=='x'&&a==0){
-    a=1;
-  }
-  if(r=='x'){
-    client.flush();
-  }
+  client.write(Serial.read());
+  
 }
+client.flush();
 //delayMicroseconds(10);
   
 }
