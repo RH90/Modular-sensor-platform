@@ -152,7 +152,7 @@ void ReadSPI(uint8_t reg,char c,uint8_t pin) {
 }
 
 // Had problems with reading a full byte from the Java program, therefor we read a byte 4 bits a time
-// and then shift it and combine it to a single byte and return it.
+// and then shift it and combine it to a single byte.
 uint8_t read_pair()
 {
 	uint8_t a=serialRead(); // Get LSB of data

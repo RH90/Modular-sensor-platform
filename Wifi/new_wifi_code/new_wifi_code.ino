@@ -49,6 +49,10 @@ int a=0;
 while(true){
 while(client.available()<=0&&Serial.available()<=0)
 {
+  if(!client.connected())
+  {
+    return;
+  }
   delay(1);
 }
 
