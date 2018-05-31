@@ -24,7 +24,7 @@ uint8_t spi_tranceiver (uint8_t data)
 	return(SPDR);
 }
 // Initilize SPI
-void spi_init_master (void)
+void spi_init (void)
 {
 	// Set MOSI, SCK as Output
 	DDRB = (1<<7)|(1<<5)|(1<<4)|(1<<0)|(1<<1);

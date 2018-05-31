@@ -23,7 +23,7 @@ import jdk.nashorn.internal.runtime.Version;
  * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
 public class SQL {
-
+    
     Statement stmt = null;
     ResultSet rs = null;
     Connection con = null;
@@ -33,6 +33,8 @@ public class SQL {
     /**
      * @param sensor_value
      * @param sensor_on
+     * @param id
+     * @param i2c_size
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
      */

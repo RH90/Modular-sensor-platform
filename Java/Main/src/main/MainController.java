@@ -313,7 +313,13 @@ public class MainController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            Simulink();
+                            while(!simulink)
+                            {
+                                socket=null;
+                                serverSocket=null;
+                                Simulink();
+                            }
+                            
                         } catch (IOException | InterruptedException ex) {
                             // Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -381,22 +387,25 @@ public class MainController implements Initializable {
     // that is retrived from the mcirocontroller in realtime to the simulink program.
     public void Simulink() throws IOException, InterruptedException {
         try {
+            System.out.println(serverSocket);
             if (serverSocket == null) {
                 serverSocket = new ServerSocket(8080);
+                serverSocket.setSoTimeout(5000);
                 //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
             }
-            serverSocket.setSoTimeout(5000);
+            System.out.println(socket_OnOff);
             while (socket == null && socket_OnOff) {
+                System.out.println("try");
                 try {
                     socket = serverSocket.accept();
+                    System.out.println("Connected");
                 } catch (Exception ex) {
-
+                     System.out.println("Simulink Error");
                 }
                 //System.out.println("Socket: " +socket);
             }
 
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
-            System.out.println("Connected");
             L9b_s = "Simulink Connected";
             //PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
             //BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -444,16 +453,19 @@ public class MainController implements Initializable {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
-                serverSocket = null;
+            if (socket != null&&!socket.isClosed()) {
+                System.out.println("Close Socket");
+                socket.close();   
+            }
+            if (serverSocket != null&&!serverSocket.isClosed()) {
+                System.out.println("Close ServerSocket");
+                serverSocket.close();   
             }
 
             //    ex.printStackTrace();
             System.out.println("Simulink Disconnect");
             L9b_s = "Simulink Disconnected";
-            // Thread.sleep(1000);
+            Thread.sleep(1000);
             // Simulink();
         }
     }
