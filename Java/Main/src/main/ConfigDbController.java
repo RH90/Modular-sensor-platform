@@ -8,9 +8,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
-/**
- * FXML Controller class
+/*
+ * ConfigDBController.java
  *
+ * This is the window for configuring the Database
+ * 
+ * Created: 2018/02/27
  * @author Ahmed
  */
 public class ConfigDbController implements Initializable {
@@ -18,7 +21,6 @@ public class ConfigDbController implements Initializable {
     /**
      * Initializes the controller class.
      */
-    private SQL sql = new SQL();
     @FXML
     private TextField UserName;
     @FXML

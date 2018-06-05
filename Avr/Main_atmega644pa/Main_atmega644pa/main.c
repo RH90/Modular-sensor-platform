@@ -107,8 +107,8 @@ void Timer1_init() {
 	sei();							// Enable global interrupt
 	
 	/*
-		Calculation:	1/(Clock/Pre_scaler/Compare_value)= delay between each interrupt
-						1/(16*10^6/256/625)= 10 ms
+		Calculation:	1/(Clock/Pre_scaler/Compare_value)	= delay between each interrupt
+						1/(16*10^6/256/625)					= 10 ms
 	*/
 }
 // Reading Analog data from a specific pin and convert it to digital data
@@ -368,8 +368,7 @@ ISR(TIMER1_COMPA_vect)
 		// Indicate that the TX led should blink 1 time
 		TX_LED=1;
 	}
-	
-	
+
 	// Turn on the led
 	if(TX_LED==1)
 	{
@@ -403,17 +402,11 @@ ISR(TIMER1_COMPA_vect)
 			PORTA &= 0x3F;
 			session_init();
 		}
-		
 	}
 	count_delay++;
 	// reset the counter variable.
 	if (count_delay>delay_max)
 	{
 		count_delay=1;
-	}
-	
-	
-	
-	
-	
+	}	
 }

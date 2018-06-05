@@ -19,12 +19,6 @@ pinMode(ledPin, OUTPUT);
 digitalWrite(ledPin, LOW);
 
 // Connect to WiFi network
-//Serial.println();
-//Serial.println();
-
-
-//Serial.println(ssid);
-
 WiFi.begin(ssid, password);
 
 while (WiFi.status() != WL_CONNECTED) {
@@ -44,7 +38,6 @@ WiFiClient client = server.available();
 if (!client) {
 return;
 }
-int a=0;
 
 while(true){
 while(client.available()<=0&&Serial.available()<=0)

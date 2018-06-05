@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 
 import java.math.BigInteger;
@@ -22,10 +17,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
-/**
- * FXML Controller class
+/*
+ * Add_SensorController.java
  *
- * @author Rilind
+ * This is the window for adding a sensor to the database
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
 public class Add_SensorController implements Initializable {
 
@@ -118,6 +116,7 @@ public class Add_SensorController implements Initializable {
 
     }
 
+    // button handler for the next button
     @FXML
     private void next(ActionEvent event) throws SQLException {
         Button button = ((Button) event.getSource());
@@ -195,6 +194,7 @@ public class Add_SensorController implements Initializable {
         }
     }
 
+    // Button for adding Analog_digital sensor
     @FXML
     private void Button_AD(ActionEvent event) throws SQLException {
         String s = (String) cba.getValue();
@@ -211,7 +211,7 @@ public class Add_SensorController implements Initializable {
             la.setText("Sensor added!");
         }
     }
-
+    // Button for adding I2c sensor
     @FXML
     private void Button_I2C(ActionEvent event) {
         if (tfb1.getText().equalsIgnoreCase("") || tfb2.getText().equalsIgnoreCase("")
@@ -255,7 +255,7 @@ public class Add_SensorController implements Initializable {
             }
         }
     }
-
+    // Button for adding SPI sensor
     @FXML
     private void Button_SPI(ActionEvent event) throws SQLException {
         if (tfc1.getText().equalsIgnoreCase("") || tfc2.getText().equalsIgnoreCase("") || tfc4.getText().equalsIgnoreCase("")) {

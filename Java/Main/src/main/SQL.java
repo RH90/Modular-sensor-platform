@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,18 +12,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import jdk.nashorn.internal.runtime.Version;
 
-/**
+/*
+ * SQL.java
  *
+ * This component is used to connect to the Mysql database and save sensor data and sensor information
+ * 
+ * Created: 2018/02/27
  * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
+
 public class SQL {
     
-    Statement stmt = null;
-    ResultSet rs = null;
-    Connection con = null;
-    PreparedStatement ps = null;
-    int session;
-
+    Statement stmt = null;          // Is used to create SQL statements 
+    ResultSet rs = null;            // saves the results from a SQL statemtnt execution
+    Connection con = null;          // Is used to create a connection to database
+    PreparedStatement ps = null;    // creates prepared SQL statements
+    int session;                    // current session number
+    
     /**
      * @param sensor_value
      * @param sensor_on
@@ -37,14 +36,16 @@ public class SQL {
      * @param i2c_size
      * @throws java.lang.InterruptedException
      * @throws java.sql.SQLException
+     * 
+     * Adds a new sensor value to the Database
      */
     public void add_value(short[][] sensor_value, boolean[] sensor_on, int[] id, int[] i2c_size) throws InterruptedException, SQLException {
-        Thread thread1 = new Thread() {
+        Thread thread1 = new Thread() { 
             public void run() {
                 try {
                     for (int i = 0; i < sensor_value.length; i++) {
                         if (sensor_on[i]) {
-                            if (i == 6 || i == 7) {
+                            if (i == 6 || i == 7|| i == 8 || i == 9) {
                                 for (int j = 0; j < i2c_size[i - 6]; j++) {
                                     short value = sensor_value[i][j];
                                     ps.setString(1, id[i] + "");
@@ -71,32 +72,30 @@ public class SQL {
             }
         };
         thread1.start();
-//                
-        // System.out.println(new Timestamp(System.currentTimeMillis()));
-
-        // ResultSetMetaData columns = rs.getMetaData();
-        // System.out.printf("%4s | %-34s | %3s | %-10s\n", columns.getColumnName(1), columns.getColumnName(2), columns.getColumnName(3), columns.getColumnName(4));
-        //  System.out.println("------------------------------------------------------------------");
     }
-
+    
+    // Get the interface for a sensor with a specific id from the database
     public String getInterface(int id) throws SQLException {
         rs = stmt.executeQuery("select Interface from sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
+    // Get the method for a analog/digital sensor
     public String getMethod(int id) throws SQLException {
         rs = stmt.executeQuery("select Reading_method from Analog_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
-
+    
+    // get the Hex address for a i2c or SPI sensor from database
     public String getAddr(int id) throws SQLException {
         rs = stmt.executeQuery("select I2c_Address from i2c_sensors where Sensor_id=" + id);
         rs.first();
         return rs.getString(1);
     }
 
+    // Get read register for a specifc sensor
     public String getReg(int id) throws SQLException {
         rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
         rs.first();
@@ -104,7 +103,8 @@ public class SQL {
         rs.first();
         return rs.getString(1);
     }
-
+    
+    // Get write register for a specific sensor
     public String getWReg(int id) throws SQLException {
         rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
         rs.first();
@@ -113,6 +113,7 @@ public class SQL {
         return rs.getString(1);
     }
 
+    // get write data for a specific sensor
     public String getWData(int id) throws SQLException {
         rs=stmt.executeQuery("select interface from sensors where sensor_id="+id);
         rs.first();
@@ -121,6 +122,10 @@ public class SQL {
         return rs.getString(1);
     }
 
+    // Get a list of sensor that is connected to specfic sensor node.
+    // Node 0 to 5: return a list of Analog/digital sensors
+    // Node 6 and 7: return a list of i2c sensors
+    // Node 8 and 9: retirn a list of SPI sensors
     public ObservableList<String> list(int i) throws SQLException {
         System.out.println(i);
         if (i >= 1 && i <= 6) {
@@ -143,7 +148,7 @@ public class SQL {
         return list;
 
     }
-
+    // Add information on a analog/digital sensor to database
     public void add_sensor(String name, String sensing_type, String reading_method,String reference) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
@@ -163,6 +168,7 @@ public class SQL {
         ps.executeUpdate();
     }
 
+    // Add information on a i2c sensor to database
     public void add_sensor(String name, String sensing_type, String I2C_addr, String write_addr, String write_data, String read_addr,String reference) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
@@ -187,6 +193,7 @@ public class SQL {
         ps.executeUpdate();
     }
 
+    // Add information on a SPI sensor to database
     public void add_sensor(String name, String sensing_type, String write_addr, String write_data, String read_addr,String reference) throws SQLException {
         String query = "INSERT INTO Sensors (Name,Interface,Sensing_type,reference) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
@@ -199,8 +206,6 @@ public class SQL {
         rs.last();
         int sensorID =rs.getInt(1);
         
-        
-        
         query = "INSERT INTO SPI_Sensors (Write_addr,Write_data,Read_addr,sensor_id) VALUES (?,?,?,?)";
         ps = con.prepareStatement(query);
         ps.setString(1, write_addr);
@@ -210,7 +215,11 @@ public class SQL {
         ps.executeUpdate();
     }
 
+    // Connects to a mysql database and creates the tables that are needed if they don't exist already 
+    // If it is able to connect than this method will return the session number, else it will return: -1
     public int start(String UserName, String UserPass, int PortNr, String IP_address, String Schema) throws ClassNotFoundException, SQLException {
+        
+        // if all the input is blank then a default configuration will be used
         if (UserName.equalsIgnoreCase("")) {
             UserName = "root";
         }
@@ -227,17 +236,20 @@ public class SQL {
             Schema = "Sensors";
         }
         Class.forName("com.mysql.jdbc.Driver");
+        // connect to database
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + IP_address + ":" + PortNr + "/" + Schema, UserName, UserPass);
         } catch (SQLException ex) {
+            // if fail return -1
             return -1;
         }
-
+        
         stmt = con.createStatement();
-
+        // get all the tables in this scheme
         rs = stmt.executeQuery("Show Tables");
-
         rs.last();
+        
+        // If no tables exist then create all the tables
         if (rs.getRow() == 0) {
             stmt = con.createStatement();
             String myTableName
@@ -292,6 +304,7 @@ public class SQL {
             stmt = con.createStatement();
 
         } else {
+            // Else check what tables do not exist and then create them
             rs.beforeFirst();
             boolean db1 = true;
             boolean db2 = true;
@@ -384,9 +397,8 @@ public class SQL {
             }
 
         }
-
+        // get the latest sensor session
         rs = stmt.executeQuery("select session from sensor_sessions;");
-
         if (rs.absolute(1)) {
             rs.last();
             session = rs.getInt(1) + 1;
@@ -394,11 +406,13 @@ public class SQL {
             session = 0;
         }
         System.out.println("Session: " + session);
+        // create a new session 
         String query = "INSERT INTO Sensor_Sessions (Sensor_id,Date,Value,Value_nr,Session) VALUES (?,?,?,?,?)";
         ps = con.prepareStatement(query);
         return session;
     }
 
+    // Close the Database connection
     public void close() {
         try {
             if (rs != null) {

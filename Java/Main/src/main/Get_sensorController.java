@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 
 import java.net.URL;
@@ -21,10 +16,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.text.Font;
 import javafx.util.Callback;
 
-/**
- * FXML Controller class
+/*
+ * Get_semsorController.java
  *
- * @author Rilind
+ * This is the window for retiving as sensor for a sepcific node
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
 public class Get_sensorController implements Initializable {
 
@@ -44,9 +42,9 @@ public class Get_sensorController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-//        getString();
         System.out.println("url: " + url.getPath());
+        
+        // connect to Mysql database
         SQL sql = new SQL();
         int a =0;
         try {
@@ -56,14 +54,16 @@ public class Get_sensorController implements Initializable {
         }
         if(a!=-1){
         try {
-            list = sql.list(s);
+            list = sql.list(s);// get sensor list
         } catch (SQLException ex) {
             Logger.getLogger(Get_sensorController.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i));
         }
-        lv.setItems(list);
+        
+        // set ListView element to the sensor list from the database
+        lv.setItems(list); 
 
         Font anyfont = new Font("Consolas", 12);
         lv.setCellFactory(new CallbackImpl(anyfont));
@@ -72,11 +72,7 @@ public class Get_sensorController implements Initializable {
             lv.setItems(FXCollections.observableArrayList("No DB connection!"));
         }
     }
-
-    public void sensor_node(int s) {
-        Get_sensorController.s = s;
-    }
-
+    // get sensor node
     public static int getNode() {
         return s;
     }
@@ -86,6 +82,8 @@ public class Get_sensorController implements Initializable {
 
     }
 
+    // Button handler for the Get button, when pressed it will return a selected sensor from the list
+    // to a sepcifc node
     @FXML
     private void get(ActionEvent event) {
         String ss = (String) lv.getSelectionModel().getSelectedItem();
@@ -100,6 +98,7 @@ public class Get_sensorController implements Initializable {
 
     }
 
+    // removes a sensor from a specific node
     @FXML
     private void remove(ActionEvent event) {
         String ss = (String) lv.getSelectionModel().getSelectedItem();
@@ -109,6 +108,7 @@ public class Get_sensorController implements Initializable {
 
     }
 
+    // adds a list to the ListView
     private class CallbackImpl implements Callback<ListView<Object>, ListCell<Object>> {
 
         private final Font anyfont;

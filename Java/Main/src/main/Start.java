@@ -1,6 +1,5 @@
 
 package main;
-
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,9 +7,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
+/*
+ * Start.java
  *
- * @author Rilind
+ * This component is only used to start the Main java Fx application
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
 public class Start extends Application {
 
@@ -21,7 +24,6 @@ public class Start extends Application {
         stage.setTitle("Modular sensor platform");
         stage.setScene(scene);
         stage.show();
-
     }
 
     /**

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main;
 
 import java.io.BufferedOutputStream;
@@ -43,10 +38,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.microedition.io.StreamConnection;
 
-/**
+/*
+ * MainController.java
  *
- * @author Rilind This is the main GUI were the user can observe the sensor data
- * from the microcontoroller.
+ * This is the Main GUI for the java fx appliction, it connects to all other components of application.
+ * From here you can start the retriving sensor data from the microcontroller 
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
  */
 public class MainController implements Initializable {
 //<?import java.util.ArrayList?>
@@ -80,7 +79,6 @@ public class MainController implements Initializable {
     @FXML
     private Rectangle wireless_module_r;
     static String[] list_string_a = new String[10];
-    private final int size = 10;
     private boolean simulink = false;
     private short[][] sensor_value = new short[10][6];
     private boolean test = false;
@@ -99,7 +97,6 @@ public class MainController implements Initializable {
     private Semaphore mutex = new Semaphore(1);
     private StreamConnection sc = null;
     private ServerSocket serverSocket;
-    private int SampleRate = 1000;
     private BufferedReader reader = null;
     private BufferedWriter writer = null;
     static String UserName = "";
@@ -117,9 +114,7 @@ public class MainController implements Initializable {
     // This method updates the Text on the UI
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        WIFI_TF.setText("FireFly-6786");
-        //WIFI_TF.setDisable(true);
-        //WIFI_L.setDisable(true);
+        WIFI_TF.setText("0006664A6786");
         WIFI_L.setText("ID:");
         for (int i = 0; i < list_string_a.length; i++) {
             list_string_a[i] = "No Sensor!";
@@ -172,7 +167,6 @@ public class MainController implements Initializable {
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
-        // L1.setText("hej");
     }
 
     // This method controlls what wireless communication is currently being used (Bluetooth or Wifi) 
@@ -180,18 +174,14 @@ public class MainController implements Initializable {
     private void chooseModule(MouseEvent event) {
         if (on_off) {
             if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
-                //WIFI_TF.setDisable(false);
-                //WIFI_L.setDisable(false);
                 WIFI_L.setText("IP:");
                 wireless_module_l.setText("Wifi");
                 WIFI_TF.setText("192.168.137.100");
                 wireless_module_r.setFill(Paint.valueOf("0xffff00"));
             } else {
-                //WIFI_TF.setDisable(true);
-                //WIFI_L.setDisable(true);
                 WIFI_L.setText("ID:");
                 wireless_module_l.setText("BlueTooth");
-                WIFI_TF.setText("FireFly-6786");
+                WIFI_TF.setText("0006664A6786");
                 wireless_module_r.setFill(Paint.valueOf("0x1e90ff"));
             }
         }
@@ -206,31 +196,24 @@ public class MainController implements Initializable {
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage_add = new Stage();
             stage_add.initModality(Modality.APPLICATION_MODAL);
-            //stage.initStyle(StageStyle.UNDECORATED);
-
             stage_add.setTitle("Add Sensor");
             stage_add.setScene(new Scene(root1));
-
             stage_add.show();
         } catch (IOException ex) {
 
         }
     }
 
+    // Opens a window where you can configure the connection for a database
     @FXML
     private void configure_db(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ConfigDb.fxml"));
-
         Parent root1 = (Parent) fxmlLoader.load();
-
         Stage stage_add = new Stage();
         stage_add.initModality(Modality.APPLICATION_MODAL);
-        //stage.initStyle(StageStyle.UNDECORATED);
         stage_add.setTitle("Configure DB");
         stage_add.setScene(new Scene(root1));
-
         stage_add.show();
-
     }
 
     // This method retrives specifications for a sensor and connects it to specific Node.
@@ -242,17 +225,12 @@ public class MainController implements Initializable {
             System.out.println(r.getId());
             try {
                 Get_sensorController.s = Integer.parseInt(r.getId().substring(1));
-                // Open the Get_sensor class
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Get_sensor.fxml"));
-
                 Parent root1 = (Parent) fxmlLoader.load();
-
                 Stage stage_add = new Stage();
                 stage_add.initModality(Modality.APPLICATION_MODAL);
-                //stage.initStyle(StageStyle.UNDECORATED);
                 stage_add.setTitle(r.getId().substring(1) + " | Get Sensor");
                 stage_add.setScene(new Scene(root1));
-
                 stage_add.show();
 
             } catch (IOException ex) {
@@ -267,9 +245,13 @@ public class MainController implements Initializable {
     // When pressing stop, all threads that was created when pressing start will be terminated.
     @FXML
     private void handleButtonAction(ActionEvent event) {
+        // if the button says Start before clicking it
         if (on_off) {
+            // disable the add sensor and config database buttons
             add_sensor_b.setDisable(true);
             config_db_b.setDisable(true);
+            
+            // try to connect to database
             try {
                 int sq = sql.start(UserName, UserPass, PortNr, IP_address, Schema);
                 if (sq == -1) {
@@ -281,23 +263,24 @@ public class MainController implements Initializable {
             } catch (ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            // turn the button Red
             Light.Distant light = new Light.Distant();
-//        light.setAzimuth(45.0);
-//        light.setElevation(30.0);
             light.setColor(Color.valueOf("#ff4f4f"));
-
             Lighting lighting = new Lighting();
             lighting.setLight(light);
             lighting.setDiffuseConstant(2.0);
             Start.setEffect(lighting);
+            
+            // set the button text to stop
             Start.setText("Stop");
             on_off = false;
             test = false;
             simulink = false;
             socket = null;
-
             socket_OnOff = true;
+            
             if (thread == null || thread1 == null) {
+                // start a new thread for the wirless module methode
                 thread = new Thread() {
                     @Override
                     public void run() {
@@ -309,6 +292,7 @@ public class MainController implements Initializable {
                     }
                 };
                 thread.start();
+                // start a new thread for the simulink method
                 thread1 = new Thread() {
                     @Override
                     public void run() {
@@ -327,59 +311,50 @@ public class MainController implements Initializable {
                 };
                 thread1.start();
             }
-        } else {
+        } else { // if the button says Stop before clicking it
             test = true;
-
-            // thread1.interrupt();
-            //thread.interrupt();
             socket_OnOff = false;
-            test = true;
-            simulink = true;
+            test = true; // kill the wireless module thread
+            simulink = true; // kill the simulink thread
             System.out.println("Dead");
+            // wait til the threads are dead
             while (thread.isAlive()) {
-                //System.out.println("Blue Alive");
             }
             while (thread1.isAlive()) {
-                //System.out.println("Blue Alive");
             }
             thread = null;
             thread1 = null;
-            System.out.println("Blue Dead");
+            System.out.println("Threads dead");
+            
+            // Turn the button green and change the text to "Start"
             Light.Distant light = new Light.Distant();
-//        light.setAzimuth(45.0);
-//        light.setElevation(30.0);
             light.setColor(Color.valueOf("#32ff3c"));
-
             Lighting lighting = new Lighting();
             lighting.setLight(light);
             lighting.setDiffuseConstant(2.0);
             Start.setEffect(lighting);
             Start.setText("Start");
+            
+            // close the database connection
             sql.close();
             ldba.setText("DB Disconnected");
             ldbb.setText("");
             on_off = true;
             System.out.println("");
-            System.out.println("");
-//            try {
-//                socket1.close();
-//            } catch (IOException ex) {
-//                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            socket1=null;
+
+            // enable the add sensor and config database buttons
             add_sensor_b.setDisable(false);
             config_db_b.setDisable(false);
+            
+            // reset the arrays
             for (int i = 0; i < sensor_value.length; i++) {
                 for (int j = 0; j < 6; j++) {
                     sensor_value[i][j] = 0;
-
                 }
-
             }
             for (int i = 0; i < i2c_size.length; i++) {
                 i2c_size[i] = 1;
             }
-            test = true;
         }
     }
 
@@ -389,11 +364,11 @@ public class MainController implements Initializable {
         try {
             System.out.println(serverSocket);
             if (serverSocket == null) {
-                serverSocket = new ServerSocket(8080);
-                serverSocket.setSoTimeout(5000);
-                //new ServerSocket(9090, 0, InetAddress.getByName("localhost"))
+                serverSocket = new ServerSocket(8080);  // give the socket the portnumber: 8080
+                serverSocket.setSoTimeout(5000);        // set the timout to 5 seconds
             }
             System.out.println(socket_OnOff);
+            // wait in this loop while simulink is no connected
             while (socket == null && socket_OnOff) {
                 System.out.println("try");
                 try {
@@ -402,21 +377,14 @@ public class MainController implements Initializable {
                 } catch (Exception ex) {
                      System.out.println("Simulink Error");
                 }
-                //System.out.println("Socket: " +socket);
             }
-
+            
             BufferedOutputStream bo = (new BufferedOutputStream(socket.getOutputStream()));
             L9b_s = "Simulink Connected";
-            //PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-            //BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+            
+            // this loop will continully send sensor data to Simulink
             while (true) {
 
-//                if (i % 50 == 0) {
-//                    s1 = (short) (Math.random() * 1000);
-//                    s2 = (short) (Math.random() * 1000);
-//                }
-                //System.out.println(br.readLine());
                 for (int j = 0; j < Label_list_a.size(); j++) {
                     if (sensor_on[j]) {
                         if (j == 6 || j == 7 || j == 8 || j == 9) {
@@ -437,9 +405,7 @@ public class MainController implements Initializable {
                     }
                 
                 }
-                //  System.out.println(new Timestamp(System.currentTimeMillis()));
-//                sql.add("1", s1);
-//                sql.add("2", s2);
+                // kill thread if simulink=true
                 if (simulink) {
                     if (serverSocket != null && !serverSocket.isClosed()) {
                         serverSocket.close();
@@ -449,6 +415,7 @@ public class MainController implements Initializable {
 
                     break;
                 }
+                // send values every 100 ms
                 Thread.sleep(100);
             }
         } catch (Exception ex) {
@@ -461,12 +428,9 @@ public class MainController implements Initializable {
                 System.out.println("Close ServerSocket");
                 serverSocket.close();   
             }
-
-            //    ex.printStackTrace();
             System.out.println("Simulink Disconnect");
             L9b_s = "Simulink Disconnected";
             Thread.sleep(1000);
-            // Simulink();
         }
     }
 
@@ -483,12 +447,11 @@ public class MainController implements Initializable {
 
                     Reader_Blue = new BufferedReader(new InputStreamReader(sc.openInputStream()));
                     Writer_Blue = new BufferedWriter(new OutputStreamWriter(sc.openOutputStream()));
-                    // PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket1.getOutputStream()));
+
                     reader = Reader_Blue;
                     writer = Writer_Blue;
                     System.out.println("hej");
                 } else {
-                    //sc.openInputStream();
                     reader = Reader_Blue;
                     writer = Writer_Blue;
                 }
@@ -510,9 +473,6 @@ public class MainController implements Initializable {
             }
             int delay_data = 10;
             try {
-                // s: 0.8  (1/0.8)*10= 100
-
-                // s: 10   (1/10)*10= 1
                 delay_data = (int) ((1 / Double.parseDouble(delay.getText())) * 10);
             } catch (Exception ex) {
                 delay_data = 10;
@@ -625,10 +585,7 @@ public class MainController implements Initializable {
                     writer.write(new BigInteger("f", 16).toByteArray()[0]);
                 }
             }
-//            writer.write(2);
-//            writer.write(1);
-//            writer.write(0x30);
-//            writer.write(0x29);
+            
             writer.flush();
             System.out.println("Go");
             // Tell the user that wireless connection has been established by writing out "Wireless Connected"
@@ -646,12 +603,12 @@ public class MainController implements Initializable {
             while (true) {
 
                 char c = (char) reader.read();
-                // System.out.println("hhh");
+
                 if (((int) c) == 65535) {
                     sc = null;
                     WirelessModule();
                 }
-                //System.out.println(c);
+
                 switch (c) {
                     case 'a':
                         sensor_value[0][0] = Short.parseShort(new StringBuffer(line).reverse().toString());
@@ -680,8 +637,6 @@ public class MainController implements Initializable {
                     case 'g':
                         int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
-                        // System.out.println(tmp);
-                        //System.out.println("Acc: " + tmp);
 
                         sensor_value[6][g] = (short) tmp;
                         g++;
@@ -690,7 +645,6 @@ public class MainController implements Initializable {
                     case 'h':
                         int tmp1 = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
                         tmp1 = (tmp1 & 0x80) == 0 ? tmp1 : tmp1 - 256;
-                        //System.out.println("Acc: " + tmp);
                         sensor_value[7][h] = (short) tmp1;
                         h++;
                         line = "";
@@ -725,7 +679,6 @@ public class MainController implements Initializable {
                         continue;
                 }
                 if (test) {
-                    //while((char) reader.read()!='x'){}
                     L9a_s = "Wireless Disconnected";
                     System.out.println("heyy");
                     writer.write(1);
@@ -734,9 +687,6 @@ public class MainController implements Initializable {
                 }
             }
         } catch (Exception ex) {
-//            writer.write(1);
-//            writer.flush();
-//            ex.printStackTrace();
             L9a_s = "Wireless Disconnected";
             System.out.println("Wireless connection error");
             if (wireless_module_l.getText().equalsIgnoreCase("BlueTooth")) {
@@ -744,6 +694,7 @@ public class MainController implements Initializable {
             } else {
                 socket1 = null;
             }
+            // will retry to connect to wireless module
             if (retry) {
                 retry = false;
                 WirelessModule();

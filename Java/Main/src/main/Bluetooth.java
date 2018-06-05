@@ -12,13 +12,22 @@ import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
 import javax.microedition.io.StreamConnection;
 
+/*
+ * Bluetooth.java
+ *
+ * This is used to connect to a bluetooth module
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
+ */
+
 public class Bluetooth {
 
     boolean scanFinished = false;
     RemoteDevice hc05device;
     String hc05Url;
 
-    public StreamConnection go(String Name) throws Exception {
+    public StreamConnection go(String ID) throws Exception {
         //scan for all devices:
         scanFinished = false;
 
@@ -27,9 +36,9 @@ public class Bluetooth {
             public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
                 try {
                     String name = btDevice.getFriendlyName(false);
-                    System.out.format("%s (%s)\n", name, btDevice.getBluetoothAddress());
-                    if (name.matches(Name)) {
-                        //FireFly-6786
+                    String Adress = btDevice.getBluetoothAddress();
+                    System.out.format("%s (%s)\n", name, Adress);
+                    if (ID.matches(Adress)) {
                         hc05device = btDevice;
                         System.out.println("got it!");
                     }
