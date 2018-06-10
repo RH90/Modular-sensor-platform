@@ -1,9 +1,5 @@
 #include <ESP8266WiFi.h>
 
-//const char* ssid = "Tele2GatewayLZdR";//type your ssid
-//const char* password = "C1C50999CA";//type your password
-//const char* ssid = "MAPCI-fast-2.4GHz";//type your ssid
-//const char* password = "mapcibjoern!";
 const char* ssid = "Connectify-me";//type your ssid
 const char* password = "1234qwer";//type your password
 
@@ -12,7 +8,7 @@ int ledPin = 2; // GPIO2 of ESP8266
 WiFiServer server(8800);//Service Port
 
 void setup() {
-Serial.begin(9600);
+Serial.begin(9600); // start uart with the baudrate= 9600
 delay(10);
 
 pinMode(ledPin, OUTPUT);
@@ -39,9 +35,13 @@ if (!client) {
 return;
 }
 
+
 while(true){
+
+// wait in this while loop until data comes from TCP connection or from UART
 while(client.available()<=0&&Serial.available()<=0)
 {
+  // return to top of the loop if connection is broken
   if(!client.connected())
   {
     return;
@@ -49,14 +49,17 @@ while(client.available()<=0&&Serial.available()<=0)
   delay(1);
 }
 
+// while there is data from TCP connection 
 while(client.available()>0){
-  Serial.write(client.read());
+  Serial.write(client.read()); // send data from TCP to UART
   delay(1);
 }
 Serial.flush();
 delay(1);
+
+// while there is data from UART connection 
 while(Serial.available()>0) {
-  client.write(Serial.read());
+  client.write(Serial.read()); // send data from UART to TCP
   delay(1);
 }
 client.flush();
