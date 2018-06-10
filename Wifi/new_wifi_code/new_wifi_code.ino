@@ -1,5 +1,13 @@
 #include <ESP8266WiFi.h>
 
+/*
+ * new_wifi_code
+ *
+ * This code is used to make the wifi module to a transparent Wirless-Uart bridge
+ * 
+ * Created: 2018/02/27
+ * @author Rilind Hasanaj <rilind.hasanaj0018@stud.hkr.se>
+ */
 const char* ssid = "Connectify-me";//type your ssid
 const char* password = "1234qwer";//type your password
 
@@ -63,11 +71,7 @@ while(Serial.available()>0) {
   delay(1);
 }
 client.flush();
-
-
-
-//delayMicroseconds(10);
   
 }
-//client.print(test);
+
 }
