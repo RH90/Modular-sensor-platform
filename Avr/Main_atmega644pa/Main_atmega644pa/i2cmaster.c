@@ -1,3 +1,12 @@
+/*
+ *	I2cmaster.c
+ *
+ *	Created: 2018-05-14 14:07:50
+ *  Author: Rilind
+ * 
+ *  This code is for initializing the I2C and communicating with I2C devices  
+ */ 
+
 #ifndef  F_CPU
 #define F_CPU 16000000UL
 #endif
@@ -11,11 +20,13 @@
 #define Prescaler 1
 #define TWBR_val ((((F_CPU / F_SCL) / Prescaler) - 16 ) / 2)
 
+// initialize i2c
 void i2c_init(void)
 {
 	TWBR = (uint8_t)TWBR_val;
 }
 
+// start i2c transmission with a device
 uint8_t i2c_start(uint8_t address)
 {
 	// reset TWI control register
@@ -42,6 +53,7 @@ uint8_t i2c_start(uint8_t address)
 	return 0;
 }
 
+// send data through the i2c bus
 uint8_t i2c_write(uint8_t data)
 {
 	// load data into data register
@@ -56,6 +68,7 @@ uint8_t i2c_write(uint8_t data)
 	return 0;
 }
 
+// read data with acknowledge from i2c device
 uint8_t i2c_read_ack(void)
 {
 	
@@ -67,6 +80,7 @@ uint8_t i2c_read_ack(void)
 	return TWDR;
 }
 
+// read acknowledgment data from i2c device
 uint8_t i2c_read_nack(void)
 {
 	
@@ -92,6 +106,7 @@ uint8_t i2c_transmit(uint8_t address, uint8_t* data, uint16_t length)
 	return 0;
 }
 
+// receive data from a address
 uint8_t i2c_receive(uint8_t address, uint8_t* data, uint16_t length)
 {
 	if (i2c_start(address | I2C_READ)) return 1;
@@ -107,6 +122,7 @@ uint8_t i2c_receive(uint8_t address, uint8_t* data, uint16_t length)
 	return 0;
 }
 
+// write data to a specific register
 uint8_t i2c_writeReg(uint8_t devaddr, uint8_t regaddr, uint8_t* data, uint16_t length)
 {
 	if (i2c_start(devaddr | 0x00)) return 1;
@@ -123,6 +139,7 @@ uint8_t i2c_writeReg(uint8_t devaddr, uint8_t regaddr, uint8_t* data, uint16_t l
 	return 0;
 }
 
+// receive data from a specific register
 uint8_t i2c_readReg(uint8_t devaddr, uint8_t regaddr, uint8_t* data, uint16_t length)
 {
 	if (i2c_start(devaddr)) return 1;
@@ -142,6 +159,7 @@ uint8_t i2c_readReg(uint8_t devaddr, uint8_t regaddr, uint8_t* data, uint16_t le
 	return 0;
 }
 
+// stop i2c transmission
 void i2c_stop(void)
 {
 	// transmit STOP condition

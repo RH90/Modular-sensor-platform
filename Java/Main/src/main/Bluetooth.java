@@ -109,7 +109,6 @@ public class Bluetooth {
         String PIN = "1234";
 
         boolean paired = RemoteDeviceHelper.authenticate(hc05device, PIN);
-        //LOG.info("Pair with " + remoteDevice.getFriendlyName(true) + (paired ? " succesfull" : " failed"));
         if (paired) {
             System.out.println("Success");
         } else {
@@ -118,9 +117,6 @@ public class Bluetooth {
         
 
         return (StreamConnection) MicroeditionConnector.open(hc05Url);
-       
-        
-        // System.out.println("Receive data");
-        // reader.close();
+
     }
 }

@@ -51,13 +51,18 @@ while(client.available()<=0&&Serial.available()<=0)
 
 while(client.available()>0){
   Serial.write(client.read());
+  delay(1);
 }
 Serial.flush();
+delay(1);
 while(Serial.available()>0) {
   client.write(Serial.read());
-  
+  delay(1);
 }
 client.flush();
+
+
+
 //delayMicroseconds(10);
   
 }

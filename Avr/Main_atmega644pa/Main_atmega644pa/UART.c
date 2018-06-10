@@ -1,9 +1,9 @@
 /*
- * UART.c
+ *	UART.c
  *
- * Created: 2018-03-08 21:32:57
+ *	Created: 2018-03-08 21:32:57
  *  Author: Rilind
- * This code is for using UART to send and recive data
+ *	This code is for using UART to send and recive data
  */ 
 #include <avr/io.h>
 #include <avr/sfr_defs.h>
