@@ -232,13 +232,39 @@ public class SQL {
         if (IP_address.equalsIgnoreCase("")) {
             IP_address = "localhost";
         }
+        System.out.println("HHH: "+ Schema);
         if (Schema.equalsIgnoreCase("")) {
             Schema = "Sensors";
         }
         Class.forName("com.mysql.jdbc.Driver");
         // connect to database
+        System.out.println("DBBB");
         try {
-            con = DriverManager.getConnection("jdbc:mysql://" + IP_address + ":" + PortNr + "/" + Schema, UserName, UserPass);
+            con = DriverManager.getConnection("jdbc:mysql://" + IP_address + ":" + PortNr, UserName, UserPass);
+        } catch (SQLException ex) {
+            // if fail return -1
+            return -1;
+        }
+        
+        // create the database if does not exists
+        stmt = con.createStatement();
+        rs= stmt.executeQuery("SHOW DATABASES");
+        rs.beforeFirst();
+        boolean schema=true;
+        while(rs.next()){
+           if( rs.getString(1).equalsIgnoreCase(Schema))
+           schema=false;
+        }
+        if(schema){
+         stmt = con.createStatement();
+         stmt.execute("CREATE SCHEMA "+Schema);
+            
+        }
+        System.out.println(Schema);
+       
+        con.close();
+         try {
+            con = DriverManager.getConnection("jdbc:mysql://" + IP_address + ":" + PortNr+"/"+Schema, UserName, UserPass);
         } catch (SQLException ex) {
             // if fail return -1
             return -1;

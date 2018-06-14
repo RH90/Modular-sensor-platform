@@ -30,11 +30,6 @@ public class Add_SensorController implements Initializable {
     /**
      * Initializes the controller class.
      */
-    private String UserName = "";
-    private String UserPass = "";
-    private int PortNr = 0;
-    private String IP_address = "";
-    private String Schema = "";
     private SQL sql = new SQL();
     @FXML
     private Label la;
@@ -109,7 +104,7 @@ public class Add_SensorController implements Initializable {
         cba.setItems(FXCollections.observableArrayList(
                 "Simple Read", "Pulse"));
         try {
-            sql.start(UserName, UserPass, PortNr, IP_address, Schema);
+            sql.start(MainController.UserName, MainController.UserPass, MainController.PortNr, MainController.IP_address, MainController.Schema);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Add_SensorController.class.getName()).log(Level.SEVERE, null, ex);
         }

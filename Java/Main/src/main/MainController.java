@@ -253,6 +253,7 @@ public class MainController implements Initializable {
             
             // try to connect to database
             try {
+                System.out.println("Scheme: "+ Schema);
                 int sq = sql.start(UserName, UserPass, PortNr, IP_address, Schema);
                 if (sq == -1) {
                     ldba.setText("DB Error");
