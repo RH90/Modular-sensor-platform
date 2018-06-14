@@ -3706,3 +3706,15 @@ org.eclipse.swt.SWTException: Widget is disposed
 
 !ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-06-10 22:01:45.130
 !MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-06-11 22:23:31.869
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-06-12 12:22:34.720
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-06-12 16:01:05.062
+!MESSAGE No network interfaces found.
+
+!ENTRY com.silabs.ss.platform.apack.ip 2 0 2018-06-13 09:07:45.772
+!MESSAGE No network interfaces found.

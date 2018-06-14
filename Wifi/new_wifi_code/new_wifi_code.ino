@@ -11,6 +11,9 @@
 const char* ssid = "Connectify-me";//type your ssid
 const char* password = "1234qwer";//type your password
 
+byte b[2048];
+int i;
+
 char test=0;
 int ledPin = 2; // GPIO2 of ESP8266
 WiFiServer server(8800);//Service Port
@@ -65,12 +68,20 @@ while(client.available()>0){
 Serial.flush();
 delay(1);
 
-// while there is data from UART connection 
+// while there is data from UART connection
+
+if(Serial.available()>0)
+{
+  i=0;
 while(Serial.available()>0) {
-  client.write(Serial.read()); // send data from UART to TCP
+  b[i] = Serial.read(); // send data from UART to TCP
+  i++;
   delay(1);
 }
-client.flush();
+    client.write(b,i);
+    client.flush();
+}
+
   
 }
 

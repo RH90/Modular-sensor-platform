@@ -1,7 +1,7 @@
 /*
- * main.c
+ *	main.c
  *
- * Created: 2018-05-14 14:07:50
+ *	Created: 2018-05-14 14:07:50
  *  Author: Rilind
  * 
  *  This is the main code for the AVR micro controller, here it will receive Sensor data through
@@ -55,7 +55,7 @@ struct I2C_struct I2C[2];
 struct SPI_struct SPI[2];
 
 // variables for delay
-volatile int count=0;
+volatile uint32_t count=0;
 volatile uint32_t delay=5;
 volatile uint32_t delay_max=5;
 volatile uint32_t count_delay=1;

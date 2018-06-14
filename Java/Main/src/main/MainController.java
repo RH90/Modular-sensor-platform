@@ -635,17 +635,12 @@ public class MainController implements Initializable {
                         line = "";
                         break;
                     case 'g':
-                        int tmp = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
-                        tmp = (tmp & 0x80) == 0 ? tmp : tmp - 256;
-
-                        sensor_value[6][g] = (short) tmp;
+                        sensor_value[6][g] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         g++;
                         line = "";
                         break;
                     case 'h':
-                        int tmp1 = Integer.parseInt(new StringBuffer(line).reverse().toString()) & 0xFF;
-                        tmp1 = (tmp1 & 0x80) == 0 ? tmp1 : tmp1 - 256;
-                        sensor_value[7][h] = (short) tmp1;
+                        sensor_value[7][h] = Short.parseShort(new StringBuffer(line).reverse().toString());
                         h++;
                         line = "";
                         break;

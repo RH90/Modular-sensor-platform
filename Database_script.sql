@@ -22,3 +22,6 @@ UPDATE sensors SET reference = 'no' WHERE Sensor_id>=1 AND Sensor_id<=9;
 SELECT * FROM sensor_sessions ORDER BY id DESC LIMIT 1;
 select Sensor_id,Name,Sensing_type from sensors where Interface='Analog_digital';
 CREATE TABLE  session_10 (id INT(64) NOT NULL AUTO_INCREMENT,Sensor_nr VARCHAR(10),Date TIMESTAMP,Value INT(64),PRIMARY KEY(id));
+
+select * from sensors;
+select * from sensor_sessions;

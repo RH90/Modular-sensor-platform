@@ -1,7 +1,7 @@
 /*
- * SPI.c
+ *	SPI.c
  *
- * Created: 2018-05-14 14:07:50
+ *	Created: 2018-05-14 14:07:50
  *  Author: Rilind
  * 
  *  This code is for initializing the SPI and communicating with SPI devices  
